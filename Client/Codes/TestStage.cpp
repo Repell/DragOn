@@ -1,0 +1,148 @@
+#include "stdafx.h"
+#include "TestStage.h"
+
+CTestStage::CTestStage(LPDIRECT3DDEVICE9 pDevice)
+	: ENGINE::CScene(pDevice), m_pLoading(nullptr)
+{
+}
+
+CTestStage::~CTestStage()
+{
+}
+
+HRESULT CTestStage::Ready_Scene()
+{
+	RenderPipeLine_SetUp();
+	Create_Light();
+
+	FAILED_CHECK_RETURN(ENGINE::CScene::Ready_Scene(), E_FAIL);
+
+	FAILED_CHECK_RETURN(Add_GameObject_Layer(), E_FAIL);
+	FAILED_CHECK_RETURN(Add_Environment_Layer(), E_FAIL);
+	FAILED_CHECK_RETURN(Add_UI_Layer(), E_FAIL);
+
+	return S_OK;
+}
+
+_int CTestStage::Update_Scene(_float fTimeDelta)
+{
+	ENGINE::CScene::Update_Scene(fTimeDelta);
+
+	return NO_EVENT;
+}
+
+void CTestStage::Late_Update_Scene()
+{
+	ENGINE::CScene::Late_Update_Scene();
+}
+
+void CTestStage::Render_Scene()
+{
+}
+
+HRESULT CTestStage::Add_Environment_Layer()
+{
+	ENGINE::CLayer* pObject_Layer = ENGINE::CLayer::Create();
+	NULL_CHECK_RETURN(pObject_Layer, E_FAIL);
+
+	ENGINE::CGameObject* pObject = nullptr;
+	////////////INSERT GAME OBJECT////////////
+
+	pObject = CTerrain::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Terrain", pObject);
+
+	pObject = CTerrainSkyBox::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Terrain_SkyBox", pObject);
+
+	//////////////INSERT LAYER//////////////
+	m_MapLayer.emplace(ENGINE::CLayer::ENVIRONMENT, pObject_Layer);
+
+	return S_OK;
+}
+
+HRESULT CTestStage::Add_GameObject_Layer()
+{
+	ENGINE::CLayer* pObject_Layer = ENGINE::CLayer::Create();
+	NULL_CHECK_RETURN(pObject_Layer, E_FAIL);
+
+	ENGINE::CGameObject* pObject = nullptr;
+	////////////INSERT GAME OBJECT////////////
+
+	pObject = CPlayer::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Player", pObject);
+
+	//////////////INSERT LAYER//////////////
+	m_MapLayer.emplace(ENGINE::CLayer::OBJECT, pObject_Layer);
+	return S_OK;
+}
+
+HRESULT CTestStage::Add_UI_Layer()
+{
+	ENGINE::CLayer* pObject_Layer = ENGINE::CLayer::Create();
+	NULL_CHECK_RETURN(pObject_Layer, E_FAIL);
+
+	ENGINE::CGameObject* pObject = nullptr;
+	////////////INSERT GAME OBJECT////////////
+
+	pObject = CDynamicCamera::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"DynamicCamera", pObject);
+
+	//////////////INSERT LAYER//////////////
+	m_MapLayer.emplace(ENGINE::CLayer::UI, pObject_Layer);
+	return S_OK;
+}
+
+void CTestStage::RenderPipeLine_SetUp()
+{
+	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
+	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+
+	// 샘플링 
+	m_pGraphicDev->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	m_pGraphicDev->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+}
+
+void CTestStage::Create_Light()
+{
+	D3DLIGHT9 DirLight;
+	ZeroMemory(&DirLight, sizeof(D3DLIGHT9));
+
+	//방향성 조명
+	DirLight.Type = D3DLIGHT_DIRECTIONAL;
+	//rgba
+	DirLight.Diffuse.a = 0.f;
+	DirLight.Diffuse.r = 1.f;
+	DirLight.Diffuse.g = 1.f;
+	DirLight.Diffuse.b = 1.f;
+	// 위치
+	DirLight.Position = { 0.f, 25.f, 0.f };
+	// 방향
+	_vec3 vLightDir = { TERRAIN_VTX_X >> 2, -25.f, TERRAIN_VTX_Z >> 2 };
+	D3DXVec3Normalize((_vec3*)&DirLight.Direction, &vLightDir);
+
+	m_pGraphicDev->SetLight(0, &DirLight);
+	m_pGraphicDev->LightEnable(0, TRUE);
+
+}
+
+CTestStage * CTestStage::Create(LPDIRECT3DDEVICE9 pDevice)
+{
+	CTestStage* pInstance = new CTestStage(pDevice);
+
+	if (FAILED(pInstance->Ready_Scene()))
+		ENGINE::Safe_Release(pInstance);
+
+	return pInstance;
+}
+
+void CTestStage::Free()
+{
+	if(m_pLoading != nullptr)
+		ENGINE::Safe_Release(m_pLoading);
+
+	ENGINE::CScene::Free();
+}

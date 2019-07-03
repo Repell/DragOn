@@ -1,0 +1,275 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="00.Utility">
+      <UniqueIdentifier>{d3022909-adab-43af-8674-4b468af2b21d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources">
+      <UniqueIdentifier>{44f8e98c-b2c9-42cf-a81f-4c404193bc8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\00.Management">
+      <UniqueIdentifier>{160a75b0-df34-421a-896b-50498ef9e8f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\01.Renderer">
+      <UniqueIdentifier>{75cd54a1-555d-485f-9c54-9e848a17ee06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\02.SuperClass">
+      <UniqueIdentifier>{0063ccc6-359f-417f-a2df-3d0962b8a06d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\02.SuperClass\00.Scene">
+      <UniqueIdentifier>{f0b12cd7-2824-47b7-975d-990f0ef86eb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\02.SuperClass\00.Scene\00.Layer">
+      <UniqueIdentifier>{8141d3c1-1110-4cb7-ad7f-847530cacf9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\02.SuperClass\01.GameObject">
+      <UniqueIdentifier>{74a6bc80-fdfa-45cf-acf2-7e682ff474ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\02.SuperClass\02.Component">
+      <UniqueIdentifier>{5f206e06-6d59-4d78-989b-dd6ce1083a87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Exports">
+      <UniqueIdentifier>{40d512bc-4c78-47c8-8f95-140db0314666}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\02.SuperClass\02.Component\00.Transform">
+      <UniqueIdentifier>{b4eee6a9-4371-4bda-a068-8b9b2ad5c15c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\02.SuperClass\02.Component\01.Collision">
+      <UniqueIdentifier>{7393a1c1-8684-4f7e-96fd-3488946d88da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\02.SuperClass\02.Component\02.Camera">
+      <UniqueIdentifier>{d1461754-bc58-483f-9e35-0ac5b349a946}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\02.SuperClass\02.Component\03.Calculator">
+      <UniqueIdentifier>{20235ffd-e2f6-4ab9-9018-261819e42c57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\03.Manager">
+      <UniqueIdentifier>{a232c7d9-1288-4cca-a305-2bcfc8d35c79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\03.Manager\00.LightMgr">
+      <UniqueIdentifier>{035ac916-e95e-4218-805d-b5a1f76cd691}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\03.Manager\01.ProtoTypeMgr">
+      <UniqueIdentifier>{1e503639-ce13-4499-bd72-a3c4920d2e22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\00.Resources">
+      <UniqueIdentifier>{f1ad9cce-6426-4675-afbd-87854fa8eea8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\01.ViBuffer">
+      <UniqueIdentifier>{43f74cf4-cd76-407e-801a-15aa10e39e66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\02.Texture">
+      <UniqueIdentifier>{ed029564-667d-4723-9213-8abada90e5c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\03.Mesh">
+      <UniqueIdentifier>{dae84966-17d1-41a0-8b2c-6d83c5f7100b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\04.Manager">
+      <UniqueIdentifier>{04e0aa83-c70b-4919-b376-111737ec3d04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\04.Manager\00.ResourcesMgr">
+      <UniqueIdentifier>{d2125b44-e3e3-42ca-a98d-bcebba8d3bb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\03.Mesh\00.Static">
+      <UniqueIdentifier>{7d8d4d3b-f347-4b61-b4f4-c55090438e54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\03.Mesh\01.Dynamice">
+      <UniqueIdentifier>{45fb5e9b-8929-4db8-ac64-2fa99150f853}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\01.ViBuffer\00.TriCol">
+      <UniqueIdentifier>{2aeab5b5-fd58-464d-b55c-6bc04d484294}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\01.ViBuffer\01.TriTex">
+      <UniqueIdentifier>{2b7abc56-2476-4985-b9a2-9a69564511b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\01.ViBuffer\02.RcCol">
+      <UniqueIdentifier>{a72f3249-5d4d-41b1-9075-cda1c702413a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\01.ViBuffer\03.RcTex">
+      <UniqueIdentifier>{21791808-845a-4b02-97ce-bd420cf03c81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\01.ViBuffer\04.CubeTex">
+      <UniqueIdentifier>{3cab40f0-08e7-4e35-b1f3-dfda4f4be0d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\01.ViBuffer\05.SkyBox">
+      <UniqueIdentifier>{ab2bc520-5c95-44b2-884e-fed80c6e2167}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\01.ViBuffer\06.TerrainTex">
+      <UniqueIdentifier>{e2111058-16f0-4561-9947-86c42ca5a7a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\03.Mesh\01.Dynamice\00.Hierarchy">
+      <UniqueIdentifier>{6780bd74-9dd6-43a0-89be-b7c96825e95e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\03.Mesh\01.Dynamice\01.AniControll">
+      <UniqueIdentifier>{647a10a7-f104-499d-b605-62306af1b8d8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Codes\Management.h">
+      <Filter>00.Utility\00.Management</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Renderer.h">
+      <Filter>00.Utility\01.Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Scene.h">
+      <Filter>00.Utility\02.SuperClass\00.Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Layer.h">
+      <Filter>00.Utility\02.SuperClass\00.Scene\00.Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\GameObject.h">
+      <Filter>00.Utility\02.SuperClass\01.GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Component.h">
+      <Filter>00.Utility\02.SuperClass\02.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine_Headers\Export_Utility.h">
+      <Filter>02.Exports</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Resourceses.h">
+      <Filter>01.Resources\00.Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\ViBuffer.h">
+      <Filter>01.Resources\01.ViBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\TriCol.h">
+      <Filter>01.Resources\01.ViBuffer\00.TriCol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\TriTex.h">
+      <Filter>01.Resources\01.ViBuffer\01.TriTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\RcCol.h">
+      <Filter>01.Resources\01.ViBuffer\02.RcCol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\RcTex.h">
+      <Filter>01.Resources\01.ViBuffer\03.RcTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\CubeTex.h">
+      <Filter>01.Resources\01.ViBuffer\04.CubeTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\SkyBox.h">
+      <Filter>01.Resources\01.ViBuffer\05.SkyBox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\TerrainTex.h">
+      <Filter>01.Resources\01.ViBuffer\06.TerrainTex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Texture.h">
+      <Filter>01.Resources\02.Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\StaticMesh.h">
+      <Filter>01.Resources\03.Mesh\00.Static</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Mesh.h">
+      <Filter>01.Resources\03.Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Hierarchy.h">
+      <Filter>01.Resources\03.Mesh\01.Dynamice\00.Hierarchy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\AniControll.h">
+      <Filter>01.Resources\03.Mesh\01.Dynamice\01.AniControll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\DynamicMesh.h">
+      <Filter>01.Resources\03.Mesh\01.Dynamice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\ResourcesMgr.h">
+      <Filter>01.Resources\04.Manager\00.ResourcesMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Transform.h">
+      <Filter>00.Utility\02.SuperClass\02.Component\00.Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Collision.h">
+      <Filter>00.Utility\02.SuperClass\02.Component\01.Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Camera.h">
+      <Filter>00.Utility\02.SuperClass\02.Component\02.Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Calculator.h">
+      <Filter>00.Utility\02.SuperClass\02.Component\03.Calculator</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Codes\Management.cpp">
+      <Filter>00.Utility\00.Management</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Renderer.cpp">
+      <Filter>00.Utility\01.Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Scene.cpp">
+      <Filter>00.Utility\02.SuperClass\00.Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Layer.cpp">
+      <Filter>00.Utility\02.SuperClass\00.Scene\00.Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GameObject.cpp">
+      <Filter>00.Utility\02.SuperClass\01.GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Component.cpp">
+      <Filter>00.Utility\02.SuperClass\02.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Resourceses.cpp">
+      <Filter>01.Resources\00.Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ViBuffer.cpp">
+      <Filter>01.Resources\01.ViBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\TriCol.cpp">
+      <Filter>01.Resources\01.ViBuffer\00.TriCol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\TriTex.cpp">
+      <Filter>01.Resources\01.ViBuffer\01.TriTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\RcCol.cpp">
+      <Filter>01.Resources\01.ViBuffer\02.RcCol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\RcTex.cpp">
+      <Filter>01.Resources\01.ViBuffer\03.RcTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CubeTex.cpp">
+      <Filter>01.Resources\01.ViBuffer\04.CubeTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SkyBox.cpp">
+      <Filter>01.Resources\01.ViBuffer\05.SkyBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\TerrainTex.cpp">
+      <Filter>01.Resources\01.ViBuffer\06.TerrainTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Texture.cpp">
+      <Filter>01.Resources\02.Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\StaticMesh.cpp">
+      <Filter>01.Resources\03.Mesh\00.Static</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Mesh.cpp">
+      <Filter>01.Resources\03.Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Hierarchy.cpp">
+      <Filter>01.Resources\03.Mesh\01.Dynamice\00.Hierarchy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\AniControll.cpp">
+      <Filter>01.Resources\03.Mesh\01.Dynamice\01.AniControll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DynamicMesh.cpp">
+      <Filter>01.Resources\03.Mesh\01.Dynamice</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ResourcesMgr.cpp">
+      <Filter>01.Resources\04.Manager\00.ResourcesMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Transform.cpp">
+      <Filter>00.Utility\02.SuperClass\02.Component\00.Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Collision.cpp">
+      <Filter>00.Utility\02.SuperClass\02.Component\01.Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Camera.cpp">
+      <Filter>00.Utility\02.SuperClass\02.Component\02.Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Calculator.cpp">
+      <Filter>00.Utility\02.SuperClass\02.Component\03.Calculator</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Engine_Headers\Export_Utility.inl">
+      <Filter>02.Exports</Filter>
+    </None>
+  </ItemGroup>
+</Project>

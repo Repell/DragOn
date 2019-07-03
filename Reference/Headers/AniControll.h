@@ -1,0 +1,42 @@
+#ifndef AniControll_h__
+#define AniControll_h__
+
+#include "Engine_Define.h"
+#include "Base.h"
+
+NS_BEGIN(ENGINE)
+
+class ENGINE_DLL CAniControll :
+	public CBase
+{
+private:
+	explicit CAniControll(LPD3DXANIMATIONCONTROLLER pAniCon);
+	explicit CAniControll(const CAniControll& rhs);
+	virtual ~CAniControll();
+
+public:
+	LPD3DXANIMATIONCONTROLLER Get_AniControll() { return m_pAniCon; }
+
+public:
+	HRESULT Ready_AniControll();
+	void Set_AnimationSet(const _uint& iIndex);
+	void Play_AnimationSet(const _float& fTimeDelta);
+
+private:
+	LPD3DXANIMATIONCONTROLLER m_pAniCon;
+	_uint	m_iCurrentTrack;
+	_uint m_iNewTrack;
+	_uint m_iOldAniIndex;
+	
+	_float m_fAccTime;
+
+public:
+	static CAniControll* Create(LPD3DXANIMATIONCONTROLLER pAniCon);
+	static CAniControll* Create(const CAniControll& rhs);
+	virtual void Free();
+
+};
+
+NS_END	
+
+#endif // AniControll_h__

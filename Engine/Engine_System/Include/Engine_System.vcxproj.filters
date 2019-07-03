@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="00.GraphicDevice">
+      <UniqueIdentifier>{560402ba-0efe-41f7-9d97-5efcfa6677e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.DirectInput">
+      <UniqueIdentifier>{1ef000af-03a7-4a9d-a7f0-dcfd54b7456e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="09.Exports">
+      <UniqueIdentifier>{ebe33f20-efda-4c1f-bbdf-60e37bf23d15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.TimeMgr">
+      <UniqueIdentifier>{8b444ca3-1ef1-46f6-8f4b-aeb6e350af42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.KeyMgr">
+      <UniqueIdentifier>{bf5736f0-9de7-4223-8c79-b27223921113}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.FontMgr">
+      <UniqueIdentifier>{7a407600-722f-47e5-851d-e0179cbc8ca2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.FontMgr\00.Font">
+      <UniqueIdentifier>{2767826c-513e-4bd1-8304-ae2d7bdce577}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Codes\GraphicDev.cpp">
+      <Filter>00.GraphicDevice</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\TimeMgr.cpp">
+      <Filter>01.TimeMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DirectInput.cpp">
+      <Filter>02.DirectInput</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\KeyMgr.cpp">
+      <Filter>03.KeyMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Font.cpp">
+      <Filter>04.FontMgr\00.Font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FontMgr.cpp">
+      <Filter>04.FontMgr</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Codes\GraphicDev.h">
+      <Filter>00.GraphicDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\TimeMgr.h">
+      <Filter>01.TimeMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\DirectInput.h">
+      <Filter>02.DirectInput</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\KeyMgr.h">
+      <Filter>03.KeyMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine_Headers\Export_System.h">
+      <Filter>09.Exports</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Font.h">
+      <Filter>04.FontMgr\00.Font</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\FontMgr.h">
+      <Filter>04.FontMgr</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Engine_Headers\Export_System.inl">
+      <Filter>09.Exports</Filter>
+    </None>
+  </ItemGroup>
+</Project>
