@@ -51,6 +51,17 @@ HRESULT CTexture::Ready_Texture(const _tchar * pPath, TEXTURETYPE eID, const _ui
 	return S_OK;
 }
 
+void CTexture::Set_Texture(LPD3DXEFFECT pEffect, const char * pShaderName, const _uint & iIndex)
+{
+	_uint iContainerSize = m_vecTexture.size();
+
+	if (iContainerSize <= iIndex)
+		return;
+
+	pEffect->SetTexture(pShaderName, m_vecTexture[iIndex]);
+
+}
+
 void CTexture::Render_Texture(const _uint & iIndex)
 {
 	_uint iContainerSize = m_vecTexture.size();

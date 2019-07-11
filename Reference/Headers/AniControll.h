@@ -16,6 +16,7 @@ private:
 
 public:
 	LPD3DXANIMATIONCONTROLLER Get_AniControll() { return m_pAniCon; }
+	_bool Is_AnimationSetEnd();
 
 public:
 	HRESULT Ready_AniControll();
@@ -29,6 +30,7 @@ private:
 	_uint m_iOldAniIndex;
 	
 	_float m_fAccTime;
+	_double m_dPeriod;
 
 public:
 	static CAniControll* Create(LPD3DXANIMATIONCONTROLLER pAniCon);

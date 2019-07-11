@@ -3,6 +3,7 @@
 
 #include "Scene.h"
 #include "Renderer.h"
+#include "Shader.h"
 
 NS_BEGIN(ENGINE)
 
@@ -19,12 +20,16 @@ public:
 								const wstring pObjTag,
 								const wstring pComponentTag,
 								COMPONENTID eID);
-
+	
 public:
 	HRESULT		SetUp_CurrentScene(CScene* pCurrentScene);
 	_int		Update_Scene(const _float& fTimeDelta);
 	void		Late_Update_Scene();
-	void		Render_Scene(void);
+	void		Render_Scene(LPDIRECT3DDEVICE9 pDevice);
+
+public:
+	void Add_GameObject(ENGINE::CLayer::LAYER_ID eID, const wstring pObjTag, CGameObject* pObj);
+	HRESULT		Ready_ShaderFile(LPDIRECT3DDEVICE9 pGraphicDev);
 
 private:
 	CScene*		m_pCurrentScene;

@@ -76,11 +76,11 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 
 		for (_ulong i = 0; i < pMeshContainer->NumMaterials; ++i)
 		{
-			_tchar szFullPath[MID_STR] = L"";
-			_tchar szFileName[MID_STR] = L"";
+			_tchar szFullPath[MAX_STR] = L"";
+			_tchar szFileName[MAX_STR] = L"";
 
 			MultiByteToWideChar(CP_ACP, 0, pMeshContainer->pMaterials[i].pTextureFilename,
-				strlen(pMeshContainer->pMaterials[i].pTextureFilename), szFileName, MID_STR);
+				strlen(pMeshContainer->pMaterials[i].pTextureFilename), szFileName, MAX_STR);
 
 			lstrcpy(szFullPath, m_pPath);
 			lstrcat(szFullPath, szFileName);

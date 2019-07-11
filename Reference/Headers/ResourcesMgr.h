@@ -14,6 +14,7 @@
 #include "TerrainTex.h"
 #include "StaticMesh.h"
 #include "DynamicMesh.h"
+#include "NaviMesh.h"
 
 NS_BEGIN(ENGINE)
 

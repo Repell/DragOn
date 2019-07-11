@@ -29,6 +29,7 @@ CStaticMesh::CStaticMesh(const CStaticMesh & rhs)
 	m_pAdjacency->AddRef();
 	m_pSubSetBuffer->AddRef();
 	m_pMesh->AddRef();
+	m_pOriginMesh->AddRef();
 }
 
 CStaticMesh::~CStaticMesh()
@@ -54,7 +55,7 @@ HRESULT CStaticMesh::Ready_Meshes(const _tchar * pFilePath, const _tchar * pFile
 	if (!(dwFVF & D3DFVF_NORMAL))	//Normal 이 없을때
 	{
 		m_pOriginMesh->CloneMeshFVF(m_pOriginMesh->GetOptions(), dwFVF | D3DFVF_NORMAL, m_pGraphicDev, &m_pMesh);
-		//정점의 노말 값을 계싼하여 삽입해주는 함수
+		//정점의 노말 값을 계산하여 삽입해주는 함수
 		D3DXComputeNormals(m_pMesh, (_ulong*)m_pAdjacency->GetBufferPointer());
 	}
 	else

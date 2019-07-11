@@ -13,6 +13,10 @@ private:
 	virtual ~CTransform();
 
 public:
+	void Set_ParentMatrix(const _matrix* pParentMat)
+	{		m_matWorld *= *pParentMat; 	}
+
+public:
 	HRESULT Ready_Trasnform(_vec3 vLook);
 	virtual _int Update_Component(const _float& fTimeDelta) override;
 	virtual void Late_Update_Component() override;

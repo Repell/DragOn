@@ -10,6 +10,7 @@ namespace ENGINE
 	class CTexture;
 	class CTransform;
 	class CRenderer;
+	class CShader;
 }
 
 class CTerrain : public ENGINE::CGameObject
@@ -27,6 +28,7 @@ public:
 
 private:
 	HRESULT Add_Component();
+	HRESULT SetUp_ConstantTable(LPD3DXEFFECT pEffect);
 
 private:
 	void Render_Set();
@@ -38,6 +40,7 @@ private:
 	ENGINE::CTexture*			m_pTexture;
 	ENGINE::CTransform*	m_pTransform;
 	ENGINE::CRenderer*		m_pRenderer;
+	ENGINE::CShader*			m_pShader;
 
 public:
 	static CTerrain* Create(LPDIRECT3DDEVICE9 pDevice);

@@ -50,7 +50,7 @@ HRESULT CTerrainTex::Ready_Buffer(WORD wCntX, WORD wCntZ, WORD wItv, WORD wDetai
 
 			pVtxTex[wIndex].vPos.x = (float)j * wItv;
 			//pVtxTex[wIndex].vPos.y = 0.f;
-			pVtxTex[wIndex].vPos.y = (pPixel[wIndex] & 0x000000ff) / 100.f;
+			pVtxTex[wIndex].vPos.y = (pPixel[wIndex] & 0x000000ff) / 50.f;
 			pVtxTex[wIndex].vPos.z = (float)i * wItv;
 
 			m_vPos[wIndex] = pVtxTex[wIndex].vPos;
@@ -73,7 +73,7 @@ HRESULT CTerrainTex::Ready_Buffer(WORD wCntX, WORD wCntZ, WORD wItv, WORD wDetai
 
 	m_pIB->Lock(0, 0, (void**)&pIndex, 0);
 
-	int iTriIndex = 0;
+	_ulong iTriIndex = 0;
 
 	wIndex = 0;
 

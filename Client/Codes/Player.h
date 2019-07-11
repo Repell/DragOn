@@ -2,6 +2,7 @@
 #define Player_h__
 
 #include "GameObject.h"
+#include "Effect_Tex.h"
 
 namespace ENGINE
 {
@@ -9,6 +10,7 @@ namespace ENGINE
 	class CDynamicMesh;
 	class CTransform;
 	class CGameObject;
+	class CNaviMesh;
 }
 
 class CPlayer : public ENGINE::CGameObject
@@ -28,6 +30,12 @@ private:
 	void Render_Set();
 	void Render_ReSet();
 
+private:
+	//Key Input, Camera, NaviMesh
+	bool Key_check(_float fTimeDelta);
+	void Key_Old(_float fTimeDelta);
+
+
 
 private:
 	void UI_Sample();
@@ -39,6 +47,7 @@ private:
 	ENGINE::CRenderer* m_pRenderer;
 	ENGINE::CDynamicMesh* m_pMesh;
 	ENGINE::CTransform*	m_pTransform;
+	ENGINE::CNaviMesh*		m_pNaviMesh;
 
 public:
 	static CPlayer* Create(LPDIRECT3DDEVICE9 pGraphicDev);

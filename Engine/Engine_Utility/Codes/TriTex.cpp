@@ -100,7 +100,7 @@ HRESULT CTriTex::Ready_Buffer()
 	m_pIB->Unlock();
 
 	for (int i = 0; i < 3; ++i)
-		D3DXCreateSphere(m_pGraphicDev, RADIUS, 10.f, 10.f, &Sphere[i], nullptr);
+		D3DXCreateSphere(m_pGraphicDev, RADIUS, 10, 10, &Sphere[i], nullptr);
 
 	return S_OK;
 }

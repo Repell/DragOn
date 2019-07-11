@@ -6,15 +6,17 @@
 #include "Renderer.h"
 #include "Transform.h"
 #include "Calculator.h"
-//
+#include "ProtoTypeMgr.h"
+
 #include "ResourcesMgr.h"
 
 NS_BEGIN(ENGINE)
 
 //Management
 inline CManagement* Get_Management();
+inline 	CComponent*	Get_Component(const CLayer::LAYER_ID eLay, const wstring pObjTag, const wstring pComponentTag, COMPONENTID eID);
 inline HRESULT SetUp_CurrentScene(CScene* pCurrentScene);
-inline HRESULT Create_Management(CManagement** ppManagement);
+inline HRESULT Create_Management(LPDIRECT3DDEVICE9 pGraphicDev, CManagement ** ppManagement);
 
 //Renderer
 inline CRenderer* Get_Renderer();
@@ -37,7 +39,12 @@ inline CResourceses * Clone_Resources(const _ushort & wContainIdx, const _tchar 
 
 inline void Release_Terrain(const _ushort wContainerIdx, const _tchar * pResourceTag);
 
-
+// ProtoTypeMgr
+// Get
+// Set
+// Public
+inline HRESULT Ready_ProtoMgr(const wstring pProtoTag, CComponent* pComp);
+inline 	CComponent* Clone(const wstring pPrototag);
 
 //Release
 inline void Release_Utility();

@@ -24,7 +24,7 @@ CDynamicMesh::~CDynamicMesh()
 
 HRESULT CDynamicMesh::Ready_Meshes(const _tchar * pFilePath, const _tchar * pFileName)
 {
-	_tchar szFullPath[MAX_STR] = L"";
+	_tchar szFullPath[512] = L"";
 
 	lstrcpy(szFullPath, pFilePath);
 	lstrcat(szFullPath, pFileName);
@@ -34,7 +34,6 @@ HRESULT CDynamicMesh::Ready_Meshes(const _tchar * pFilePath, const _tchar * pFil
 	NULL_CHECK_RETURN(m_pLoader, E_FAIL);
 
 	LPD3DXANIMATIONCONTROLLER pAniCon = nullptr;
-
 
 	FAILED_CHECK_RETURN(D3DXLoadMeshHierarchyFromX(szFullPath,
 		D3DXMESH_MANAGED,
@@ -79,14 +78,14 @@ void CDynamicMesh::Render_Meshes()
 		pMeshCon->pSkinInfo->UpdateSkinnedMesh(pMeshCon->pRenderingMatrix, NULL, pSrcVtx, pDestVtx);
 
 		//Render
-		
+
 		for (_ulong i = 0; i < pMeshCon->NumMaterials; ++i)
 		{
 			m_pGraphicDev->SetTexture(0, pMeshCon->ppTexture[i]);
 			pMeshCon->MeshData.pMesh->DrawSubset(i);
 		}
 
-		
+
 		pMeshCon->pOriMesh->UnlockVertexBuffer();
 		pMeshCon->MeshData.pMesh->UnlockVertexBuffer();
 
@@ -106,6 +105,16 @@ void CDynamicMesh::Play_AnimationSet(const _float & fTimeDelta)
 
 	//_matrix matTemp;
 	Update_FrameMatrix((D3DXFRAME_DERIVED*)m_pRootFrame, D3DXMatrixIdentity(&_matrix()));
+}
+
+const	D3DXFRAME_DERIVED* CDynamicMesh::Get_FrameByName(const char * pFrameName)
+{
+	return	(D3DXFRAME_DERIVED*)D3DXFrameFind(m_pRootFrame, pFrameName);
+}
+
+_bool CDynamicMesh::Is_AnimationSetEnd(void)
+{
+	return m_pAniCon->Is_AnimationSetEnd();
 }
 
 void CDynamicMesh::Update_FrameMatrix(D3DXFRAME_DERIVED * pFrame, const _matrix * pParentMatrix)

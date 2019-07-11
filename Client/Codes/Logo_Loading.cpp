@@ -41,17 +41,38 @@ _int CLogo_Loading::Update_Object(const _float & fTimeDelta)
 void CLogo_Loading::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
+	
 }
 
 void CLogo_Loading::Render_Object()
 {
-	
-	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 
-	m_pTexture->Render_Texture(m_fFrame);
+	LPD3DXEFFECT pEffect = m_pShader->Get_EffectHandle();
+	NULL_CHECK(pEffect);
+
+	_uint iPassCnt = 0;
+	_matrix matView, matProj;
+
+	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
+
+	pEffect->SetMatrix("g_matWorld", &m_pTransform->m_matWorld);
+	pEffect->SetMatrix("g_matView", &matView);
+	pEffect->SetMatrix("g_matProj", &matProj);
+	
+	//m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
+
+	m_pTexture->Set_Texture(pEffect, "g_BaseTexture", m_fFrame);
+	////
+	pEffect->Begin(&iPassCnt, 0);
+	pEffect->BeginPass(0);
+
+	//m_pTexture->Render_Texture(_uint(m_fFrame));
 	m_pBuffer->Render_Buffer();
 
-//	ENGINE::Render_Font(L"Sp", m_pLoading->Get_String(), &_vec2(10.f, 10.f), D3DXCOLOR(0.f, 1.f, 0.f, 1.f));
+	pEffect->EndPass();
+	pEffect->End();
+	////
 }
 
 HRESULT CLogo_Loading::Add_Component()
@@ -81,6 +102,11 @@ HRESULT CLogo_Loading::Add_Component()
 	pComponent->AddRef();
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Renderer", pComponent);
+
+	//Shader Component
+	pComponent = m_pShader = dynamic_cast<ENGINE::CShader*>(ENGINE::Clone(L"Shader_Sample"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	////////////////////////////
 	return S_OK;

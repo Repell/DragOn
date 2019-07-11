@@ -27,9 +27,7 @@ private:
 public:
 	CComponent* Get_Component(const wstring pMapObjTag, const wstring pComponentTag, COMPONENTID eID);
 	OBJLIST& Get_MapObject(const wstring pKey)
-	{
-		return m_mapObject[pKey];
-	}
+	{		return m_mapObject[pKey];	}
 
 public:
 	virtual HRESULT Ready_Layer(void);
@@ -38,7 +36,7 @@ public:
 	virtual void Render_Layer(void);
 	
 public:
-	HRESULT Add_GameObject(const _tchar* pObjTag, CGameObject* pObj);
+	HRESULT Add_GameObject(const wstring pObjTag, CGameObject* pObj);
 
 private:
 	MAP_GAMEOBJ m_mapObject;

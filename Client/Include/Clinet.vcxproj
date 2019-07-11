@@ -170,7 +170,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Codes\Effect_Tex.h" />
     <ClInclude Include="..\Codes\Player.h" />
+    <ClInclude Include="..\Codes\Shade.h" />
+    <ClInclude Include="..\Codes\Sword.h" />
     <ClInclude Include="..\Codes\Terrain.h" />
     <ClInclude Include="..\Codes\DynamicCamera.h" />
     <ClInclude Include="..\Codes\FrameMgr.h" />
@@ -192,7 +195,10 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Codes\Effect_Tex.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
+    <ClCompile Include="..\Codes\Shade.cpp" />
+    <ClCompile Include="..\Codes\Sword.cpp" />
     <ClCompile Include="..\Codes\Terrain.cpp" />
     <ClCompile Include="..\Codes\DynamicCamera.cpp" />
     <ClCompile Include="..\Codes\FrameMgr.cpp" />

@@ -17,6 +17,7 @@ protected:
 
 public:
 	CComponent* Get_Component(const wstring pComponentTag, COMPONENTID eID);
+	_float Get_ViewZ() const { return m_fViewZ; }
 	
 public:
 	virtual HRESULT Ready_Object();
@@ -24,12 +25,17 @@ public:
 	virtual _int Update_Object(const _float& fTimeDelta);
 	virtual void Late_Update_Object();
 	virtual void Render_Object();
+
+public:
+	void Compute_ViewZ(const _vec3* pPos);
 	
 protected:
 	LPDIRECT3DDEVICE9	m_pGraphicDev;
 	typedef	map<const wstring, CComponent*> MAP_COMPONENT;
 	MAP_COMPONENT			m_MapComponent[COMP_END];
-	bool m_bIsInit;
+	
+	_bool m_bIsInit;
+	_float m_fViewZ = 0.f;
 	
 public:
 	virtual void Free(void);

@@ -40,6 +40,7 @@ private:
 	bool			bSpectre;
 	float		m_fTargetDist;
 	float		m_fCamAngle;
+	float		m_fCamAngleY;
 	float		m_fCamSpeed;
 	float		m_fTargetDistMax;
 

@@ -17,8 +17,15 @@ private:
 
 public:
 	void Add_RenderGroup(RENDERID eGroup, CGameObject* pObj);
-	void Render_GameObject();
+	void Render_GameObject(LPDIRECT3DDEVICE9 pDevice);
 	void Clear_RenderGroup();
+
+private:
+	void Render_Priority();
+	void Render_NonAlpha();
+	void Render_Alpha();
+	void Render_UI();
+	void Render_ReSet();
 
 private:
 	list<CGameObject*>	m_pRenderlist[RENDER_END];

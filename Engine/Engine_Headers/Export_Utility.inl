@@ -5,16 +5,24 @@ inline CManagement * Get_Management()
 	return CManagement::Get_Instance();
 }
 
+inline CComponent * Get_Component(const CLayer::LAYER_ID eLay, const wstring pObjTag, const wstring pComponentTag, COMPONENTID eID)
+{
+	return CManagement::Get_Instance()->Get_Component(eLay, pObjTag, pComponentTag, eID);
+}
+
 inline HRESULT SetUp_CurrentScene(CScene * pCurrentScene)
 {
 	return CManagement::Get_Instance()->SetUp_CurrentScene(pCurrentScene);
 }
 
-inline HRESULT Create_Management(CManagement ** ppManagement)
+inline HRESULT Create_Management(LPDIRECT3DDEVICE9 pGraphicDev, CManagement ** ppManagement)
 {
 	CManagement* pManagement = CManagement::Get_Instance();
 
 	if (nullptr == pManagement)
+		return E_FAIL;
+
+	if (FAILED(pManagement->Ready_ShaderFile(pGraphicDev)))
 		return E_FAIL;
 
 	*ppManagement = pManagement;
@@ -67,8 +75,19 @@ inline void Release_Terrain(const _ushort wContainerIdx, const _tchar * pResourc
 	return CResourcesMgr::Get_Instance()->Release_Terrain(wContainerIdx, pResourceTag);
 }
 
+inline HRESULT Ready_ProtoMgr(const wstring pProtoTag, CComponent * pComp)
+{
+	return CProtoMgr::Get_Instance()->Ready_ProtoMgr(pProtoTag, pComp);
+}
+
+inline CComponent * Clone(const wstring pPrototag)
+{
+	return CProtoMgr::Get_Instance()->Clone(pPrototag);
+}
+
 inline void Release_Utility()
 {
+	CProtoMgr::Get_Instance()->Destroy_Instance();
 	CRenderer::Get_Instance()->Destroy_Instance();
 	CResourcesMgr::Get_Instance()->Destroy_Instance();
 	CManagement::Get_Instance()->Destroy_Instance();

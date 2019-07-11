@@ -45,6 +45,12 @@ _uint CLoading::Loading_ForLogo()
 		L"Sword.X"),
 		E_FAIL);
 
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Navi",
+		ENGINE::MESH_NAVI, NULL, NULL),
+		E_FAIL);
+
 	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
 	//	RESOURCE_LOGO,
 	//	L"Pl_Sword",
@@ -76,6 +82,17 @@ _uint CLoading::Loading_ForLogo()
 	//	L"../Bin/Resources/Mesh/DynamicMesh/Player_Ride/",
 	//	L"Player_Ride.X"),
 	//	E_FAIL);
+
+	lstrcpy(m_szLoading, L" [ Texture Loading ]");/////////////////////////////////////////
+	
+	FAILED_CHECK_RETURN(ENGINE::Ready_Texture(m_pGraphicDev, RESOURCE_LOGO, L"Texture_Explosion", ENGINE::TEX_NORMAL,
+		L"../Bin/Resources/Texture/Explosion/Explosion%d.png", 90), E_FAIL);
+
+	FAILED_CHECK_RETURN(ENGINE::Ready_Texture(m_pGraphicDev, RESOURCE_LOGO, L"Texture_Shade", ENGINE::TEX_NORMAL,
+		L"../Bin/Resources/Texture/Etc/Shade.png"), E_FAIL);
+
+	FAILED_CHECK_RETURN(ENGINE::Ready_Texture(m_pGraphicDev, RESOURCE_LOGO, L"Texture_Aura", ENGINE::TEX_NORMAL,
+		L"../Bin/Resources/Texture/Etc/Aura0.tga"), E_FAIL);
 
 	lstrcpy(m_szLoading, L" === Load Complete! ===");
 

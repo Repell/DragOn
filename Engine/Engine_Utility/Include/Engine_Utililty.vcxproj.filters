@@ -28,9 +28,6 @@
     <Filter Include="00.Utility\02.SuperClass\02.Component">
       <UniqueIdentifier>{5f206e06-6d59-4d78-989b-dd6ce1083a87}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.Exports">
-      <UniqueIdentifier>{40d512bc-4c78-47c8-8f95-140db0314666}</UniqueIdentifier>
-    </Filter>
     <Filter Include="00.Utility\02.SuperClass\02.Component\00.Transform">
       <UniqueIdentifier>{b4eee6a9-4371-4bda-a068-8b9b2ad5c15c}</UniqueIdentifier>
     </Filter>
@@ -63,12 +60,6 @@
     </Filter>
     <Filter Include="01.Resources\03.Mesh">
       <UniqueIdentifier>{dae84966-17d1-41a0-8b2c-6d83c5f7100b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Resources\04.Manager">
-      <UniqueIdentifier>{04e0aa83-c70b-4919-b376-111737ec3d04}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Resources\04.Manager\00.ResourcesMgr">
-      <UniqueIdentifier>{d2125b44-e3e3-42ca-a98d-bcebba8d3bb9}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Resources\03.Mesh\00.Static">
       <UniqueIdentifier>{7d8d4d3b-f347-4b61-b4f4-c55090438e54}</UniqueIdentifier>
@@ -103,6 +94,36 @@
     <Filter Include="01.Resources\03.Mesh\01.Dynamice\01.AniControll">
       <UniqueIdentifier>{647a10a7-f104-499d-b605-62306af1b8d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Resources\09.Manager">
+      <UniqueIdentifier>{04e0aa83-c70b-4919-b376-111737ec3d04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\09.Manager\00.ResourcesMgr">
+      <UniqueIdentifier>{d2125b44-e3e3-42ca-a98d-bcebba8d3bb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\04.NaviMesh">
+      <UniqueIdentifier>{18def8e2-e21d-4646-85fa-8436fea8ecbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\04.NaviMesh\00.Cell">
+      <UniqueIdentifier>{4ade8f55-eae8-4046-8adf-59bcdf624cf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Resources\04.NaviMesh\01.Line">
+      <UniqueIdentifier>{45a7a047-b98f-4482-9b15-3881fba9d2ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="09.Exports">
+      <UniqueIdentifier>{40d512bc-4c78-47c8-8f95-140db0314666}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.SubClass">
+      <UniqueIdentifier>{90de2f90-2ec5-41c8-811e-789d6e3f3d9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.SubClass\00.ProtoTypeMgr">
+      <UniqueIdentifier>{49bfb544-1472-4aa2-9ea1-9ae6abf485a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.SubClass\01.Shader">
+      <UniqueIdentifier>{bf805d19-45c9-4a42-9cdf-8566c575c347}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.SubClass\01.Shader\00. Hpp">
+      <UniqueIdentifier>{c7336c08-7a36-4d74-ab76-ffd3c7d08a45}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Codes\Management.h">
@@ -124,7 +145,7 @@
       <Filter>00.Utility\02.SuperClass\02.Component</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Engine_Headers\Export_Utility.h">
-      <Filter>02.Exports</Filter>
+      <Filter>09.Exports</Filter>
     </ClInclude>
     <ClInclude Include="..\Codes\Resourceses.h">
       <Filter>01.Resources\00.Resources</Filter>
@@ -172,7 +193,7 @@
       <Filter>01.Resources\03.Mesh\01.Dynamice</Filter>
     </ClInclude>
     <ClInclude Include="..\Codes\ResourcesMgr.h">
-      <Filter>01.Resources\04.Manager\00.ResourcesMgr</Filter>
+      <Filter>01.Resources\09.Manager\00.ResourcesMgr</Filter>
     </ClInclude>
     <ClInclude Include="..\Codes\Transform.h">
       <Filter>00.Utility\02.SuperClass\02.Component\00.Transform</Filter>
@@ -185,6 +206,33 @@
     </ClInclude>
     <ClInclude Include="..\Codes\Calculator.h">
       <Filter>00.Utility\02.SuperClass\02.Component\03.Calculator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\NaviMesh.h">
+      <Filter>01.Resources\04.NaviMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Cell.h">
+      <Filter>01.Resources\04.NaviMesh\00.Cell</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Line.h">
+      <Filter>01.Resources\04.NaviMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Shader.h">
+      <Filter>02.SubClass\01.Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Shader_Base.hpp">
+      <Filter>02.SubClass\01.Shader\00. Hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Shader_Sample.hpp">
+      <Filter>02.SubClass\01.Shader\00. Hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Shader_Terrain.hpp">
+      <Filter>02.SubClass\01.Shader\00. Hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\ProtoTypeMgr.h">
+      <Filter>02.SubClass\00.ProtoTypeMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Shader_Shade.hpp">
+      <Filter>02.SubClass\01.Shader\00. Hpp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -252,7 +300,7 @@
       <Filter>01.Resources\03.Mesh\01.Dynamice</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\ResourcesMgr.cpp">
-      <Filter>01.Resources\04.Manager\00.ResourcesMgr</Filter>
+      <Filter>01.Resources\09.Manager\00.ResourcesMgr</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Transform.cpp">
       <Filter>00.Utility\02.SuperClass\02.Component\00.Transform</Filter>
@@ -266,10 +314,25 @@
     <ClCompile Include="..\Codes\Calculator.cpp">
       <Filter>00.Utility\02.SuperClass\02.Component\03.Calculator</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\NaviMesh.cpp">
+      <Filter>01.Resources\04.NaviMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Cell.cpp">
+      <Filter>01.Resources\04.NaviMesh\00.Cell</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Line.cpp">
+      <Filter>01.Resources\04.NaviMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Shader.cpp">
+      <Filter>02.SubClass\01.Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ProtoTypeMgr.cpp">
+      <Filter>02.SubClass\00.ProtoTypeMgr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Engine_Headers\Export_Utility.inl">
-      <Filter>02.Exports</Filter>
+      <Filter>09.Exports</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -5,7 +5,12 @@
 #include "Loading.h"
 #include "Terrain.h"
 #include "TerrainSkyBox.h"
+
 #include "Player.h"
+#include "Sword.h"
+
+#include "Effect_Tex.h"
+#include "Shade.h"
 
 #include "DynamicCamera.h"
 

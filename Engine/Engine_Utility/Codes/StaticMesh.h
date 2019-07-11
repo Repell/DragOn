@@ -14,7 +14,10 @@ private:
 	virtual ~CStaticMesh();
 
 public: //Get
-
+	_ulong		Get_NumVtx(void) const { return m_dwNumVtx; }
+	_ulong		Get_Stride(void) const { return m_dwStride; }
+	_vec3*	Get_VtxMeshPos(void) { return m_pVtxPos; }
+	LPD3DXMESH Get_Mesh() { return m_pOriginMesh; }
 
 public:
 	HRESULT Ready_Meshes(const _tchar* pFilePath, const _tchar* pFileName);

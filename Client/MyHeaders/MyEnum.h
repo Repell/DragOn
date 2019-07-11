@@ -20,4 +20,13 @@ enum LOADINGID
 	LOADING_END
 };
 
+enum TABSTATE
+{
+	TABTERRAIN,
+	TABMESH,
+	TABNAVI,
+	TABEFFECT,
+	TABEND
+};
+
 #endif // MyEnum_h__

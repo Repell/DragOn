@@ -61,7 +61,7 @@ _int CLayer::Update_Layer(const _float& fTimeDelta)
 		{
 			iEvnet = (*iter)->Update_Object(fTimeDelta);
 
-			if (999 == iEvnet)
+			if (-1 == iEvnet)
 			{
 				Safe_Release(*iter);
 				iter = iter_Begin->second.erase(iter);
@@ -129,7 +129,7 @@ CLayer * CLayer::Create(void)
 	return pInstance;
 }
 
-HRESULT CLayer::Add_GameObject(const _tchar* pObjTag, CGameObject * pObj)
+HRESULT CLayer::Add_GameObject(const wstring pObjTag, CGameObject * pObj)
 {
 	if (nullptr == pObj)
 		return E_FAIL;

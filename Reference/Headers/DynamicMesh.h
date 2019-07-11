@@ -16,6 +16,10 @@ private:
 	virtual ~CDynamicMesh();
 
 public:
+	const	D3DXFRAME_DERIVED* Get_FrameByName(const char* pFrameName);
+	_bool						Is_AnimationSetEnd(void);
+
+public:
 	HRESULT Ready_Meshes(const _tchar* pFilePath, const _tchar* pFileName);
 	void Render_Meshes();
 	void Set_AnimationSet(const _uint& iIndex);

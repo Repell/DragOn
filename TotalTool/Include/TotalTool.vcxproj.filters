@@ -1,0 +1,235 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="01.Tool">
+      <UniqueIdentifier>{e2d9656e-3596-4b78-9b87-c5d8f7c38d70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.ToolDoc">
+      <UniqueIdentifier>{68ebff85-fcfb-410c-91d0-15f335759892}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.ToolView">
+      <UniqueIdentifier>{7c8af648-f72c-4146-8d5e-8627e9289e25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.MainFrm">
+      <UniqueIdentifier>{2c603a24-7aec-4c12-9cc0-97d95149823f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.SubClass">
+      <UniqueIdentifier>{366ae180-a33c-427d-a03c-60338dd69e29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.Manager">
+      <UniqueIdentifier>{7bf61347-3c79-40b8-bb1b-146355937fe4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Default">
+      <UniqueIdentifier>{848bf996-0196-4921-9715-57013c6561ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Default\리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="04.MainFrm\00.MyForm">
+      <UniqueIdentifier>{ea86acbd-3da3-4af0-a371-67ffca57e782}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.MyHeaders">
+      <UniqueIdentifier>{8a096c02-7c1f-43cd-8796-b461bf29400c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.SubClass\00.Values">
+      <UniqueIdentifier>{1f5e9a29-4f86-4e3b-bd9a-558cb895f91c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.SubClass\01.ToolRender">
+      <UniqueIdentifier>{226ebb05-7532-44c7-b07d-01470a9405ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.SubClass\02.Camera">
+      <UniqueIdentifier>{56cdd3f6-c1ea-44ad-ae02-2dcb12decfc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.SubClass\03.TimeMgr">
+      <UniqueIdentifier>{19a51b7d-e9a0-4fcf-b79e-a8bedb6c43e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.SubClass\01.ToolRender\00.Terrain">
+      <UniqueIdentifier>{1f1d82f1-274a-473e-8443-a62efc0587b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.SubClass\04.Collision">
+      <UniqueIdentifier>{a126fdca-13a8-44c5-b017-4e5a7f3f24b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.SubClass\04.Collision\00.Coll_Mouse">
+      <UniqueIdentifier>{feccfb51-8931-4a0b-81c1-c97434d78efd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.SubClass\05.Mouse">
+      <UniqueIdentifier>{d8528d5c-8923-4dc8-8d27-1c197f31f7ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.SubClass\06.FileInfo">
+      <UniqueIdentifier>{b0b0e92f-edbe-4f51-b0b2-f77d37c1dcae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.MainFrm\01.TabTerrain">
+      <UniqueIdentifier>{4f47d8af-7f09-43e6-bd4e-477bbccb8ec8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.MainFrm\02.TabMesh">
+      <UniqueIdentifier>{aaddf6fd-e783-43a5-9731-8223faff8e5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.SubClass\99.Object">
+      <UniqueIdentifier>{51bdbf7a-c514-4b07-8d92-e4ffad87e57d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.SubClass\99.Object\00.TestObject">
+      <UniqueIdentifier>{d943d3fd-f3c6-49e0-95da-5fd491edf605}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.MainFrm\03.TabNavi">
+      <UniqueIdentifier>{ddf2c277-5069-469f-bf8a-d341b7be576c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.MainFrm\04.TabEffect">
+      <UniqueIdentifier>{526d164e-f400-4683-96c2-421d50f1e365}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MainFrm.h">
+      <Filter>04.MainFrm</Filter>
+    </ClInclude>
+    <ClInclude Include="TotalTool.h">
+      <Filter>01.Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="TotalToolDoc.h">
+      <Filter>02.ToolDoc</Filter>
+    </ClInclude>
+    <ClInclude Include="TotalToolView.h">
+      <Filter>03.ToolView</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>01.Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MyDefine.h">
+      <Filter>00.MyHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MyEnum.h">
+      <Filter>00.MyHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MyFunction.h">
+      <Filter>00.MyHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MyMacro.h">
+      <Filter>00.MyHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MyTypeDef.h">
+      <Filter>00.MyHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\ValueMgr.h">
+      <Filter>05.SubClass\00.Values</Filter>
+    </ClInclude>
+    <ClInclude Include="MyForm.h">
+      <Filter>04.MainFrm\00.MyForm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\ToolRender.h">
+      <Filter>05.SubClass\01.ToolRender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\DynamicCamera.h">
+      <Filter>05.SubClass\02.Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Terrain.h">
+      <Filter>05.SubClass\01.ToolRender\00.Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\MouseCtn.h">
+      <Filter>05.SubClass\05.Mouse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Coll_Mouse.h">
+      <Filter>05.SubClass\04.Collision\00.Coll_Mouse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\FileInfo.h">
+      <Filter>05.SubClass\06.FileInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="TapTerrain.h">
+      <Filter>04.MainFrm\01.TabTerrain</Filter>
+    </ClInclude>
+    <ClInclude Include="TabMesh.h">
+      <Filter>04.MainFrm\02.TabMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\TestObj.h">
+      <Filter>05.SubClass\99.Object\00.TestObject</Filter>
+    </ClInclude>
+    <ClInclude Include="TabNavi.h">
+      <Filter>04.MainFrm\03.TabNavi</Filter>
+    </ClInclude>
+    <ClInclude Include="TabEffect.h">
+      <Filter>04.MainFrm\04.TabEffect</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>04.MainFrm</Filter>
+    </ClCompile>
+    <ClCompile Include="TotalTool.cpp">
+      <Filter>01.Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="TotalToolDoc.cpp">
+      <Filter>02.ToolDoc</Filter>
+    </ClCompile>
+    <ClCompile Include="TotalToolView.cpp">
+      <Filter>03.ToolView</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ValueMgr.cpp">
+      <Filter>05.SubClass\00.Values</Filter>
+    </ClCompile>
+    <ClCompile Include="MyForm.cpp">
+      <Filter>04.MainFrm\00.MyForm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ToolRender.cpp">
+      <Filter>05.SubClass\01.ToolRender</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DynamicCamera.cpp">
+      <Filter>05.SubClass\02.Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Terrain.cpp">
+      <Filter>05.SubClass\01.ToolRender\00.Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MouseCtn.cpp">
+      <Filter>05.SubClass\05.Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Coll_Mouse.cpp">
+      <Filter>05.SubClass\04.Collision\00.Coll_Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FileInfo.cpp">
+      <Filter>05.SubClass\06.FileInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="TapTerrain.cpp">
+      <Filter>04.MainFrm\01.TabTerrain</Filter>
+    </ClCompile>
+    <ClCompile Include="TabMesh.cpp">
+      <Filter>04.MainFrm\02.TabMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\TestObj.cpp">
+      <Filter>05.SubClass\99.Object\00.TestObject</Filter>
+    </ClCompile>
+    <ClCompile Include="TabNavi.cpp">
+      <Filter>04.MainFrm\03.TabNavi</Filter>
+    </ClCompile>
+    <ClCompile Include="TabEffect.cpp">
+      <Filter>04.MainFrm\04.TabEffect</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TotalTool.rc">
+      <Filter>99.Default\리소스 파일</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\TotalTool.rc2">
+      <Filter>99.Default\리소스 파일</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\TotalToolDoc.ico">
+      <Filter>99.Default\리소스 파일</Filter>
+    </Image>
+    <Image Include="res\TotalTool.ico">
+      <Filter>99.Default\리소스 파일</Filter>
+    </Image>
+    <Image Include="res\Toolbar.bmp">
+      <Filter>99.Default\리소스 파일</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

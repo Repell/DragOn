@@ -4,11 +4,11 @@
 #include "Export_Function.h"
 
 #define SPEED 15.f
-#define ANGLE 30.f
+#define ANGLE 60.f
 
 CDynamicCamera::CDynamicCamera(LPDIRECT3DDEVICE9 pDev)
 	:ENGINE::CCamera(pDev), m_pCamTarget(nullptr),
-	m_fTargetDist(0.f), m_fCamAngle(0.f), m_fCamSpeed(0.f), m_fTargetDistMax(10.f), bSpectre(TRUE)
+	m_fTargetDist(0.f), m_fCamAngle(0.f), m_fCamSpeed(0.f), m_fTargetDistMax(10.f), bSpectre(FALSE), m_fCamAngleY(180)
 {
 }
 
@@ -21,8 +21,9 @@ HRESULT CDynamicCamera::Ready_Object()
 	Add_Component();
 
 	m_fTargetDist = 7.f;
-	m_fCamAngle = 45.f;
+	m_fCamAngle = -25.f;
 	m_fCamSpeed = 1.f;
+	m_fCamAngleY = 180.f;
 
 	m_pGraphicDev->SetTransform(D3DTS_VIEW, &m_matView);
 	m_pGraphicDev->SetTransform(D3DTS_PROJECTION, &m_matProj);
@@ -32,10 +33,14 @@ HRESULT CDynamicCamera::Ready_Object()
 
 HRESULT CDynamicCamera::Late_Init()
 {
-
-
-	//if (m_pCamTarget == nullptr)
-	//	return E_FAIL;
+	m_pCamTarget = dynamic_cast<ENGINE::CTransform*>
+		(ENGINE::Get_Management()->Get_Component(ENGINE::CLayer::OBJECT, L"Player", L"Com_Transform", ENGINE::COMP_DYNAMIC));
+	
+	if (m_pCamTarget == nullptr)
+	{
+		bSpectre = TRUE;
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -62,11 +67,11 @@ void CDynamicCamera::Late_Update_Object()
 	else
 		Target_Renewal();
 
-	//if (!m_pCamTarget->bCamTarget)
-	//{
-	bSpectre = true;
-	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransCom->m_matWorld);
-	//	}
+	if (!m_pCamTarget->bCamTarget)
+	{
+		bSpectre = true;
+		m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransCom->m_matWorld);
+	}
 
 }
 
@@ -84,7 +89,7 @@ HRESULT CDynamicCamera::Add_Component()
 void CDynamicCamera::Reset_Camera()
 {
 	m_fTargetDist = 7.f;
-	m_fCamAngle = 45.f;
+	m_fCamAngle = -25.f;
 	m_fCamSpeed = 1.f;
 
 	m_pGraphicDev->SetTransform(D3DTS_VIEW, &m_matView);
@@ -150,9 +155,9 @@ void CDynamicCamera::Key_Spectre(const _float & fTimeDelta)
 	}
 
 	if (ENGINE::Key_Press(ENGINE::dwKEY_SPACE))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y += 5.f * SPEED * fTimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y += SPEED * fTimeDelta;
 	if (ENGINE::Key_Press(ENGINE::dwKEY_Shift))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y -= 5.f * SPEED * fTimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y -= SPEED * fTimeDelta;
 
 
 	if (ENGINE::Key_Down(ENGINE::dwKEY_F4) && bSpectre)
@@ -169,7 +174,7 @@ void CDynamicCamera::Target_Renewal()
 	_vec3 vEye = vEye.Reverse(&m_pCamTarget->m_vDir);
 
 	//카메라는 플레이어의 역방향
-	vEye *= m_fTargetDist;
+	vEye *= -m_fTargetDist;
 
 	//높이는 카메라의 각도의 따라 조절될 것
 	_vec3 vRight = {};
@@ -177,7 +182,7 @@ void CDynamicCamera::Target_Renewal()
 
 	//right 벡터 기준으로 축 회전
 	D3DXMATRIX matRotAxis;
-
+	
 	//D3DXMatrixRotationAxis: 임의의 축회전
 	D3DXMatrixRotationAxis(&matRotAxis, &vRight, D3DXToRadian(m_fCamAngle));
 	D3DXVec3TransformNormal(&vEye, &vEye, &matRotAxis);
@@ -191,16 +196,16 @@ void CDynamicCamera::Target_Renewal()
 	m_pTransCom->m_vInfo[ENGINE::INFO_POS] = vAt;		//Spectre Cam StartPos
 	vAt.y += 1.25f;
 
-	if (m_pCamTarget->m_vAngle.x > 44.f || m_pCamTarget->m_vAngle.x < -135.f)
-		ENGINE::CCamera::Make_ViewMatrix(&vEye, &vAt, &_vec3(0.f, -1.f, 0.f));
-	else
-		ENGINE::CCamera::Make_ViewMatrix(&vEye, &vAt, &_vec3(0.f, 1.f, 0.f));
+	//if (m_pCamTarget->m_vAngle.x > 44.f || m_pCamTarget->m_vAngle.x < -135.f)
+	//	ENGINE::CCamera::Make_ViewMatrix(&vEye, &vAt, &_vec3(0.f, -1.f, 0.f));
+	//else
+	ENGINE::CCamera::Make_ViewMatrix(&vEye, &vAt, &_vec3(0.f, 1.f, 0.f));
 }
 
 void CDynamicCamera::Target_Spectre()
 {
 	_vec3 vEye = vEye.Reverse(&m_pTransCom->m_vDir);
-	D3DXVec3Normalize(&vEye, &vEye);
+	//_vec3 vEye = vEye.Reverse(&m_pCamTarget->m_vDir);
 
 	//카메라는 플레이어의 역방향
 	vEye *= m_fTargetDist;

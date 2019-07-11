@@ -18,7 +18,7 @@ HRESULT CMainApp::Ready_MainApp(void)
 	FAILED_CHECK_RETURN(SetUp_GraphicDevice(&m_pGraphicDev), E_FAIL);
 	//Etc Managers
 	FAILED_CHECK_RETURN(SetUp_SystemManagers(), E_FAIL);
-
+	
 	FAILED_CHECK_RETURN(Ready_PreLoad(m_pGraphicDev, RESOURCE_PRELOAD),E_FAIL);
 	ENGINE::Safe_Release(m_pLoading);
 
@@ -37,7 +37,7 @@ _int CMainApp::Update_MainApp()
 	//KeyMgr
 	ENGINE::KeyInput();
 	ENGINE::Set_InputDev();
-
+	 
 	//Management
 	m_pManagement->Update_Scene(ENGINE::Get_DeltaTime());
 
@@ -60,7 +60,7 @@ void CMainApp::Render_MainApp(void)
 
 	m_pDeviceInstance->Render_Begin(D3DXCOLOR(0.f, 0.f, 1.f, 1.f));
 
-	m_pManagement->Render_Scene();
+	m_pManagement->Render_Scene(m_pGraphicDev);
 	
 	m_pDeviceInstance->Render_End();
 }
@@ -102,10 +102,11 @@ HRESULT CMainApp::Ready_PreLoad(LPDIRECT3DDEVICE9 pGraphicDev, RESOURCED eID)
 HRESULT CMainApp::Ready_NextScene(LPDIRECT3DDEVICE9 pDevice, ENGINE::CManagement ** ppManagement)
 {
 	ENGINE::CScene* pScene = nullptr;
+	
+	FAILED_CHECK_RETURN(ENGINE::Create_Management(pDevice, ppManagement), E_FAIL);
 
 	pScene = CLogo::Create(pDevice);
 	NULL_CHECK_RETURN(pScene, E_FAIL);
-	FAILED_CHECK_RETURN(ENGINE::Create_Management(ppManagement), E_FAIL);
 
 	(*ppManagement)->AddRef();
 

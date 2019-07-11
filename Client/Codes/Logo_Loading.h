@@ -3,6 +3,7 @@
 
 #include "GameObject.h"
 #include "Loading.h"
+//#include "Shader.h"
 
 namespace ENGINE
 {
@@ -11,6 +12,7 @@ namespace ENGINE
 	class CTransform;
 	class CTexture;
 	class CRenderer;
+	class CShader;
 }
 
 class CLogo_Loading : public ENGINE::CGameObject
@@ -40,6 +42,7 @@ private:
 	ENGINE::CTransform*		m_pTransform;
 	ENGINE::CTexture*				m_pTexture;
 	ENGINE::CRenderer*			m_pRenderer;
+	ENGINE::CShader*				m_pShader;
 
 	//Frame
 	_float m_fFrame;

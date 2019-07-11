@@ -62,6 +62,15 @@
     <Filter Include="01.Clinet\02.Scene\09.TestStage\02.Player">
       <UniqueIdentifier>{da7d0993-03be-4b89-a532-0bbc0e03b163}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Clinet\02.Scene\09.TestStage\02.Player\00.Sword">
+      <UniqueIdentifier>{95e15e7a-52fd-426a-bc84-ba47b22712f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.SubApp\02.Effect">
+      <UniqueIdentifier>{060b3e27-1144-465e-83b3-8b20554f74d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Clinet\02.Scene\09.TestStage\03.Shade">
+      <UniqueIdentifier>{1c86a84f-5d2d-466d-91ad-02b609217f51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clinet.h">
@@ -124,6 +133,15 @@
     <ClInclude Include="..\Codes\Player.h">
       <Filter>01.Clinet\02.Scene\09.TestStage\02.Player</Filter>
     </ClInclude>
+    <ClInclude Include="..\Codes\Sword.h">
+      <Filter>01.Clinet\02.Scene\09.TestStage\02.Player\00.Sword</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Effect_Tex.h">
+      <Filter>02.SubApp\02.Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Shade.h">
+      <Filter>01.Clinet\02.Scene\09.TestStage\03.Shade</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -164,6 +182,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Player.cpp">
       <Filter>01.Clinet\02.Scene\09.TestStage\02.Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Sword.cpp">
+      <Filter>01.Clinet\02.Scene\09.TestStage\02.Player\00.Sword</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Effect_Tex.cpp">
+      <Filter>02.SubApp\02.Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Shade.cpp">
+      <Filter>01.Clinet\02.Scene\09.TestStage\03.Shade</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

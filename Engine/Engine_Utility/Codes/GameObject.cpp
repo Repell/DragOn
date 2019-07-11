@@ -19,6 +19,8 @@ CComponent * CGameObject::Get_Component(const wstring pComponentTag, COMPONENTID
 	{
 		if (MyPair.first == pComponentTag)
 			return TRUE;
+		else
+			return FALSE;
 	});
 
 	if (iter == m_MapComponent[eID].end())
@@ -61,6 +63,19 @@ void CGameObject::Late_Update_Object()
 void CGameObject::Render_Object()
 {
 
+}
+
+void CGameObject::Compute_ViewZ(const _vec3 * pPos)
+{
+	_matrix matView;
+	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+
+	D3DXMatrixInverse(&matView, 0, &matView);
+
+	_vec3 vCamPos;
+	memcpy(&vCamPos, &matView.m[3][0], sizeof(_vec3));
+
+	m_fViewZ = D3DXVec3Length(&(vCamPos - *pPos));
 }
 
 

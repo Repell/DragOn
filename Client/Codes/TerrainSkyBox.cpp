@@ -44,14 +44,20 @@ void CTerrainSkyBox::Late_Update_Object()
 
 void CTerrainSkyBox::Render_Object()
 {
-	Render_Set();
+	//Render_Set();
+	//Cull Mode			//SkyBox Only CW
+	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 	////////////////////
 
 	m_pTexture->Render_Texture();
 	m_pBuffer->Render_Buffer();
 
 	////////////////////
-	Render_ReSet();
+	//Render_ReSet();
+
+	//Cull Mode		//Default CCW
+	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }
 
 void CTerrainSkyBox::Render_Set()

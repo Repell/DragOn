@@ -10,6 +10,7 @@ CTransform::CTransform()
 	m_fJump(0.f),
 	bCamTarget(true)
 {
+	
 }
 
 CTransform::~CTransform()

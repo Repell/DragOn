@@ -17,8 +17,8 @@ HRESULT CTestStage::Ready_Scene()
 
 	FAILED_CHECK_RETURN(ENGINE::CScene::Ready_Scene(), E_FAIL);
 
-	FAILED_CHECK_RETURN(Add_GameObject_Layer(), E_FAIL);
 	FAILED_CHECK_RETURN(Add_Environment_Layer(), E_FAIL);
+	FAILED_CHECK_RETURN(Add_GameObject_Layer(), E_FAIL);
 	FAILED_CHECK_RETURN(Add_UI_Layer(), E_FAIL);
 
 	return S_OK;
@@ -73,6 +73,18 @@ HRESULT CTestStage::Add_GameObject_Layer()
 	pObject = CPlayer::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pObject, E_FAIL);
 	pObject_Layer->Add_GameObject(L"Player", pObject);
+
+	pObject = CSword::Create(m_pGraphicDev, 0);
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Sword", pObject);
+
+	pObject = CEffect_Tex::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Effect", pObject);
+
+	pObject = CShade::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Shade", pObject);
 
 	//////////////INSERT LAYER//////////////
 	m_MapLayer.emplace(ENGINE::CLayer::OBJECT, pObject_Layer);

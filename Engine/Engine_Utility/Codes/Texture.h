@@ -15,6 +15,7 @@ protected:
 
 public:
 	HRESULT Ready_Texture(const _tchar* pPath, TEXTURETYPE eID, const _uint iCnt);
+	void Set_Texture(LPD3DXEFFECT pEffect, const char* pShaderName, const _uint& iIndex = 0);
 	void Render_Texture(const _uint& iIndex = 0);
 
 private:

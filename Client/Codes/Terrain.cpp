@@ -17,8 +17,6 @@ HRESULT CTerrain::Ready_Object()
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 	
-	m_pTransform->m_vScale = {1.f, 1.f, 1.f};
-
 	return S_OK;
 }
 
@@ -33,24 +31,43 @@ _int CTerrain::Update_Object(const _float & fTimeDelta)
 	ENGINE::CGameObject::Late_Init();
 	ENGINE::CGameObject::Update_Object(fTimeDelta);
 	
-	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_PRIORITY, this);
+	
 
+	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_NONALPHA, this);
 	return NO_EVENT;
 }
 
 void CTerrain::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
+	Setup_Material();
 }
 
 void CTerrain::Render_Object()
 {
-	Render_Set();
 
-	m_pTexture->Render_Texture();
+	//Render_Set();
+
+	LPD3DXEFFECT pEffect = m_pShader->Get_EffectHandle();
+	if (nullptr == pEffect)
+		return;
+
+	pEffect->AddRef();
+
+	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect));
+
+	pEffect->Begin(NULL, 0);
+	pEffect->BeginPass(0);
+
+	//m_pTexture->Render_Texture();
 	m_pBuffer->Render_Buffer();
 
-	Render_ReSet();
+	pEffect->EndPass();
+	pEffect->End();
+
+	ENGINE::Safe_Release(pEffect);
+
+	//Render_ReSet();
 }
 
 HRESULT CTerrain::Add_Component()
@@ -81,7 +98,55 @@ HRESULT CTerrain::Add_Component()
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Renderer", pComponent);
 
+	//ShaderComponent
+	pComponent = m_pShader = dynamic_cast<ENGINE::CShader*>(ENGINE::Clone(L"Shader_Terrain"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
+
 	////////////////////////////
+	return S_OK;
+}
+
+HRESULT CTerrain::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
+{
+
+	pEffect->AddRef();
+
+	_matrix	matView, matProj;
+
+	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
+
+	pEffect->SetMatrix("g_matWorld", &m_pTransform->m_matWorld);
+	pEffect->SetMatrix("g_matView", &matView);
+	pEffect->SetMatrix("g_matProj", &matProj);
+
+	m_pTexture->Set_Texture(pEffect, "g_BaseTexture");
+
+	pEffect->SetFloat("g_fDetail", 20.f);	//디테일값 세팅
+
+	D3DLIGHT9 pLightInfo;
+	m_pGraphicDev->GetLight(0, &pLightInfo);
+
+	pEffect->SetVector("g_vLightDir", &_vec4(pLightInfo.Direction, 0.f));
+
+	pEffect->SetVector("g_vLightDiffuse", (_vec4*)&pLightInfo.Diffuse);
+	pEffect->SetVector("g_vLightAmbient", (_vec4*)&pLightInfo.Ambient);
+	pEffect->SetVector("g_vLightSpecular", (_vec4*)&pLightInfo.Specular);
+
+	D3DMATERIAL9 tMat;
+	m_pGraphicDev->GetMaterial(&tMat);
+
+	pEffect->SetVector("g_vMtrlDiffuse", (_vec4*)&tMat.Diffuse);
+	pEffect->SetVector("g_vMtrlAmbient", (_vec4*)&tMat.Ambient);
+	pEffect->SetVector("g_vMtrlSpecular", (_vec4*)&tMat.Specular);
+	pEffect->SetFloat("g_fPower", tMat.Power);
+
+	D3DXMatrixInverse(&matView, NULL, &matView);
+	pEffect->SetVector("g_vCamPos", (_vec4*)&matView._41);
+
+	ENGINE::Safe_Release(pEffect);
+	
 	return S_OK;
 }
 
@@ -91,9 +156,9 @@ void CTerrain::Render_Set()
 	Setup_Material();
 
 	//Alpha Test Begin
-	m_pGraphicDev->SetRenderState(D3DRS_ALPHAREF, 0x000000ff);
-	m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-	m_pGraphicDev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
+	//m_pGraphicDev->SetRenderState(D3DRS_ALPHAREF, 0x000000ff);
+	//m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	//m_pGraphicDev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
 
 	//Render State
 	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
@@ -117,13 +182,13 @@ void CTerrain::Setup_Material()
 
 	dMatrial.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
 	//디퓨즈(주변광) :: 표면의 모든 점들에 균일하게 비춰지는 빛
-	dMatrial.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 0.2f);
+	dMatrial.Ambient = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
 	//엠비언트(확산광) :: 최저 평균 밝기(동일한 양으로 모든 면에서 나오는 빛)
 	dMatrial.Specular = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
 	//스펙큘러(반사광) :: 특정한 방향으로 반사하는 빛, 광원의 위치와 카메라의 위치에 따라 달라짐
-	dMatrial.Emissive = D3DXCOLOR(0.f, 0.f, 0.f, 0.f);
+	dMatrial.Emissive = D3DXCOLOR(0.f, 0.f, 0.f, 1.f);
 	//이미시브(방출광) :: 메시 표면에서 자체적으로 방출하는 빛, 다른 메시에 영향을 주지 않음
-	dMatrial.Power = 1.f;
+	dMatrial.Power = 20.f;
 
 	m_pGraphicDev->SetMaterial(&dMatrial);
 }
