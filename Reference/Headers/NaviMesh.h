@@ -22,6 +22,7 @@ public:
 	_vec3 MoveOn_NaviMesh(const _vec3* pTargetPos, const _vec3* pTargetDir);
 
 private:
+	HRESULT Load_NaviMesh(_int iMax);
 	HRESULT Link_Cell();
 	_float Compute_OnTerrain(const _vec3* pPos, _ulong * pCellIndex);
 	

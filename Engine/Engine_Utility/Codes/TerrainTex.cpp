@@ -49,8 +49,8 @@ HRESULT CTerrainTex::Ready_Buffer(WORD wCntX, WORD wCntZ, WORD wItv, WORD wDetai
 			wIndex = j + wCntX * i;
 
 			pVtxTex[wIndex].vPos.x = (float)j * wItv;
-			//pVtxTex[wIndex].vPos.y = 0.f;
-			pVtxTex[wIndex].vPos.y = (pPixel[wIndex] & 0x000000ff) / 50.f;
+			pVtxTex[wIndex].vPos.y = 0.f;
+			//pVtxTex[wIndex].vPos.y = (pPixel[wIndex] & 0x000000ff) / 50.f;
 			pVtxTex[wIndex].vPos.z = (float)i * wItv;
 
 			m_vPos[wIndex] = pVtxTex[wIndex].vPos;

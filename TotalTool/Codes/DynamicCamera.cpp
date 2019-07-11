@@ -18,6 +18,8 @@ HRESULT CDynamicCamera::Ready_Object()
 {
 	Add_Component();
 
+	
+
 	m_fTargetDist = 10.f;
 	m_fCamAngle = 45.f;
 	m_fCamSpeed = 1.f;

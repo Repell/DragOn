@@ -1362,6 +1362,7 @@ void CTabMesh::OnBnClicked_LoadMesh()	//Static
 				break;
 			
 			m_staticBox.AddString(pMesh.pFileName.c_str());
+			CValueMgr::bMeshState = FALSE;
 
 			wstring strKey = L"Static_MeshObject";
 			CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());

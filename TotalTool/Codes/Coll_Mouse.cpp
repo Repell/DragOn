@@ -25,13 +25,13 @@ bool CColl_Mouse::PickTerrain(D3DXVECTOR3 * pOut, const ENGINE::VTX_TEX * pTerre
 
 	float fU = 0.f, fV = 0.f, fDist = 0.f;
 
-	for (int iZ = 0; iZ < TERRAIN_VTX_Z - 1; ++iZ)
+	for (int iZ = 0; iZ < CValueMgr::wSizeZ - 1; ++iZ)
 	{
-		for (int iX = 0; iX < TERRAIN_VTX_X - 1; ++iX)
+		for (int iX = 0; iX < CValueMgr::wSizeX - 1; ++iX)
 		{
-			wIndex = iX + TERRAIN_VTX_X * iZ;
-			w[0] = wIndex + TERRAIN_VTX_X;
-			w[1] = wIndex + TERRAIN_VTX_X + 1;
+			wIndex = iX + CValueMgr::wSizeX * iZ;
+			w[0] = wIndex + CValueMgr::wSizeX;
+			w[1] = wIndex + CValueMgr::wSizeX + 1;
 			w[2] = wIndex + 1;
 			w[3] = wIndex;
 

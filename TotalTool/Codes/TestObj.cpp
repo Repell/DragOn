@@ -70,7 +70,7 @@ HRESULT CTestObj::Ready_MeshObject(wstring strMesh)
 	if(m_pDynamicCom != nullptr)
 		m_pDynamicCom->Set_AnimationSet(0);
 
-	m_pTransCom->m_vInfo[ENGINE::INFO_POS] = { 10.f, 1.f, 10.f };
+	m_pTransCom->m_vInfo[ENGINE::INFO_POS] = { 0.f, 0.f, 0.f };
 	m_pTransCom->m_vScale = { 1.f, 1.f, 1.f };
 
 	return S_OK;
@@ -110,6 +110,7 @@ _int CTestObj::Update_Object(const _float & fTimeDelta)
 void CTestObj::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
+	m_matWorld = m_pTransCom->m_matWorld;
 }
 
 void CTestObj::Render_Object()

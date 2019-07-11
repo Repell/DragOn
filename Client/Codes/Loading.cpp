@@ -33,8 +33,8 @@ _uint CLoading::Loading_ForLogo()
 		RESOURCE_LOGO,
 		L"Mesh_Player",
 		ENGINE::MESH_DYNAMIC,
-		L"../Bin/Resources/Mesh/DynamicMesh/PlayerXfile/",
-		L"Player.X"),
+		L"../Bin/Resources/Mesh/DynamicMesh/Player_Sword/",
+		L"Player_Sword.X"),
 		E_FAIL);
 
 	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,

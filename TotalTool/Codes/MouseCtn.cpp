@@ -31,15 +31,7 @@ HRESULT CMouseCtn::Ready_Object()
 
 HRESULT CMouseCtn::Late_Init()
 {
-	CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
-	CTotalToolView* pView = dynamic_cast<CTotalToolView*>(pMain->Get_MainWnd().GetPane(0, 0));
-	list<ENGINE::CGameObject*>& pList = pView->m_pToolRender->Get_RenderList(L"Terrain");
-	CTerrain* pTerrain = dynamic_cast<CTerrain*>(pList.front());
-	ENGINE::CViBuffer* pBuffer = dynamic_cast<ENGINE::CViBuffer*>(pTerrain->Get_TerrainTex());
-
-	m_pVtxOrigin = new ENGINE::VTX_TEX[TERRAIN_VTX_X * TERRAIN_VTX_Z];
-	pBuffer->Get_VtxInfo(m_pVtxOrigin);
-	//memcpy(m_pVtxCopy, m_pVtxOrigin, sizeof(ENGINE::VTX_TEX) * TERRAIN_VTX_X * TERRAIN_VTX_Z);
+	Make_TerrainVertex(TERRAIN_VTX_X, TERRAIN_VTX_Z);
 
 	return S_OK;
 }
@@ -50,8 +42,8 @@ _int CMouseCtn::Update_Object(const _float& fTimeDelta)
 	ENGINE::CGameObject::Update_Object(fTimeDelta);
 
 	if (CValueMgr::bMakeLine && CValueMgr::eTab == 2)
-		Make_Line();
-		//Make_NaviMesh();
+		Make_NaviMesh();
+	//Make_NaviMesh();
 
 
 	return 0;
@@ -88,8 +80,8 @@ void CMouseCtn::Render_Font(const _vec2* pPos)
 	RECT rc = { _long(pPos->x), _long(pPos->y) + 25 };
 	_tchar szStr[MAX_PATH] = L"";
 
-	//bRender = m_pCollMouse->PickTerrain(&m_vPickPos, m_pVtxOrigin);
-	bRender = Pick_Mesh(&m_vPickPos);
+	bRender = m_pCollMouse->PickTerrain(&m_vPickPos, m_pVtxOrigin);
+	//bRender = Pick_Mesh(&m_vPickPos);
 
 	switch (wCount)
 	{
@@ -213,6 +205,29 @@ void CMouseCtn::Transform_NaviMesh(_int iNavi, _int iTri, _vec3 vPos)
 
 }
 
+void CMouseCtn::Make_TerrainVertex(WORD iX, WORD iY)
+{
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+	CTotalToolView* pView = dynamic_cast<CTotalToolView*>(pMain->Get_MainWnd().GetPane(0, 0));
+	list<ENGINE::CGameObject*>& pList = pView->m_pToolRender->Get_RenderList(L"Terrain");
+	CTerrain* pTerrain = dynamic_cast<CTerrain*>(pList.front());
+	ENGINE::CViBuffer* pBuffer = dynamic_cast<ENGINE::CViBuffer*>(pTerrain->Get_TerrainTex());
+
+	if (m_pVtxOrigin == nullptr)
+	{
+		m_pVtxOrigin = new ENGINE::VTX_TEX[iX * iY];
+		pBuffer->Get_VtxInfo(m_pVtxOrigin);
+	}
+	else if (m_pVtxOrigin != nullptr)
+	{
+		ENGINE::Safe_Delete_Array(m_pVtxOrigin);
+
+		m_pVtxOrigin = new ENGINE::VTX_TEX[iX * iY];
+		pBuffer->Get_VtxInfo(m_pVtxOrigin);
+	}
+	//memcpy(m_pVtxCopy, m_pVtxOrigin, sizeof(ENGINE::VTX_TEX) * TERRAIN_VTX_X * TERRAIN_VTX_Z);
+}
+
 void CMouseCtn::Make_Line()
 {
 	if (m_vMousePos.x > 0 && m_vMousePos.x < 1400)
@@ -251,7 +266,10 @@ void CMouseCtn::Make_Line()
 				++wCount;
 			}
 			else if (Pick_Mesh(&m_LinePos[wCount]))
+			{
+
 				++wCount;
+			}
 		}
 
 		if (wCount == 1 && ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON))
@@ -366,17 +384,21 @@ void CMouseCtn::Make_NaviMesh()
 		{
 			if (Coll_Navi())
 			{
+				auto& iter_find = m_MapNavi.find(m_iCurNavi);
+
+				if (iter_find == m_MapNavi.end())
+					return;
 
 				switch (m_iCurNavi_Tri)
 				{
 				case 0:
-					m_LinePos[wCount] = m_MapNavi[m_iCurNavi]->Get_3DLine().vLine_X[0];
+					m_LinePos[wCount] = iter_find->second->Get_3DLine().vLine_X[0];
 					break;
 				case 1:
-					m_LinePos[wCount] = m_MapNavi[m_iCurNavi]->Get_3DLine().vLine_Y[0];
+					m_LinePos[wCount] = iter_find->second->Get_3DLine().vLine_Y[0];
 					break;
 				case 2:
-					m_LinePos[wCount] = m_MapNavi[m_iCurNavi]->Get_3DLine().vLine_Z[0];
+					m_LinePos[wCount] = iter_find->second->Get_3DLine().vLine_Z[0];
 					break;
 				}
 
@@ -390,16 +412,21 @@ void CMouseCtn::Make_NaviMesh()
 		{
 			if (Coll_Navi())
 			{
+				auto& iter_find = m_MapNavi.find(m_iCurNavi);
+
+				if (iter_find == m_MapNavi.end())
+					return;
+
 				switch (m_iCurNavi_Tri)
 				{
 				case 0:
-					m_LinePos[wCount] = m_MapNavi[m_iCurNavi]->Get_3DLine().vLine_X[0];
+					m_LinePos[wCount] = iter_find->second->Get_3DLine().vLine_X[0];
 					break;
 				case 1:
-					m_LinePos[wCount] = m_MapNavi[m_iCurNavi]->Get_3DLine().vLine_Y[0];
+					m_LinePos[wCount] = iter_find->second->Get_3DLine().vLine_Y[0];
 					break;
 				case 2:
-					m_LinePos[wCount] = m_MapNavi[m_iCurNavi]->Get_3DLine().vLine_Z[0];
+					m_LinePos[wCount] = iter_find->second->Get_3DLine().vLine_Z[0];
 					break;
 				}
 
@@ -413,19 +440,24 @@ void CMouseCtn::Make_NaviMesh()
 		{
 			if (Coll_Navi())
 			{
+				auto& iter_find = m_MapNavi.find(m_iCurNavi);
+
+				if (iter_find == m_MapNavi.end())
+					return;
+
 				switch (m_iCurNavi_Tri)
 				{
 				case 0:
-					m_LinePos[wCount] = m_MapNavi[m_iCurNavi]->Get_3DLine().vLine_X[0];
+					m_LinePos[wCount] = iter_find->second->Get_3DLine().vLine_X[0];
 					break;
 				case 1:
-					m_LinePos[wCount] = m_MapNavi[m_iCurNavi]->Get_3DLine().vLine_Y[0];
+					m_LinePos[wCount] = iter_find->second->Get_3DLine().vLine_Y[0];
 					break;
 				case 2:
-					m_LinePos[wCount] = m_MapNavi[m_iCurNavi]->Get_3DLine().vLine_Z[0];
+					m_LinePos[wCount] = iter_find->second->Get_3DLine().vLine_Z[0];
 					break;
 				}
-
+				
 				m_tLine.Set_LinePos_X(m_LinePos[0], m_LinePos[1]);
 				m_tLine.Set_LinePos_Y(m_LinePos[1], m_LinePos[2]);
 				m_tLine.Set_LinePos_Z(m_LinePos[2], m_LinePos[0]);
@@ -440,8 +472,7 @@ void CMouseCtn::Make_NaviMesh()
 				m_MapLine.emplace(m_iCurNavi, m_tLine);
 				ZeroMemory(&m_tLine, sizeof(ENGINE::LINE_3D));
 				ZeroMemory(m_LinePos, sizeof(_vec3));
-
-
+				
 				wCount = 0;
 			}
 			else if (m_pCollMouse->PickTerrain(&m_LinePos[wCount], m_pVtxOrigin))
@@ -456,10 +487,11 @@ void CMouseCtn::Make_NaviMesh()
 
 				m_MapNavi.emplace(m_iCurNavi, pBuffer);
 				m_MapLine.emplace(m_iCurNavi, m_tLine);
-				ZeroMemory(&m_tLine, sizeof(ENGINE::LINE_3D));
-				ZeroMemory(m_LinePos, sizeof(_vec3));
 
 				Insert_TabNavi();
+
+				ZeroMemory(&m_tLine, sizeof(ENGINE::LINE_3D));
+				ZeroMemory(m_LinePos, sizeof(_vec3));
 
 				wCount = 0;
 			}
@@ -474,9 +506,9 @@ _bool CMouseCtn::Pick_Mesh(_vec3 * pPos)
 {
 	_vec3 vNewMice;
 	//윈도우 좌표에서 투영 공간으로 변환
-	vNewMice.x = m_vMousePos.x / (WINCX >> 1) - 1.f;
-	vNewMice.y = m_vMousePos.y / -(WINCY >> 1) + 1.f;
-	vNewMice.z = 0.f;
+	vNewMice.x = m_vMousePos.x / (WINCX * 0.5f) - 1.f;
+	vNewMice.y = m_vMousePos.y / -(WINCY * 0.5f) + 1.f;
+	vNewMice.z = 1.f;
 	//투영에서 뷰 스페이스로 변환
 	_matrix matProj;
 	D3DXMatrixInverse(&matProj, NULL, &CValueMgr::matProj);
@@ -493,6 +525,19 @@ _bool CMouseCtn::Pick_Mesh(_vec3 * pPos)
 
 	D3DXVec3TransformNormal(&vRayDir, &vRayDir, &matView);
 	D3DXVec3TransformCoord(&vRayPos, &vRayPos, &matView);
+
+	///////////////
+	ENGINE::LINE_3D vLine;
+	vLine.Set_LinePos_X(_vec3(0.f, 0.f, 0.f), vRayDir);
+
+	m_pLine->SetWidth(5.f);
+	m_pLine->Begin();
+	_matrix mat;
+	D3DXMatrixIdentity(&mat);
+	m_pLine->DrawTransform(vLine.vLine_X, 2, &CValueMgr::matTerrain, D3DXCOLOR(1.f, 0.f, 0.f, 1.f));
+
+	m_pLine->End();
+
 
 	/////////////////////////////////////
 
@@ -517,18 +562,27 @@ _bool CMouseCtn::Pick_Mesh(_vec3 * pPos)
 
 	_int iNum = pObj->Get_Static()->Get_Mesh()->GetNumFaces();
 	_int iMaxVtx = pObj->Get_Static()->Get_Mesh()->GetNumVertices();
+	//_matrix matWorld = pObj->Get_Matrix();
+
+	//D3DXMatrixInverse(&matWorld, nullptr, &matWorld);
+
+	//D3DXVec3TransformCoord(&vRayPos, &vRayPos, &matWorld);
+	//D3DXVec3TransformNormal(&vRayDir, &vRayDir, &matWorld);
+	//D3DXVec3Normalize(&vRayDir, &vRayDir);
 
 	pObj->Get_Static()->Get_Mesh()->GetVertexBuffer(&pVB);
 	pObj->Get_Static()->Get_Mesh()->GetIndexBuffer(&pIB);
 
 	ENGINE::VTX_TEX* pVertex = nullptr;
 	pVB->Lock(0, 0, (void**)&pVertex, 0);
-	pVB->Unlock();
+
 
 	WORD w[3] = {};
 	WORD* wIndex;
 	pIB->Lock(0, 0, (void**)&wIndex, 0);
-	pIB->Unlock();
+
+	vector<_vec3> vecTemp;
+	vector<_float> vecdist;
 
 	_float fU, fV, fDist;
 	for (int i = 0; i < iNum; ++i)
@@ -537,31 +591,56 @@ _bool CMouseCtn::Pick_Mesh(_vec3 * pPos)
 		w[1] = wIndex[3 * i + 1];
 		w[2] = wIndex[3 * i + 2];
 
-		if (D3DXIntersectTri(&pVertex[w[1]].vPos, &pVertex[w[0]].vPos, &pVertex[w[2]].vPos,
+		if (D3DXIntersectTri(&pVertex[w[0]].vPos, &pVertex[w[1]].vPos, &pVertex[w[2]].vPos,
 			&vRayPos, &vRayDir, &fU, &fV, &fDist))
 		{
-			*pPos = pVertex[w[1]].vPos +
-				fU * (pVertex[w[0]].vPos - pVertex[w[1]].vPos) +
-				fV * (pVertex[w[2]].vPos - pVertex[w[1]].vPos);
+			//*pPos = pVertex[w[0]].vPos +
+			//	fU * (pVertex[w[1]].vPos - pVertex[w[0]].vPos) +
+			//	fV * (pVertex[w[2]].vPos - pVertex[w[0]].vPos);
 
-			//*pPos = _vec3(pVertex[w[1]].vPos.x + (pVertex[w[0]].vPos.x - pVertex[w[1]].vPos.x) * fU,
-			//	0.f,
-			//	pVertex[w[1]].vPos.x + (pVertex[w[2]].vPos.x - pVertex[w[1]].vPos.x) * fV);
+			//D3DXVec3TransformCoord(pPos, pPos, &matWorld);
+			_vec3 vTemp = pVertex[w[0]].vPos +
+				fU * (pVertex[w[1]].vPos - pVertex[w[0]].vPos) +
+				fV * (pVertex[w[2]].vPos - pVertex[w[0]].vPos);
 
-			pVB->Release();
-			pIB->Release();
+			vecTemp.emplace_back(vTemp);
+			vecdist.emplace_back(fDist);
 
-			return TRUE;
+			pVB->Unlock();
+			pIB->Unlock();
+
 		}
 
+	}
+	_int i = 0;
+	_int idx = 0;
+	_float Dist = 0;
 
+	if (!vecdist.empty())
+		Dist = vecdist[0];
 
+	for (auto v : vecdist)
+	{
+		if (Dist > v)
+		{
+			Dist = v;
+			idx = i;
+		}
+
+		++i;
 	}
 
+	_tchar szStr[MAX_PATH] = L"";
+	swprintf_s(szStr, L" %5.2f , %5.2f, %5.2f", vecTemp[idx].x, vecTemp[idx].y, vecTemp[idx].z);
 
+	ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 40.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 
+	*pPos = vecTemp[idx];
 
-	return FALSE;
+	pVB->Unlock();
+	pIB->Unlock();
+
+	return TRUE;
 }
 
 void CMouseCtn::Render_NaviMesh()
@@ -678,6 +757,7 @@ void CMouseCtn::Free()
 	ENGINE::Safe_Release(m_pLine);
 	ENGINE::Safe_Delete_Array(m_pVtxOrigin);
 
+	m_MapLine.clear();
 	for_each(m_MapNavi.begin(), m_MapNavi.end(), [](auto& MyPair)
 	{
 		ENGINE::Safe_Release(MyPair.second);

@@ -43,6 +43,14 @@ namespace ENGINE
 
 	}LINE_3D;
 
+	typedef struct tagNavi
+	{
+		_ulong Index;
+		_vec3 vPointA;
+		_vec3 vPointB;
+		_vec3 vPointC;
+	}NAVI;
+
 	typedef  struct tagObb
 	{
 		_vec3		vPoint[8];		// 큐브를 이루는 정점 8개

@@ -57,9 +57,9 @@ PS_OUT	PS_MAIN(PS_IN In)
 
 	Out.vColor = tex2D(BaseSampler, In.vTexUV); // 2차원 형태의 텍스쳐로부터 uv좌표에 해당되는 색을 추출하는 함수, 반환 타입이 vector 타입
 
-	if(In.vTexUV.y < 0.5f)
-		Out.vColor.a = 0.5f;
-	else
+	//if(In.vTexUV.y < 0.5f)
+	//	Out.vColor.a = 0.5f;
+	//else
 		Out.vColor.a = 1.0f;
 
 	return Out;

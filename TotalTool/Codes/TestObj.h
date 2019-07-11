@@ -22,6 +22,7 @@ public:
 	_vec3*	Get_VtxMeshPos(void);
 	ENGINE::CStaticMesh* Get_Static() { return m_pMeshCom; }
 	ENGINE::CDynamicMesh* Get_Dynamic() { return m_pDynamicCom; }
+	_matrix Get_Matrix() { return m_matWorld; }
 
 public:
 	HRESULT Ready_MeshObject(wstring strMesh);
@@ -51,6 +52,9 @@ private:
 	
 	//
 	_bool bMeshState;
+
+public:
+	_matrix m_matWorld;
 
 public:
 	static CTestObj* Create(LPDIRECT3DDEVICE9 pGraphicDev);

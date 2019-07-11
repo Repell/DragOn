@@ -30,6 +30,9 @@ public:
 
 	static CString strCurObj;
 	static _int iCurIndex;
+
+	static WORD wSizeX;
+	static WORD wSizeZ;
 };
 
 #endif // !__VALUEMGR_H__

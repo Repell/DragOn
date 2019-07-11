@@ -23,6 +23,9 @@ _int CValueMgr::iDynamicCnt = 0;
 CString CValueMgr::strCurObj = L"";
 _int CValueMgr::iCurIndex = 0;
 
+WORD CValueMgr::wSizeX = TERRAIN_VTX_X;
+WORD CValueMgr::wSizeZ = TERRAIN_VTX_Z;
+
 CValueMgr::CValueMgr()
 {
 }

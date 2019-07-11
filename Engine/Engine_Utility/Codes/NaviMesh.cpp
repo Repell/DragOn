@@ -24,25 +24,7 @@ CNaviMesh::~CNaviMesh()
 
 HRESULT CNaviMesh::Ready_NaviMesh()
 {
-	m_vecCell.reserve(64);
-
-	CCell* pCell = nullptr;
-	
-	for (_uint Z = 0; Z < 8; ++Z)
-	{
-		for (_uint X = 0; X < 8; ++X)
-		{
-			// 0
-			pCell = CCell::Create(m_pGraphicDev, m_vecCell.size(), &_vec3(X * 2.f, Z +1, (Z + 1) * 2.f), &_vec3((X + 1) * 2.f, Z, Z * 2.f), &_vec3(X * 2.f, Z, Z * 2.f));
-			NULL_CHECK_RETURN(pCell, E_FAIL);
-			m_vecCell.emplace_back(pCell);
-
-			pCell = CCell::Create(m_pGraphicDev, m_vecCell.size(), &_vec3(X * 2.f, Z +1, (Z + 1) * 2.f), &_vec3((X + 1) * 2.f, Z + 1, (Z +1) * 2.f), &_vec3((X+1) * 2.f, Z, Z * 2.f));
-			NULL_CHECK_RETURN(pCell, E_FAIL);
-			m_vecCell.emplace_back(pCell);
-
-		}
-	}
+	Load_NaviMesh(64);
 	
 	FAILED_CHECK_RETURN(Link_Cell(), E_FAIL);
 
@@ -72,6 +54,33 @@ _vec3 CNaviMesh::MoveOn_NaviMesh(const _vec3 * pTargetPos, const _vec3 * pTarget
 	}
 
 	return _vec3(0.f, 0.f, 0.f);
+}
+
+
+
+HRESULT CNaviMesh::Load_NaviMesh(_int iMax)
+{
+	m_vecCell.reserve(iMax);
+
+	CCell* pCell = nullptr;
+	
+	for (_uint Z = 0; Z < 8; ++Z)
+	{
+		for (_uint X = 0; X < 8; ++X)
+		{
+
+			pCell = CCell::Create(m_pGraphicDev, m_vecCell.size(), &_vec3(X * 2.f, Z +1, (Z + 1) * 2.f), &_vec3((X + 1) * 2.f, Z, Z * 2.f), &_vec3(X * 2.f, Z, Z * 2.f));
+			NULL_CHECK_RETURN(pCell, E_FAIL);
+			m_vecCell.emplace_back(pCell);
+
+			pCell = CCell::Create(m_pGraphicDev, m_vecCell.size(), &_vec3(X * 2.f, Z +1, (Z + 1) * 2.f), &_vec3((X + 1) * 2.f, Z + 1, (Z +1) * 2.f), &_vec3((X+1) * 2.f, Z, Z * 2.f));
+			NULL_CHECK_RETURN(pCell, E_FAIL);
+			m_vecCell.emplace_back(pCell);
+
+		}
+	}
+
+	return S_OK;
 }
 
 HRESULT CNaviMesh::Link_Cell()

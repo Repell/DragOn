@@ -161,6 +161,10 @@ HRESULT CToolRender::Ready_Resources(LPDIRECT3DDEVICE9 pGraphicDev, RESOURCED eI
 	FAILED_CHECK_RETURN(ENGINE::Ready_Texture(pGraphicDev, RESOURCE_TOOL, L"Texture_SkyBox", ENGINE::TEX_CUBE,
 		L"../../Client/Bin/Resources/Texture/SkyBox/SkyBox%d.dds"), E_FAIL);
 
+	FAILED_CHECK_RETURN(ENGINE::Ready_Texture(pGraphicDev, RESOURCE_TOOL, L"Texture_ColorRect", ENGINE::TEX_CUBE,
+		L"../../Client/Bin/Resources/Texture/NaviMesh/ColorRect.png"), E_FAIL);
+
+
 	////ColorRect Texture
 	//FAILED_CHECK_RETURN(Ready_Texture(pGraphicDev,	RESOURCE_TOOL, 	L"Texture_ColorRect", ENGINE::TEX_NORMAL,
 	//	L"../../Client/Bin/Resources/Texture/ColorRect%d.png", 3), E_FAIL);

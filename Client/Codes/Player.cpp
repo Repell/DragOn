@@ -45,7 +45,7 @@ _int CPlayer::Update_Object(const _float & fTimeDelta)
 	if (m_pTransform->bCamTarget)
 	{
 		if (Key_check(fTimeDelta))
-			m_pMesh->Set_AnimationSet(57);
+			m_pMesh->Set_AnimationSet(0);
 	}
 		//Key_Old(fTimeDelta);
 

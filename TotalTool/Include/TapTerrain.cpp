@@ -10,6 +10,7 @@
 #include "TotalToolView.h"
 #include "ToolRender.h"
 #include "Terrain.h"
+#include "MouseCtn.h"
 
 // CTapTerrain 대화 상자입니다.
 
@@ -271,6 +272,9 @@ void CTapTerrain::OnBnClicked_SetTerrain()
 	m_uInterval = _wtoi(m_strInterval);
 	m_uDetail = _wtoi(m_strDetail);
 
+	CValueMgr::wSizeX = m_uSizeX;
+	CValueMgr::wSizeZ = m_uSizeZ;
+
 	//Release Terrain
 	CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 	CTotalToolView* pView = dynamic_cast<CTotalToolView*>(pMain->Get_MainWnd().GetPane(0, 0));
@@ -284,6 +288,10 @@ void CTapTerrain::OnBnClicked_SetTerrain()
 	pRender->Create_NewTerrain(m_uSizeX, m_uSizeZ, m_uInterval, m_uDetail);
 
 	pTerrain->Create_Buffer();
+
+	list<ENGINE::CGameObject*>& pList2 = pView->m_pToolRender->Get_RenderList(L"MouseCtn");
+	CMouseCtn* pMouse = dynamic_cast<CMouseCtn*>(pList2.front());
+	pMouse->Make_TerrainVertex(m_uSizeX, m_uSizeZ);
 
 	UpdateData(FALSE);
 }
@@ -606,6 +614,9 @@ void CTapTerrain::OnBnClicked_ResetTerrain()
 	m_uInterval = TERRAIN_INTRV;
 	m_uDetail = 1;
 
+	CValueMgr::wSizeX = m_uSizeX;
+	CValueMgr::wSizeZ = m_uSizeZ;
+
 	m_strSize_X.Format(_T("%d"), m_uSizeX);
 	m_strSize_Z.Format(_T("%d"), m_uSizeZ);
 	m_strInterval.Format(_T("%d"), m_uInterval);
@@ -747,6 +758,8 @@ void CTapTerrain::OnBnClicked_LoadTerrain()
 		CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 		CTotalToolView* pView = dynamic_cast<CTotalToolView*>(pMain->Get_MainWnd().GetPane(0, 0));
 		list<ENGINE::CGameObject*>& pList = pView->m_pToolRender->Get_RenderList(L"Terrain");
+		list<ENGINE::CGameObject*>& pList2 = pView->m_pToolRender->Get_RenderList(L"MouseCtn");
+
 		CTerrain* pTerrain = dynamic_cast<CTerrain*>(pList.front());
 		pTerrain->Release_Buffer();
 		ENGINE::Release_Terrain(RESOURCE_TOOL, L"Buffer_Terrain");
@@ -755,12 +768,19 @@ void CTapTerrain::OnBnClicked_LoadTerrain()
 		CToolRender* pRender = pView->m_pToolRender;
 		pRender->Create_NewTerrain(m_uSizeX, m_uSizeZ, m_uInterval, m_uDetail);
 
+		CValueMgr::wSizeX = m_uSizeX;
+		CValueMgr::wSizeZ = m_uSizeZ;
+
 		pTerrain->Create_Buffer();
 
 		pTerrain->Release_Texture();
 		HRESULT hr = pTerrain->Set_Texture(strKey, m_iTex);
 		pTerrain->Set_Transform(vPos, vRot);
 		
+		CMouseCtn* pMouse = dynamic_cast<CMouseCtn*>(pList2.front());
+		pMouse->Make_TerrainVertex(m_uSizeX, m_uSizeZ);
+
+
 		ENGINE::Safe_Delete_Array(szKey);
 
 		CloseHandle(hFile);

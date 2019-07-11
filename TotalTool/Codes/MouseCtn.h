@@ -9,8 +9,6 @@
 #include "ToolRender.h"
 #include "Terrain.h"
 
-
-
 class CMouseCtn :
 	public ENGINE::CGameObject	
 {
@@ -40,6 +38,7 @@ public:
 	void Transform_NaviMesh(_int iNavi, _int iTri, _vec3 vPos);
 
 	map<_int, ENGINE::LINE_3D>& Get_MapLine() { return m_MapLine; }
+	void Make_TerrainVertex(WORD iX, WORD iY);
 
 private:
 	void Make_Line();
@@ -49,8 +48,6 @@ private:
 	_bool Coll_Navi();
 	_bool Coll_Sphere(ENGINE::LINE_3D pLine);
 
-public:
-	static CMouseCtn* Create(LPDIRECT3DDEVICE9 pGraphicDev);
 
 private:
 	ENGINE::LINE_3D m_tLine;
@@ -67,8 +64,6 @@ private:
 	_int m_iCurNavi;
 	_int m_iCurNavi_Tri;
 
-	//vector<ENGINE::LINE_3D> m_vecLine;
-	//vector<ENGINE::CTriTex*> m_vecNavi;
 	map<_int, ENGINE::LINE_3D>m_MapLine;
 	map<_int, ENGINE::CTriTex*>m_MapNavi;
 
@@ -81,8 +76,9 @@ private:
 	LPD3DXSPRITE						m_pSprite;
 	LPD3DXLINE							m_pLine;
 
-private:
-	void Free();
+public:
+	static CMouseCtn* Create(LPDIRECT3DDEVICE9 pGraphicDev);
+	virtual void Free();
 
 };
 

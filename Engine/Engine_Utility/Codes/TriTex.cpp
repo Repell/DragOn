@@ -1,4 +1,5 @@
 #include "TriTex.h"
+#include "Texture.h"
 
 #define  RADIUS 1.f
 
@@ -14,7 +15,7 @@ CTriTex::CTriTex(const CTriTex & rhs)
 {
 	for (int i = 0; i < 3; ++i)
 		Sphere[i] = rhs.Sphere[i];
-
+	
 }
 
 CTriTex::~CTriTex(void)
@@ -59,7 +60,7 @@ void CTriTex::Set_TriTex(LINE_3D pLine)
 	//}
 
 	//m_pVB->Unlock();
-
+	
 }
 
 HRESULT CTriTex::Ready_Buffer()
