@@ -124,6 +124,9 @@
     <Filter Include="02.SubClass\01.Shader\00. Hpp">
       <UniqueIdentifier>{c7336c08-7a36-4d74-ab76-ffd3c7d08a45}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.SubClass\02.Collidier">
+      <UniqueIdentifier>{4a92049c-c148-493d-9e1a-68ba53dc2d45}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Codes\Management.h">
@@ -234,6 +237,9 @@
     <ClInclude Include="..\Codes\Shader_Shade.hpp">
       <Filter>02.SubClass\01.Shader\00. Hpp</Filter>
     </ClInclude>
+    <ClInclude Include="..\Codes\Collider.h">
+      <Filter>02.SubClass\02.Collidier</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Management.cpp">
@@ -328,6 +334,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ProtoTypeMgr.cpp">
       <Filter>02.SubClass\00.ProtoTypeMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Collider.cpp">
+      <Filter>02.SubClass\02.Collidier</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

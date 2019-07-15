@@ -8,6 +8,7 @@
 
 #include "Player.h"
 #include "Sword.h"
+#include "StaticObj.h"
 
 #include "Effect_Tex.h"
 #include "Shade.h"
@@ -35,6 +36,7 @@ protected:
 private:
 	void RenderPipeLine_SetUp();
 	void Create_Light();
+	void LoadForStaticDat(ENGINE::CLayer* pLayer);
 
 private:
 	CLoading*								m_pLoading;

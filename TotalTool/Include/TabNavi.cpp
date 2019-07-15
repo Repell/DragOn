@@ -9,7 +9,8 @@
 #include "MainFrm.h"
 #include "TotalToolView.h"
 #include "ToolRender.h"
-#include "MouseCtn.h"
+//#include "MouseCtn.h"
+#include "NaviMaker.h"
 
 
 // CTabNavi 대화 상자입니다.
@@ -64,13 +65,12 @@ END_MESSAGE_MAP()
 // CTabNavi 메시지 처리기입니다.
 
 
-_int CTabNavi::Insert_Navi()
+void CTabNavi::Insert_Navi(_int idx)
 {
 	CString strTemp;
 
-	strTemp.Format(_T("%d"), iNaviNumb);
-	++iNaviNumb;
-
+	strTemp.Format(_T("%d"), idx);
+	
 	hLevel1 = m_TreeList.InsertItem(strTemp, 0, 0);
 	m_TreeList.Expand(hLevel1, TVE_EXPAND);
 
@@ -82,8 +82,6 @@ _int CTabNavi::Insert_Navi()
 
 	strTemp.Format(_T("2"));
 	hLevel2 = m_TreeList.InsertItem(strTemp, 0, 0, hLevel1);
-
-	return iNaviNumb;
 
 }
 
@@ -99,12 +97,10 @@ void CTabNavi::Update_Transform()
 	CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 	CTotalToolView* pView = dynamic_cast<CTotalToolView*>(pMain->Get_MainWnd().GetPane(0, 0));
 	CToolRender* pRender = dynamic_cast<CToolRender*>(pView->m_pToolRender);
-	CMouseCtn* pNavi = dynamic_cast<CMouseCtn*>(pRender->Get_RenderList(L"MouseCtn").front());
+	CNaviMaker* pNavi = dynamic_cast<CNaviMaker*>(pRender->Get_RenderList(L"NaviMaker").front());
 
 	pNavi->Transform_NaviMesh(iNaviNum, iTriNum, vPos);
-
-
-
+	
 
 	UpdateData(FALSE);
 }
@@ -151,11 +147,15 @@ void CTabNavi::OnTvnSelchanged_NaviTree(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(TRUE);
+	Check_MakeLine.SetCheck(false);
+	CValueMgr::bMakeLine = false;
+	m_bClick = false;
 
 	CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 	CTotalToolView* pView = dynamic_cast<CTotalToolView*>(pMain->Get_MainWnd().GetPane(0, 0));
 	CToolRender* pRender = dynamic_cast<CToolRender*>(pView->m_pToolRender);
-	CMouseCtn* pNavi = dynamic_cast<CMouseCtn*>(pRender->Get_RenderList(L"MouseCtn").front());
+	CNaviMaker* pNavi = dynamic_cast<CNaviMaker*>(pRender->Get_RenderList(L"NaviMaker").front());
 	//pNavi->Transform_NaviMesh(iNaviNum, iTriNum, _vec3(0.f, 10.f, 0.f));
 
 	hLevel2 = m_TreeList.GetNextItem(NULL, TVGN_CARET);
@@ -167,21 +167,22 @@ void CTabNavi::OnTvnSelchanged_NaviTree(NMHDR *pNMHDR, LRESULT *pResult)
 	iNaviNum = _wtoi(strTmp);
 	iTriNum = _wtoi(strTmp1);
 
-	ENGINE::LINE_3D pLine = pNavi->Get_vecLine3D(iNaviNum);
+	//ENGINE::LINE_3D pLine = pNavi->Get_vecLine3D(iNaviNum);
+	ENGINE::NAVI tNavi = pNavi->Get_Navi(iNaviNum);
 	_vec3 vTemp;
 	switch (iTriNum)
 	{
 	case 0:
-		vTemp = pLine.vLine_X[0];
+		vTemp = tNavi.vPointA;
 		break;
 	case 1:
-		vTemp = pLine.vLine_Y[0];
+		vTemp = tNavi.vPointB;
 		break;
 	case 2:
-		vTemp = pLine.vLine_Z[0];
+		vTemp = tNavi.vPointC;
 		break;
 	}
-	UpdateData(TRUE);
+
 
 	m_fPosX = vTemp.x;
 	m_fPosY = vTemp.y;
@@ -214,7 +215,7 @@ void CTabNavi::OnEnChangeEdit_PosX()
 	CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 	CTotalToolView* pView = dynamic_cast<CTotalToolView*>(pMain->Get_MainWnd().GetPane(0, 0));
 	CToolRender* pRender = dynamic_cast<CToolRender*>(pView->m_pToolRender);
-	CMouseCtn* pNavi = dynamic_cast<CMouseCtn*>(pRender->Get_RenderList(L"MouseCtn").front());
+	CNaviMaker* pNavi = dynamic_cast<CNaviMaker*>(pRender->Get_RenderList(L"NaviMaker").front());
 
 	pNavi->Transform_NaviMesh(iNaviNum, iTriNum, vPos);
 
@@ -241,7 +242,7 @@ void CTabNavi::OnEnChangeEdit_PosY()
 	CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 	CTotalToolView* pView = dynamic_cast<CTotalToolView*>(pMain->Get_MainWnd().GetPane(0, 0));
 	CToolRender* pRender = dynamic_cast<CToolRender*>(pView->m_pToolRender);
-	CMouseCtn* pNavi = dynamic_cast<CMouseCtn*>(pRender->Get_RenderList(L"MouseCtn").front());
+	CNaviMaker* pNavi = dynamic_cast<CNaviMaker*>(pRender->Get_RenderList(L"NaviMaker").front());
 
 	pNavi->Transform_NaviMesh(iNaviNum, iTriNum, vPos);
 
@@ -268,7 +269,7 @@ void CTabNavi::OnEnChangeEdit_PosZ()
 	CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 	CTotalToolView* pView = dynamic_cast<CTotalToolView*>(pMain->Get_MainWnd().GetPane(0, 0));
 	CToolRender* pRender = dynamic_cast<CToolRender*>(pView->m_pToolRender);
-	CMouseCtn* pNavi = dynamic_cast<CMouseCtn*>(pRender->Get_RenderList(L"MouseCtn").front());
+	CNaviMaker* pNavi = dynamic_cast<CNaviMaker*>(pRender->Get_RenderList(L"NaviMaker").front());
 
 	pNavi->Transform_NaviMesh(iNaviNum, iTriNum, vPos);
 
@@ -368,12 +369,16 @@ void CTabNavi::OnBnClicked_SaveNavi()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	UpdateData(TRUE);
 
+	Check_MakeLine.SetCheck(false);
+	CValueMgr::bMakeLine = false;
+	m_bClick = false;
+
 	CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 	CTotalToolView* pView = dynamic_cast<CTotalToolView*>(pMain->Get_MainWnd().GetPane(0, 0));
 	CToolRender* pRender = dynamic_cast<CToolRender*>(pView->m_pToolRender);
-	CMouseCtn* pNavi = dynamic_cast<CMouseCtn*>(pRender->Get_RenderList(L"MouseCtn").front());
+	CNaviMaker* pNavi = dynamic_cast<CNaviMaker*>(pRender->Get_RenderList(L"NaviMaker").front());
 
-	map<_int, ENGINE::LINE_3D> pMapLine = pNavi->Get_MapLine();
+	map<_int, ENGINE::NAVI> pMapNavi = pNavi->Get_MapNavi();
 
 
 	CFileDialog Dlg(FALSE, L"dat", L"*.dat", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
@@ -406,22 +411,19 @@ void CTabNavi::OnBnClicked_SaveNavi()
 		DWORD dwBuff = 0;
 		_tchar szBuff[MAX_STR] = L"";
 
-		_int iCnt = pMapLine.size();
+		_int iCnt = pMapNavi.size();
 
-		for (int i = 0; i < iCnt; ++i)
+		WriteFile(hFile, &iCnt, sizeof(_int), &dwByte, nullptr);
+
+		auto iter = pMapNavi.begin();
+
+		for (; iter != pMapNavi.end() ; ++iter)
 		{
-
-			WriteFile(hFile, &pMapLine[i].vLine_X[0], sizeof(_vec3), &dwByte, nullptr);
-			WriteFile(hFile, &pMapLine[i].vLine_X[1], sizeof(_vec3), &dwByte, nullptr);
-
-			WriteFile(hFile, &pMapLine[i].vLine_Y[0], sizeof(_vec3), &dwByte, nullptr);
-			WriteFile(hFile, &pMapLine[i].vLine_Y[1], sizeof(_vec3), &dwByte, nullptr);
-
-			WriteFile(hFile, &pMapLine[i].vLine_Z[0], sizeof(_vec3), &dwByte, nullptr);
-			WriteFile(hFile, &pMapLine[i].vLine_Z[1], sizeof(_vec3), &dwByte, nullptr);
-
-
-
+			WriteFile(hFile, &iter->second.Index, sizeof(_ulong), &dwByte, nullptr);
+			WriteFile(hFile, iter->second.vPointA, sizeof(_vec3), &dwByte, nullptr);
+			WriteFile(hFile, iter->second.vPointB, sizeof(_vec3), &dwByte, nullptr);
+			WriteFile(hFile, iter->second.vPointC, sizeof(_vec3), &dwByte, nullptr);
+			
 		}
 
 		CloseHandle(hFile);
@@ -438,13 +440,17 @@ void CTabNavi::OnBnClicked_LoadNavi()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	UpdateData(TRUE);
 
+	Check_MakeLine.SetCheck(false);
+	CValueMgr::bMakeLine = false;	
+	m_bClick = false;
+
 	CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 	CTotalToolView* pView = dynamic_cast<CTotalToolView*>(pMain->Get_MainWnd().GetPane(0, 0));
 	CToolRender* pRender = dynamic_cast<CToolRender*>(pView->m_pToolRender);
-	CMouseCtn* pNavi = dynamic_cast<CMouseCtn*>(pRender->Get_RenderList(L"MouseCtn").front());
+	CNaviMaker* pNavi = dynamic_cast<CNaviMaker*>(pRender->Get_RenderList(L"NaviMaker").front());
 
 
-	CFileDialog Dlg(FALSE, L"dat", L"*.dat", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+	CFileDialog Dlg(FALSE, L"dat", L"*.dat", OFN_HIDEREADONLY | OFN_READONLY,
 		L"Data Files(*.dat)|*.dat||", this);
 
 	TCHAR szPath[MAX_STR] = L"";
@@ -461,6 +467,7 @@ void CTabNavi::OnBnClicked_LoadNavi()
 	if (Dlg.DoModal() == IDOK)
 	{
 		CString strFileName = Dlg.GetPathName();
+		strFileName = CFileInfo::ConvertRelativePath(strFileName);
 
 		HANDLE hFile = CreateFile(strFileName.GetString(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 
@@ -469,32 +476,39 @@ void CTabNavi::OnBnClicked_LoadNavi()
 			AfxMessageBox(L"Save Navi Failed");
 			return;
 		}
+
+		if (!pNavi->Get_MapNavi().empty())
+		{
+			pNavi->Clear_MapNavi();
+			m_TreeList.DeleteAllItems();
+		}
+		
+		map<_int, ENGINE::NAVI> pMapNavi;
+
 		iNaviNumb = 0;
 		DWORD dwByte = 0;
 		DWORD dwBuff = 0;
 		_tchar szBuff[MAX_STR] = L"";
 
-		ENGINE::LINE_3D pLine;
+		ENGINE::NAVI tNavi;
+
+		_int iCnt;
+
+		ReadFile(hFile, &iCnt, sizeof(_int), &dwByte, nullptr);
 
 		while (true)
 		{
-
-			ReadFile(hFile, &pLine.vLine_X[0], sizeof(_vec3), &dwByte, nullptr);
-			ReadFile(hFile, &pLine.vLine_X[1], sizeof(_vec3), &dwByte, nullptr);
-
-			ReadFile(hFile, &pLine.vLine_Y[0], sizeof(_vec3), &dwByte, nullptr);
-			ReadFile(hFile, &pLine.vLine_Y[1], sizeof(_vec3), &dwByte, nullptr);
-
-			ReadFile(hFile, &pLine.vLine_Z[0], sizeof(_vec3), &dwByte, nullptr);
-			ReadFile(hFile, &pLine.vLine_Z[1], sizeof(_vec3), &dwByte, nullptr);
+			ReadFile(hFile, &tNavi.Index, sizeof(_ulong), &dwByte, nullptr);
+			ReadFile(hFile, &tNavi.vPointA, sizeof(_vec3), &dwByte, nullptr);
+			ReadFile(hFile, &tNavi.vPointB, sizeof(_vec3), &dwByte, nullptr);
+			ReadFile(hFile, &tNavi.vPointC, sizeof(_vec3), &dwByte, nullptr);
 
 			if (dwByte == 0)
 				break;
 
-			pNavi->Get_MapLine().emplace(iNaviNumb, pLine);
-			pNavi->Load_NaviList(pLine, iNaviNumb);
-			++iNaviNumb;
-
+			pNavi->Get_MapNavi().emplace(tNavi.Index, tNavi);
+			Insert_Navi(tNavi.Index);
+			CValueMgr::iNaviCount = tNavi.Index + 1;
 		}
 
 		CloseHandle(hFile);
@@ -512,12 +526,15 @@ void CTabNavi::OnBnClicked_DeleteNavi()
 	CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 	CTotalToolView* pView = dynamic_cast<CTotalToolView*>(pMain->Get_MainWnd().GetPane(0, 0));
 	CToolRender* pRender = dynamic_cast<CToolRender*>(pView->m_pToolRender);
-	CMouseCtn* pNavi = dynamic_cast<CMouseCtn*>(pRender->Get_RenderList(L"MouseCtn").front());
+	CNaviMaker* pNavi = dynamic_cast<CNaviMaker*>(pRender->Get_RenderList(L"NaviMaker").front());
 
 	UpdateData(TRUE);
 
 	hLevel2 = m_TreeList.GetNextItem(NULL, TVGN_CARET);
 	hLevel1 = m_TreeList.GetNextItem(hLevel2, TVGN_PARENT);
+
+	if (hLevel2 == nullptr)
+		return;
 
 	if (hLevel1 != nullptr)
 	{
@@ -526,6 +543,7 @@ void CTabNavi::OnBnClicked_DeleteNavi()
 
 		iNaviNum = _wtoi(strTmp.GetString());
 		iTriNum = _wtoi(strTmp1.GetString());
+		pNavi->Delete_MapNavi(iNaviNum, iTriNum);
 		m_TreeList.DeleteItem(hLevel1);
 	}
 	else
@@ -533,10 +551,11 @@ void CTabNavi::OnBnClicked_DeleteNavi()
 		CString strTmp = m_TreeList.GetItemText(hLevel2);
 		iNaviNum = _wtoi(strTmp.GetString());
 		iTriNum = 0;
+		pNavi->Delete_MapNavi(iNaviNum, iTriNum);
 		m_TreeList.DeleteItem(hLevel2);
 	}
 	
-	pNavi->Delete_TabNavi(iNaviNum, iTriNum);
+
 
 	UpdateData(FALSE);
 }

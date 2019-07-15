@@ -71,6 +71,9 @@
     <Filter Include="01.Clinet\02.Scene\09.TestStage\03.Shade">
       <UniqueIdentifier>{1c86a84f-5d2d-466d-91ad-02b609217f51}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.SubApp\03.StaticObj">
+      <UniqueIdentifier>{08105519-8d40-4435-bac1-a3da6499a17c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clinet.h">
@@ -142,6 +145,9 @@
     <ClInclude Include="..\Codes\Shade.h">
       <Filter>01.Clinet\02.Scene\09.TestStage\03.Shade</Filter>
     </ClInclude>
+    <ClInclude Include="..\Codes\StaticObj.h">
+      <Filter>02.SubApp\03.StaticObj</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -191,6 +197,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Shade.cpp">
       <Filter>01.Clinet\02.Scene\09.TestStage\03.Shade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\StaticObj.cpp">
+      <Filter>02.SubApp\03.StaticObj</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

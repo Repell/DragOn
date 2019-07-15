@@ -85,6 +85,11 @@ HRESULT CStaticMesh::Ready_Meshes(const _tchar * pFilePath, const _tchar * pFile
 			break;
 		}
 	}
+
+	m_dwStride = D3DXGetFVFVertexSize(dwFVF);
+
+	for (_ulong i = 0; i < m_dwNumVtx; ++i)
+		m_pVtxPos[i] = *((_vec3*)(((_ubyte*)pVertex) + (m_dwStride * i + byOffSet)));
 	
 
 	m_pMesh->UnlockVertexBuffer();

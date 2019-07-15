@@ -24,7 +24,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	_int Insert_Navi();
+	void Insert_Navi(_int idx);
 	void Update_Transform();
 
 public:	//func

@@ -24,6 +24,9 @@ public:
 	_uint		Loading_ForStage();
 	_uint		Load_DefaultResource();
 
+private:
+	HRESULT LoadForTerrainDat();
+
 public:
 	static _uint CALLBACK Thread_Main(void* pArg);
 

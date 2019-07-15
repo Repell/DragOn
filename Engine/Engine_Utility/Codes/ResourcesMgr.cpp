@@ -114,7 +114,7 @@ HRESULT CResourcesMgr::Ready_Meshes(LPDIRECT3DDEVICE9 pGraphicDev, const _ushort
 		pResource = CDynamicMesh::Create(pGraphicDev, pFilePath, pFileName);
 		break;
 	case MESH_NAVI:
-		pResource = CNaviMesh::Create(pGraphicDev);
+		pResource = CNaviMesh::Create(pGraphicDev, pFilePath, pFileName);
 		break;
 	}
 	

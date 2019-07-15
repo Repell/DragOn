@@ -13,6 +13,7 @@ CMouseCtn::CMouseCtn(LPDIRECT3DDEVICE9 pGraphicDev)
 	m_pCollMouse(nullptr), m_pVtxOrigin(nullptr), m_pVtxCopy(nullptr),
 	bMakeLine(FALSE), wCount(0)
 {
+	ZeroMemory(&m_tNavi, sizeof(ENGINE::NAVI));
 	m_pSprite->AddRef();
 	m_pLine->AddRef();
 }
@@ -25,7 +26,7 @@ CMouseCtn::~CMouseCtn()
 HRESULT CMouseCtn::Ready_Object()
 {
 	Add_Component();
-
+	
 	return S_OK;
 }
 
@@ -129,7 +130,7 @@ void CMouseCtn::Insert_TabNavi()
 	if (m_MapNavi.empty())
 		return;
 
-	m_iCurNavi = pForm->m_pTabNavi.Insert_Navi();
+	//m_iCurNavi = pForm->m_pTabNavi.Insert_Navi();
 
 }
 

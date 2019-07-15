@@ -22,7 +22,7 @@ HRESULT CPlayer::Ready_Object()
 
 	m_pMesh->Set_AnimationSet(57);
 
-	m_pNaviMesh->Set_CurrentIdx(0);
+	m_pNaviMesh->Set_CurrentIdx(3);
 
 	m_pTransform->m_vAngle.y = 0.f;
 
@@ -32,7 +32,7 @@ HRESULT CPlayer::Ready_Object()
 HRESULT CPlayer::Late_Init()
 {
 	m_pTransform->m_vScale = { 0.01f, 0.01f, 0.01f };
-	m_pTransform->m_vInfo[ENGINE::INFO_POS] = { 0.1f, 0.1f, 0.1f };
+	m_pTransform->m_vInfo[ENGINE::INFO_POS] = { 1.f, 0.1f, 1.f };
 
 	return S_OK;
 }
@@ -45,7 +45,7 @@ _int CPlayer::Update_Object(const _float & fTimeDelta)
 	if (m_pTransform->bCamTarget)
 	{
 		if (Key_check(fTimeDelta))
-			m_pMesh->Set_AnimationSet(0);
+			m_pMesh->Set_AnimationSet(55);
 	}
 		//Key_Old(fTimeDelta);
 
@@ -263,6 +263,12 @@ HRESULT CPlayer::Add_Component()
 	pComponent = m_pNaviMesh = dynamic_cast<ENGINE::CNaviMesh*>
 		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Mesh_Navi"));
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_NaviMesh", pComponent);
+
+	////Collider
+	//pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev,
+	//	m_pMesh->Get_VtxMeshPos(), m_pMesh->Get_NumVtx(), m_pMesh->Get_Stride());
+	//NULL_CHECK_RETURN(pComponent, E_FAIL);
+	//m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider", pComponent);
 
 	////////////////////////////
 	return S_OK;

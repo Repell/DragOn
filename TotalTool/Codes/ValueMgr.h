@@ -33,6 +33,8 @@ public:
 
 	static WORD wSizeX;
 	static WORD wSizeZ;
+
+	static _int iNaviCount;
 };
 
 #endif // !__VALUEMGR_H__

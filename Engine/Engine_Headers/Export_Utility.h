@@ -5,6 +5,7 @@
 #include "Management.h"
 #include "Renderer.h"
 #include "Transform.h"
+#include "Collider.h"
 #include "Calculator.h"
 #include "ProtoTypeMgr.h"
 

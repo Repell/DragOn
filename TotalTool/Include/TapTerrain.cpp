@@ -11,6 +11,7 @@
 #include "ToolRender.h"
 #include "Terrain.h"
 #include "MouseCtn.h"
+#include "NaviMaker.h"
 
 // CTapTerrain 대화 상자입니다.
 
@@ -708,7 +709,7 @@ void CTapTerrain::OnBnClicked_LoadTerrain()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	UpdateData(TRUE);
 
-	CFileDialog Dlg(TRUE, L"dat", L"*.dat", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+	CFileDialog Dlg(TRUE, L"dat", L"*.dat", OFN_HIDEREADONLY | OFN_READONLY,
 		L"Data Files(*.dat)|*.dat||", this);
 
 	TCHAR szPath[MAX_STR] = L"";
@@ -725,6 +726,7 @@ void CTapTerrain::OnBnClicked_LoadTerrain()
 	if (Dlg.DoModal() == IDOK)
 	{
 		CString strFileName = Dlg.GetPathName();
+		strFileName = CFileInfo::ConvertRelativePath(strFileName);
 
 		HANDLE hFile = CreateFile(strFileName.GetString(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 
@@ -758,7 +760,7 @@ void CTapTerrain::OnBnClicked_LoadTerrain()
 		CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 		CTotalToolView* pView = dynamic_cast<CTotalToolView*>(pMain->Get_MainWnd().GetPane(0, 0));
 		list<ENGINE::CGameObject*>& pList = pView->m_pToolRender->Get_RenderList(L"Terrain");
-		list<ENGINE::CGameObject*>& pList2 = pView->m_pToolRender->Get_RenderList(L"MouseCtn");
+		list<ENGINE::CGameObject*>& pList2 = pView->m_pToolRender->Get_RenderList(L"NaviMaker");
 
 		CTerrain* pTerrain = dynamic_cast<CTerrain*>(pList.front());
 		pTerrain->Release_Buffer();
@@ -777,8 +779,8 @@ void CTapTerrain::OnBnClicked_LoadTerrain()
 		HRESULT hr = pTerrain->Set_Texture(strKey, m_iTex);
 		pTerrain->Set_Transform(vPos, vRot);
 		
-		CMouseCtn* pMouse = dynamic_cast<CMouseCtn*>(pList2.front());
-		pMouse->Make_TerrainVertex(m_uSizeX, m_uSizeZ);
+		CNaviMaker* pNavi = dynamic_cast<CNaviMaker*>(pList2.front());
+		pNavi->Make_TerrainVertex(m_uSizeX, m_uSizeZ);
 
 
 		ENGINE::Safe_Delete_Array(szKey);

@@ -24,7 +24,7 @@ CDynamicMesh::~CDynamicMesh()
 
 HRESULT CDynamicMesh::Ready_Meshes(const _tchar * pFilePath, const _tchar * pFileName)
 {
-	_tchar szFullPath[512] = L"";
+	_tchar szFullPath[MAX_STR] = L"";
 
 	lstrcpy(szFullPath, pFilePath);
 	lstrcat(szFullPath, pFileName);
@@ -47,7 +47,6 @@ HRESULT CDynamicMesh::Ready_Meshes(const _tchar * pFilePath, const _tchar * pFil
 	NULL_CHECK_RETURN(m_pAniCon, E_FAIL);
 
 	Safe_Release(pAniCon);
-
 
 	_matrix matTemp;
 	Update_FrameMatrix((D3DXFRAME_DERIVED*)m_pRootFrame, D3DXMatrixIdentity(&matTemp));

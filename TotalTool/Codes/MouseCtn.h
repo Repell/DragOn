@@ -51,6 +51,7 @@ private:
 
 private:
 	ENGINE::LINE_3D m_tLine;
+	ENGINE::NAVI		m_tNavi;
 	
 	_ulong wCount;
 

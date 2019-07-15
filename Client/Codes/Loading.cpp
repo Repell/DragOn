@@ -33,8 +33,8 @@ _uint CLoading::Loading_ForLogo()
 		RESOURCE_LOGO,
 		L"Mesh_Player",
 		ENGINE::MESH_DYNAMIC,
-		L"../Bin/Resources/Mesh/DynamicMesh/Player_Sword/",
-		L"Player_Sword.X"),
+		L"../Bin/Resources/Mesh/DynamicMesh/PlayerXfile/",
+		L"Player.X"),
 		E_FAIL);
 
 	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
@@ -47,8 +47,16 @@ _uint CLoading::Loading_ForLogo()
 
 	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
 		RESOURCE_LOGO,
+		L"Mesh_3D_BG",
+		ENGINE::MESH_STATIC,
+		L"../Bin/Resources/Mesh/StaticMesh/BG/",
+		L"3D_BG.X"),
+		E_FAIL);
+
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
 		L"Mesh_Navi",
-		ENGINE::MESH_NAVI, NULL, NULL),
+		ENGINE::MESH_NAVI, L"../../Data/",L"Line.dat"),
 		E_FAIL);
 
 	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
@@ -131,8 +139,10 @@ _uint CLoading::Load_DefaultResource()
 	FAILED_CHECK_RETURN(ENGINE::Ready_Buffers(m_pGraphicDev,
 		RESOURCE_PRELOAD, L"Buffer_SkyBox", ENGINE::BUFFER_SKYBOX), E_FAIL);
 
-	FAILED_CHECK_RETURN(ENGINE::Ready_Buffers(m_pGraphicDev,
-		RESOURCE_PRELOAD, L"Buffer_Terrain", ENGINE::BUFFER_TERRAINTEX, TERRAIN_VTX_X, TERRAIN_VTX_Z, TERRAIN_INTRV, 20), E_FAIL);
+	LoadForTerrainDat();
+	//FAILED_CHECK_RETURN(ENGINE::Ready_Buffers(m_pGraphicDev,
+	//	RESOURCE_PRELOAD, L"Buffer_Terrain", ENGINE::BUFFER_TERRAINTEX, TERRAIN_VTX_X, TERRAIN_VTX_Z, TERRAIN_INTRV, 20), E_FAIL);
+
 
 	lstrcpy(m_szLoading, L" [ Texture Loading ]");///////////////////////////////////
 
@@ -150,6 +160,41 @@ _uint CLoading::Load_DefaultResource()
 	m_bFisihed = TRUE;
 
 	return 0;
+}
+
+HRESULT CLoading::LoadForTerrainDat()
+{
+	HANDLE hFile = CreateFile(L"../../Data/Terrain.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		ERR_BOX("Load Terrain Dat Failed!");
+		return E_FAIL;
+	}
+
+	DWORD dwByte = 0;
+	DWORD dwBuff = 0;
+	TCHAR* szKey = nullptr;
+	_vec3 vPos, vRot;
+	_uint iTex = 0;
+
+	WORD iSizeX, iSizeZ, iInterval, iDetail;
+
+	ReadFile(hFile, &dwBuff, sizeof(DWORD), &dwByte, nullptr);
+	szKey = new TCHAR[dwBuff];
+	ReadFile(hFile, szKey, sizeof(TCHAR) * dwBuff, &dwByte, nullptr);
+
+	ReadFile(hFile, &iSizeX, sizeof(WORD), &dwByte, nullptr);
+	ReadFile(hFile, &iSizeZ, sizeof(WORD), &dwByte, nullptr);
+	ReadFile(hFile, &iInterval, sizeof(WORD), &dwByte, nullptr);
+	ReadFile(hFile, &iDetail, sizeof(WORD), &dwByte, nullptr);
+	ReadFile(hFile, &vPos, sizeof(_vec3), &dwByte, nullptr);
+	ReadFile(hFile, &vRot, sizeof(_vec3), &dwByte, nullptr);
+	ReadFile(hFile, &iTex, sizeof(_uint), &dwByte, nullptr);
+
+	FAILED_CHECK_RETURN(ENGINE::Ready_Buffers(m_pGraphicDev,
+		RESOURCE_PRELOAD, L"Buffer_Terrain", ENGINE::BUFFER_TERRAINTEX, iSizeX, iSizeZ, iInterval, iDetail), E_FAIL);
+
 }
 
 _uint CALLBACK CLoading::Thread_Main(void * pArg)

@@ -161,7 +161,7 @@ HRESULT CToolRender::Ready_Resources(LPDIRECT3DDEVICE9 pGraphicDev, RESOURCED eI
 	FAILED_CHECK_RETURN(ENGINE::Ready_Texture(pGraphicDev, RESOURCE_TOOL, L"Texture_SkyBox", ENGINE::TEX_CUBE,
 		L"../../Client/Bin/Resources/Texture/SkyBox/SkyBox%d.dds"), E_FAIL);
 
-	FAILED_CHECK_RETURN(ENGINE::Ready_Texture(pGraphicDev, RESOURCE_TOOL, L"Texture_ColorRect", ENGINE::TEX_CUBE,
+	FAILED_CHECK_RETURN(ENGINE::Ready_Texture(pGraphicDev, RESOURCE_TOOL, L"Texture_ColorRect", ENGINE::TEX_NORMAL,
 		L"../../Client/Bin/Resources/Texture/NaviMesh/ColorRect.png"), E_FAIL);
 
 
@@ -203,11 +203,19 @@ HRESULT CToolRender::Ready_GameObject()
 	pTempList.clear();
 
 	//MouseCtn
-	pObject = CMouseCtn::Create(m_pDevice);
+	//pObject = CMouseCtn::Create(m_pDevice);
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+
+	//pTempList.emplace_back(pObject);
+	//m_mapRender.emplace(L"MouseCtn", pTempList);
+	//pTempList.clear();
+
+	//NaviMaker
+	pObject = CNaviMaker::Create(m_pDevice);
 	NULL_CHECK_RETURN(pObject, E_FAIL);
 
 	pTempList.emplace_back(pObject);
-	m_mapRender.emplace(L"MouseCtn", pTempList);
+	m_mapRender.emplace(L"NaviMaker", pTempList);
 	pTempList.clear();
 
 	////Mesh Object

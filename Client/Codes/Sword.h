@@ -9,6 +9,7 @@ namespace ENGINE
 	class CStaticMesh;
 	class CTransform;
 	class CGameObject;
+	class CCollider;
 }
 
 class CSword : public ENGINE::CGameObject
@@ -35,12 +36,14 @@ private:
 	ENGINE::CRenderer* m_pRenderer;
 	ENGINE::CStaticMesh* m_pMesh;
 	ENGINE::CTransform*	m_pTransform;
+	ENGINE::CCollider*			m_pCollider;
 
 private:
 	_vec3				m_vDir;
 	_uint				m_iFlag;
 	const _matrix*		m_pParentBoneMatrix;
 	const _matrix*		m_pParentWorldMatrix;
+	_matrix matWorld;
 
 public:
 	static CSword* Create(LPDIRECT3DDEVICE9 pGraphicDev, const _uint& iFlag);

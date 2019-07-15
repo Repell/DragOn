@@ -6,6 +6,7 @@
 #include "DynamicCamera.h"
 #include "Terrain.h"
 #include "MouseCtn.h"
+#include "NaviMaker.h"
 
 #include "MainFrm.h"
 #include "MyForm.h"

@@ -26,6 +26,8 @@ _int CValueMgr::iCurIndex = 0;
 WORD CValueMgr::wSizeX = TERRAIN_VTX_X;
 WORD CValueMgr::wSizeZ = TERRAIN_VTX_Z;
 
+_int CValueMgr::iNaviCount = 0;
+
 CValueMgr::CValueMgr()
 {
 }

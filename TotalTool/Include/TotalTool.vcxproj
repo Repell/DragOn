@@ -210,6 +210,7 @@
     <ClInclude Include="..\Codes\DynamicCamera.h" />
     <ClInclude Include="..\Codes\FileInfo.h" />
     <ClInclude Include="..\Codes\MouseCtn.h" />
+    <ClInclude Include="..\Codes\NaviMaker.h" />
     <ClInclude Include="..\Codes\Terrain.h" />
     <ClInclude Include="..\Codes\TestObj.h" />
     <ClInclude Include="..\Codes\ToolRender.h" />
@@ -237,6 +238,7 @@
     <ClCompile Include="..\Codes\DynamicCamera.cpp" />
     <ClCompile Include="..\Codes\FileInfo.cpp" />
     <ClCompile Include="..\Codes\MouseCtn.cpp" />
+    <ClCompile Include="..\Codes\NaviMaker.cpp" />
     <ClCompile Include="..\Codes\Terrain.cpp" />
     <ClCompile Include="..\Codes\TestObj.cpp" />
     <ClCompile Include="..\Codes\ToolRender.cpp" />

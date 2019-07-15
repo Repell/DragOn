@@ -30,7 +30,6 @@ HRESULT CSword::Ready_Object(const _uint& iFlag)
 HRESULT CSword::Late_Init()
 {
 
-	//m_pTransform->m_vInfo[ENGINE::INFO_POS] = { 4.f, 2.f, 4.f };
 
 	return S_OK;
 }
@@ -59,28 +58,30 @@ _int CSword::Update_Object(const _float & fTimeDelta)
 
 		m_pParentWorldMatrix = &(pTrans->m_matWorld);
 	}
-
-
+	
 	ENGINE::CGameObject::Update_Object(fTimeDelta);
-
-	//m_pMesh->Play_AnimationSet(fTimeDelta);
 
 	m_pTransform->Set_ParentMatrix(&(*m_pParentBoneMatrix * *m_pParentWorldMatrix));
 	
-	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_NONALPHA, this);
+	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_ALPHA, this);
 	return NO_EVENT;
 }
 
 void CSword::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
+	
 }
 
 void CSword::Render_Object()
 {
 	//Render_Set();
+
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
+
 	m_pMesh->Render_Meshes();
+
+	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pTransform->m_matWorld);
 
 	//Render_ReSet();
 }
@@ -128,6 +129,11 @@ HRESULT CSword::Add_Component()
 	pComponent->AddRef();
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Renderer", pComponent);
+
+	pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev,
+		m_pMesh->Get_VtxMeshPos(), m_pMesh->Get_NumVtx(), m_pMesh->Get_Stride());
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider", pComponent);
 
 	////////////////////////////
 	return S_OK;

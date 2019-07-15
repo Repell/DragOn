@@ -11,6 +11,7 @@ namespace ENGINE
 	class CTransform;
 	class CGameObject;
 	class CNaviMesh;
+	class CCollider;
 }
 
 class CPlayer : public ENGINE::CGameObject
@@ -48,6 +49,7 @@ private:
 	ENGINE::CDynamicMesh* m_pMesh;
 	ENGINE::CTransform*	m_pTransform;
 	ENGINE::CNaviMesh*		m_pNaviMesh;
+	//ENGINE::CCollider*			m_pCollider;
 
 public:
 	static CPlayer* Create(LPDIRECT3DDEVICE9 pGraphicDev);

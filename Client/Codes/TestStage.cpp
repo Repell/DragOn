@@ -56,6 +56,8 @@ HRESULT CTestStage::Add_Environment_Layer()
 	NULL_CHECK_RETURN(pObject, E_FAIL);
 	pObject_Layer->Add_GameObject(L"Terrain_SkyBox", pObject);
 
+	LoadForStaticDat(pObject_Layer);
+
 	//////////////INSERT LAYER//////////////
 	m_MapLayer.emplace(ENGINE::CLayer::ENVIRONMENT, pObject_Layer);
 
@@ -138,6 +140,60 @@ void CTestStage::Create_Light()
 
 	m_pGraphicDev->SetLight(0, &DirLight);
 	m_pGraphicDev->LightEnable(0, TRUE);
+
+}
+
+void CTestStage::LoadForStaticDat(ENGINE::CLayer* pLayer)
+{
+	ENGINE::CGameObject* pObject = nullptr;
+
+	HANDLE hFile = CreateFile(L"../../Data/Static.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		ERR_BOX("Load Static Dat");
+		return;
+	}
+
+	DWORD dwByte = 0;
+	DWORD dwBuff = 0;
+	TCHAR* szKey = nullptr;
+
+
+	while (true)	//static
+	{
+		ENGINE::MESH_INFO pMesh;
+
+		ReadFile(hFile, &pMesh.iUnitType, sizeof(_int), &dwByte, nullptr);
+		ReadFile(hFile, &pMesh.wMeshType, sizeof(_ushort), &dwByte, nullptr);
+
+		//Mesh_Tag
+		ReadFile(hFile, &dwBuff, sizeof(DWORD), &dwByte, nullptr);
+		szKey = new TCHAR[dwBuff];
+		ReadFile(hFile, szKey, sizeof(TCHAR) * dwBuff, &dwByte, nullptr);
+		pMesh.pMeshTag = szKey;
+		ENGINE::Safe_Delete_Array(szKey);
+
+		//FileName
+		ReadFile(hFile, &dwBuff, sizeof(DWORD), &dwByte, nullptr);
+		szKey = new TCHAR[dwBuff];
+		ReadFile(hFile, szKey, sizeof(TCHAR) * dwBuff, &dwByte, nullptr);
+		pMesh.pFileName = szKey;
+		ENGINE::Safe_Delete_Array(szKey);
+
+		//Pos, Rot, Scale
+		_vec3 vTransform[3];
+		ReadFile(hFile, &vTransform[0], sizeof(_vec3), &dwByte, nullptr);
+		ReadFile(hFile, &vTransform[1], sizeof(_vec3), &dwByte, nullptr);
+		ReadFile(hFile, &vTransform[2], sizeof(_vec3), &dwByte, nullptr);
+
+		if (dwByte == 0)
+			break;
+
+		pObject = CStaticObj::Create_MeshObject(m_pGraphicDev, pMesh.pMeshTag, vTransform);
+		NULL_CHECK_RETURN(pObject);
+		pLayer->Add_GameObject(pMesh.pMeshTag, pObject);
+	}
 
 }
 

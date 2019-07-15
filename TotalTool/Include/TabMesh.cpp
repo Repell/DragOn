@@ -1297,6 +1297,7 @@ void CTabMesh::OnBnClicked_LoadMesh()	//Static
 	if (Dlg.DoModal() == IDOK)
 	{
 		CString strFileName = Dlg.GetPathName();
+		strFileName = CFileInfo::ConvertRelativePath(strFileName);
 
 		HANDLE hFile = CreateFile(strFileName.GetString(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 
@@ -1328,12 +1329,14 @@ void CTabMesh::OnBnClicked_LoadMesh()	//Static
 
 			//ReadFile(hFile, &mInfo.wContainerIdx, sizeof(_ushort), &dwByte, nullptr);
 
+			//Mesh_Tag
 			ReadFile(hFile, &dwBuff, sizeof(DWORD), &dwByte, nullptr);
 			szKey = new TCHAR[dwBuff];
 			ReadFile(hFile, szKey, sizeof(TCHAR) * dwBuff, &dwByte, nullptr);
 			pMesh.pMeshTag = szKey;
 			ENGINE::Safe_Delete_Array(szKey);
 
+			//FileName
 			ReadFile(hFile, &dwBuff, sizeof(DWORD), &dwByte, nullptr);
 			szKey = new TCHAR[dwBuff];
 			ReadFile(hFile, szKey, sizeof(TCHAR) * dwBuff, &dwByte, nullptr);
@@ -1342,25 +1345,14 @@ void CTabMesh::OnBnClicked_LoadMesh()	//Static
 
 			_vec3 vTransform[3];
 
+			//Pos, Rot, Scale
 			ReadFile(hFile, &vTransform[0], sizeof(_vec3), &dwByte, nullptr);
 			ReadFile(hFile, &vTransform[1], sizeof(_vec3), &dwByte, nullptr);
 			ReadFile(hFile, &vTransform[2], sizeof(_vec3), &dwByte, nullptr);
 
-
-			//m_strPosX.Format(_T("%5.3f"), vTransform[0].x);
-			//m_strPosY.Format(_T("%5.3f"), vTransform[0].y);
-			//m_strPosZ.Format(_T("%5.3f"), vTransform[0].z);
-			//m_strRotX.Format(_T("%5.3f"), vTransform[1].x);
-			//m_strRotY.Format(_T("%5.3f"), vTransform[1].y);
-			//m_strRotZ.Format(_T("%5.3f"), vTransform[1].z);
-			//m_strScaleX.Format(_T("%5.3f"), vTransform[2].x);
-			//m_strScaleY.Format(_T("%5.3f"), vTransform[2].y);
-			//m_strScaleZ.Format(_T("%5.3f"), vTransform[2].z);
-
-
 			if (dwByte == 0)
 				break;
-			
+		
 			m_staticBox.AddString(pMesh.pFileName.c_str());
 			CValueMgr::bMeshState = FALSE;
 

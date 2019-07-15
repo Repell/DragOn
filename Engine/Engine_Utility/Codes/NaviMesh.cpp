@@ -22,9 +22,11 @@ CNaviMesh::~CNaviMesh()
 {
 }
 
-HRESULT CNaviMesh::Ready_NaviMesh()
+HRESULT CNaviMesh::Ready_NaviMesh(wstring strPath, wstring strName)
 {
-	Load_NaviMesh(64);
+
+	//	Load_NaviMesh(64);		//Test
+	LoadforLineDat(strPath, strName);
 	
 	FAILED_CHECK_RETURN(Link_Cell(), E_FAIL);
 
@@ -83,6 +85,46 @@ HRESULT CNaviMesh::Load_NaviMesh(_int iMax)
 	return S_OK;
 }
 
+HRESULT CNaviMesh::LoadforLineDat(wstring strPath, wstring strName)
+{
+	wstring FullPath = strPath + strName;
+
+	HANDLE hFile = CreateFile(FullPath.c_str(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+	{
+		ERR_BOX("Load NaviMash Failed!");
+		return E_FAIL;
+	}
+	
+	CCell* pCell = nullptr;
+	DWORD dwByte = 0;
+	_int iSize = 0;
+	ENGINE::NAVI tNavi;
+
+	ReadFile(hFile, &iSize, sizeof(_int), &dwByte, nullptr);
+	
+	m_vecCell.reserve(iSize);
+
+	while (true)
+	{
+		ReadFile(hFile, &tNavi.Index, sizeof(_ulong), &dwByte, nullptr);
+		ReadFile(hFile, &tNavi.vPointA, sizeof(_vec3), &dwByte, nullptr);
+		ReadFile(hFile, &tNavi.vPointB, sizeof(_vec3), &dwByte, nullptr);
+		ReadFile(hFile, &tNavi.vPointC, sizeof(_vec3), &dwByte, nullptr);
+
+		if (dwByte == 0)
+			break;
+
+		pCell = CCell::Create(m_pGraphicDev, m_vecCell.size(), &tNavi.vPointA, &tNavi.vPointB, &tNavi.vPointC);
+		NULL_CHECK_RETURN(pCell, E_FAIL);
+		m_vecCell.emplace_back(pCell);
+
+	}
+	
+	return S_OK;
+}
+
 HRESULT CNaviMesh::Link_Cell()
 {
 	for (_ulong i = 0; i < m_vecCell.size(); ++i)
@@ -137,11 +179,11 @@ _float CNaviMesh::Compute_OnTerrain(const _vec3 * pPos, _ulong * pCellIndex)
 	return (-d3Plane.a * pPos->x - d3Plane.c * pPos->z - d3Plane.d) / d3Plane.b;
 }
 
-CNaviMesh * CNaviMesh::Create(LPDIRECT3DDEVICE9 pDevice)
+CNaviMesh * CNaviMesh::Create(LPDIRECT3DDEVICE9 pDevice, wstring strPath, wstring strName)
 {
 	CNaviMesh*		pInstance = new CNaviMesh(pDevice);
 
-	if (FAILED(pInstance->Ready_NaviMesh()))
+	if (FAILED(pInstance->Ready_NaviMesh(strPath, strName)))
 		Safe_Release(pInstance);
 
 	return pInstance;
