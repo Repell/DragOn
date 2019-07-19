@@ -28,6 +28,9 @@ private:
 	HRESULT Add_Component();
 	void Render_Font(const _vec2* pPos);
 	_vec2 MousePos(const _vec2* pMice);
+
+public:
+	void Render_Test();
 	
 public:
 	void Insert_TabNavi();

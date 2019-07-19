@@ -13,17 +13,17 @@ class ENGINE_DLL CTimeMgr
 
 private:
  	explicit CTimeMgr();
-	~CTimeMgr();
+	virtual ~CTimeMgr();
 
 public:
-	const float& Get_DeltaTime();
+	const _double& Get_DeltaTime();
 
 public:
 	void Init_Time();
 	void Update_Time();
 
 private:
-	float m_fDeltaTime; //시간 / fps   = 수행시간
+	_double m_DeltaTime; //시간 / fps   = 수행시간
 
 	LARGE_INTEGER m_OldTime;		//측정 시작 시간(Time)
 	LARGE_INTEGER m_CurTime;		//측정 후 지나간 시간(Time)

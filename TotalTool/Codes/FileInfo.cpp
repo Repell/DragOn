@@ -40,7 +40,7 @@ void CFileInfo::DirInfoExtract(const wstring & strFullPath, map<wstring, ENGINE:
 	wstring filePath = strFullPath + L"/*.*";		//경로 내 파일 지정(*.* == 경로 내 파일 전부)
 
 	//검색결과 파일이나 폴더가 있으면 TRUE 반환
-	bool bWorking = finder.FindFile(filePath.c_str());
+	BOOL bWorking = finder.FindFile(filePath.c_str());
 
 	while (bWorking)
 	{
@@ -134,7 +134,7 @@ int CFileInfo::DirFileCount(const wstring & strFullPath)
 
 	wstring strFind = strFullPath + L"\\*.*";
 
-	bool bWorking = finder.FindFile(strFind.c_str());
+	BOOL bWorking = finder.FindFile(strFind.c_str());
 	while (bWorking)
 	{
 		bWorking = finder.FindNextFile();

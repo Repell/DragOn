@@ -10,7 +10,7 @@ HRESULT Ready_GraphicDev(HWND hWnd, CGraphicDev::WINMODE eMode, const _uint& iSi
 	return CGraphicDev::Get_Instance()->Ready_GraphicDev(hWnd, eMode, iSizeX, iSizeY, ppGraphicDev);
 }
 
-inline const float& Get_DeltaTime()
+inline const _double& Get_DeltaTime()
 {
 	return CTimeMgr::Get_Instance()->Get_DeltaTime();
 }

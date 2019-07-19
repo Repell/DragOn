@@ -34,7 +34,7 @@ HRESULT CGameObject::Ready_Object()
 	return S_OK;
 }
 
-_int CGameObject::Update_Object(const _float& fTimeDelta)
+_int CGameObject::Update_Object(const _double& TimeDelta)
 {
 	for (_uint i = 0; i < COMP_END; ++i)
 	{
@@ -42,7 +42,7 @@ _int CGameObject::Update_Object(const _float& fTimeDelta)
 		MAP_COMPONENT::iterator iter_End = m_MapComponent[i].end();
 
 		for (; iter_Begin != iter_End; ++iter_Begin)
-			iter_Begin->second->Update_Component(fTimeDelta);
+			iter_Begin->second->Update_Component(TimeDelta);
 	}
 
 	return 0;
@@ -77,7 +77,6 @@ void CGameObject::Compute_ViewZ(const _vec3 * pPos)
 
 	m_fViewZ = D3DXVec3Length(&(vCamPos - *pPos));
 }
-
 
 HRESULT CGameObject::Late_Init()
 {

@@ -4,6 +4,7 @@
 #include "MainFrm.h"
 #include "MyForm.h"
 #include "TabNavi.h"
+#include "TabAnimation.h"
 
 #define RADIUS 1.f
 
@@ -26,7 +27,7 @@ CMouseCtn::~CMouseCtn()
 HRESULT CMouseCtn::Ready_Object()
 {
 	Add_Component();
-	
+
 	return S_OK;
 }
 
@@ -61,6 +62,8 @@ void CMouseCtn::Render_Object()
 
 	if (CValueMgr::eTab == 2)
 		Render_Font(&MousePos(&CValueMgr::vRatio));
+
+	Render_Test();
 }
 
 HRESULT CMouseCtn::Add_Component()
@@ -119,6 +122,28 @@ _vec2 CMouseCtn::MousePos(const _vec2* pMice)
 	ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 10.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 
 	return  m_vMousePos;
+}
+
+void CMouseCtn::Render_Test()
+{
+	_tchar szStr[MAX_PATH] = L"";
+
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+	CMyForm* pForm = dynamic_cast<CMyForm*>(pMain->Get_MainWnd().GetPane(0, 1));
+	//CTabAnimation* pAni = dynamic_cast<CTabAnimation*>(pForm->m_pTabAnimation);
+	map<wstring, _matrix*>& pMap = pForm->m_pTabAnimation.Get_mapBones();
+
+	if (pMap.empty())
+		return;
+
+	for (auto iter : pMap)
+	{
+		_vec3 vTemp = {};
+		memcpy(vTemp, &iter.second->m[3][0], sizeof(_vec3));
+		swprintf_s(szStr, L" Matrix :: %5.2f , %5.2f, %5.2f", vTemp.x, vTemp.y, vTemp.z);
+		ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 10.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
+	}
+		
 }
 
 void CMouseCtn::Insert_TabNavi()
@@ -458,7 +483,7 @@ void CMouseCtn::Make_NaviMesh()
 					m_LinePos[wCount] = iter_find->second->Get_3DLine().vLine_Z[0];
 					break;
 				}
-				
+
 				m_tLine.Set_LinePos_X(m_LinePos[0], m_LinePos[1]);
 				m_tLine.Set_LinePos_Y(m_LinePos[1], m_LinePos[2]);
 				m_tLine.Set_LinePos_Z(m_LinePos[2], m_LinePos[0]);
@@ -473,7 +498,7 @@ void CMouseCtn::Make_NaviMesh()
 				m_MapLine.emplace(m_iCurNavi, m_tLine);
 				ZeroMemory(&m_tLine, sizeof(ENGINE::LINE_3D));
 				ZeroMemory(m_LinePos, sizeof(_vec3));
-				
+
 				wCount = 0;
 			}
 			else if (m_pCollMouse->PickTerrain(&m_LinePos[wCount], m_pVtxOrigin))

@@ -14,7 +14,7 @@ protected:
 	virtual ~CComponent(void);
 
 public:
-	virtual _int Update_Component(const _float& fTimeDelta) { return 0; };
+	virtual _int Update_Component(const _double& TimeDelta) { return 0; };
 	virtual void Late_Update_Component() {};
 	virtual CComponent* Clone() { return nullptr; }
 

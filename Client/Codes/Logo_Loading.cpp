@@ -3,7 +3,7 @@
 #include "Export_Function.h"
 
 CLogo_Loading::CLogo_Loading(LPDIRECT3DDEVICE9 pDevice)
-	: CGameObject(pDevice), m_fFrame(0.f), m_fMaxFrame(5.f)	//0 ~ 4 / 5~6
+	: CGameObject(pDevice), m_Frame(0.f), m_MaxFrame(5.f)	//0 ~ 4 / 5~6
 	,bLoading(FALSE)
 {
 }
@@ -23,15 +23,15 @@ HRESULT CLogo_Loading::Ready_Object()
 	return S_OK;
 }
 
-_int CLogo_Loading::Update_Object(const _float & fTimeDelta)
+_int CLogo_Loading::Update_Object(const _double& TimeDelta)
 {
 	//ENGINE::CGameObject::Late_Init();
-	ENGINE::CGameObject::Update_Object(fTimeDelta);
+	ENGINE::CGameObject::Update_Object(TimeDelta);
 
 	if (!bLoading)
-		Update_Frame(fTimeDelta);
+		Update_Frame(TimeDelta);
 	else if(bLoading)
-		Update_Frame2(fTimeDelta);
+		Update_Frame2(TimeDelta);
 
 	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_PRIORITY, this);
 
@@ -62,7 +62,7 @@ void CLogo_Loading::Render_Object()
 	
 	//m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 
-	m_pTexture->Set_Texture(pEffect, "g_BaseTexture", m_fFrame);
+	m_pTexture->Set_Texture(pEffect, "g_BaseTexture", m_Frame);
 	////
 	pEffect->Begin(&iPassCnt, 0);
 	pEffect->BeginPass(0);
@@ -118,23 +118,23 @@ HRESULT CLogo_Loading::Ready_LogoLoad(LPDIRECT3DDEVICE9 pGraphicDev, LOADINGID e
 	return S_OK;
 }
 
-void CLogo_Loading::Update_Frame(const _float& fTimeDelta)
+void CLogo_Loading::Update_Frame(const _double& TimeDelta)
 {
-	m_fFrame += m_fMaxFrame * fTimeDelta * 0.25f;
+	m_Frame += m_MaxFrame * TimeDelta * 0.25f;
 	
-	if (m_fFrame >= m_fMaxFrame)
-		m_fFrame = 0.f;
+	if (m_Frame >= m_MaxFrame)
+		m_Frame = 0.f;
 
 }
 
-void CLogo_Loading::Update_Frame2(const _float & fTimeDelta)
+void CLogo_Loading::Update_Frame2(const _double& TimeDelta)
 {
-	m_fMaxFrame = 7.f;
+	m_MaxFrame = 7.f;
 
-	m_fFrame += m_fMaxFrame * fTimeDelta * 0.25f;
+	m_Frame += m_MaxFrame * TimeDelta * 0.25f;
 
-	if (m_fFrame >= m_fMaxFrame)
-		m_fFrame = 5.f;
+	if (m_Frame >= m_MaxFrame)
+		m_Frame = 5.f;
 }
 
 CLogo_Loading * CLogo_Loading::Create(LPDIRECT3DDEVICE9 pDevice)

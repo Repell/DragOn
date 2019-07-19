@@ -20,12 +20,14 @@ public:
 	HRESULT Ready_NaviMesh(wstring strPath = L"", wstring strName = L"");
 	void Render_NaviMesh();
 	_vec3 MoveOn_NaviMesh(const _vec3* pTargetPos, const _vec3* pTargetDir);
+	_float MoveOn_Terrain(const _vec3* pTargetPos, const _vec3* pTargetDir);
 
 private:
 	HRESULT Load_NaviMesh(_int iMax);
 	HRESULT LoadforLineDat(wstring strPath, wstring strName);
 	HRESULT Link_Cell();
 	_float Compute_OnTerrain(const _vec3* pPos, _ulong * pCellIndex);
+	
 	
 private:
 	vector<CCell*> m_vecCell;

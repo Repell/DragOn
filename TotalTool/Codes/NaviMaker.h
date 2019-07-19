@@ -29,7 +29,7 @@ public:
 public:
 	virtual HRESULT Ready_Object();
 	virtual HRESULT Late_Init();
-	virtual _int Update_Object(const _float& fTimeDelta);
+	virtual _int Update_Object(const _double& TimeDelta);
 	virtual void Late_Update_Object();
 	virtual void Render_Object();
 
@@ -41,6 +41,10 @@ private:
 private:
 	void Make_NaviMesh();
 	void Render_Navi();
+
+public:
+	void Render_Bones();
+
 
 private:
 	//Collision Point

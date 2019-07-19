@@ -4,8 +4,9 @@
 #include "MainFrm.h"
 #include "MyForm.h"
 #include "TabNavi.h"
+#include "TabAnimation.h"
 
-#define RADIUS 1.5f
+#define RADIUS 1.f
 
 CNaviMaker::CNaviMaker(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CGameObject(pGraphicDev), m_pSprite(ENGINE::Get_GraphicDev()->Get_Sprite()),
@@ -50,9 +51,7 @@ ENGINE::NAVI CNaviMaker::Get_Navi(_int iNavi)
 
 	if (iter == m_MapNavi.end())
 		return ENGINE::NAVI();
-
-
-
+	
 	return iter->second;
 }
 
@@ -103,14 +102,13 @@ HRESULT CNaviMaker::Ready_Object()
 HRESULT CNaviMaker::Late_Init()
 {
 	Make_TerrainVertex(TERRAIN_VTX_X, TERRAIN_VTX_Z);
-
 	return S_OK;
 }
 
-_int CNaviMaker::Update_Object(const _float& fTimeDelta)
+_int CNaviMaker::Update_Object(const _double& TimeDelta)
 {
 	ENGINE::CGameObject::Late_Init();
-	ENGINE::CGameObject::Update_Object(fTimeDelta);
+	ENGINE::CGameObject::Update_Object(TimeDelta);
 
 	if (CValueMgr::bMakeLine && CValueMgr::eTab == 2)
 		Make_NaviMesh();
@@ -139,8 +137,10 @@ void CNaviMaker::Render_Object()
 {
 	Render_Navi();
 
-	if (CValueMgr::eTab == 2)
+	if (CValueMgr::eTab == 2 && m_pVtxOrigin != nullptr)
 		Render_Font(&MousePos(&CValueMgr::vRatio));
+
+	Render_Bones();
 }
 
 HRESULT CNaviMaker::Add_Component()
@@ -359,6 +359,59 @@ void CNaviMaker::Render_Navi()
 	}
 
 }
+
+void CNaviMaker::Render_Bones()
+{
+	_tchar szStr[MAX_PATH] = L"";
+
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+	CMyForm* pForm = dynamic_cast<CMyForm*>(pMain->Get_MainWnd().GetPane(0, 1));
+	CTotalToolView* pView = dynamic_cast<CTotalToolView*>(pMain->Get_MainWnd().GetPane(0, 0));
+	list<ENGINE::CGameObject*>& pList = pView->m_pToolRender->Get_RenderList(L"Dynamic_AniObject");
+	map<wstring, _matrix*>& pMap = pForm->m_pTabAnimation.Get_mapBones();
+
+
+	if (pMap.empty())
+		return;
+
+	if (pList.front() == nullptr)
+		return;
+
+	CTestObj* pObj = dynamic_cast<CTestObj*>(pList.front());
+
+	//for (auto iter : pMap)
+	//{
+	//	_vec3 vTemp = {};
+	//	memcpy(vTemp, &iter.second->m[3][0], sizeof(_vec3));
+	//	swprintf_s(szStr, L" Matrix :: %5.2f , %5.2f, %5.2f", vTemp.x, vTemp.y, vTemp.z);
+	//	ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 10.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
+	//}
+
+	if (!CValueMgr::bVisibleBone)
+		return;
+
+	for (auto iter : pMap)
+	{
+		D3DVIEWPORT9 viewPort;
+		m_pGraphicDev->GetViewport(&viewPort);
+
+		_vec3 vTemp = {};
+		memcpy(vTemp, &iter.second->m[3][0], sizeof(_vec3));
+		swprintf_s(szStr, L"  :: %5.2f , %5.2f, %5.2f", vTemp.x, vTemp.y, vTemp.z);
+		CString pp = szStr;
+		CString pStr = iter.first.c_str() + pp;
+
+		_vec3	vPos;
+		D3DXVec3Project(&vPos, &vTemp, &viewPort, &CValueMgr::matProj, &CValueMgr::matView, &pObj->m_matWorld);
+		ENGINE::Render_Font(L"Sp", pStr, &_vec2(vPos.x, vPos.y), D3DXCOLOR(1.f, 0.f, 0.f, 1.f));
+
+	}
+
+
+}
+
+
+
 
 _bool CNaviMaker::Coll_NaviPoint()
 {

@@ -12,6 +12,12 @@ CSword::CSword(LPDIRECT3DDEVICE9 pDevice)
 
 CSword::~CSword()
 {
+
+}
+
+void CSword::Set_bAttack(_bool bState)
+{
+	bAttack = bState;
 }
 
 HRESULT CSword::Ready_Object(const _uint& iFlag)
@@ -20,9 +26,10 @@ HRESULT CSword::Ready_Object(const _uint& iFlag)
 
 	//m_pMesh->Set_AnimationSet(57);
 	m_iFlag = iFlag;
+	bAttack = FALSE;
 	m_pTransform->m_vScale = { 1.f, 1.f, 1.f };
-
 	m_pTransform->m_vAngle.x = 90.f;
+	m_pCollider->Set_Scale(0.01f);
 
 	return S_OK;
 }
@@ -30,13 +37,15 @@ HRESULT CSword::Ready_Object(const _uint& iFlag)
 HRESULT CSword::Late_Init()
 {
 
-
 	return S_OK;
 }
 
-_int CSword::Update_Object(const _float & fTimeDelta)
+_int CSword::Update_Object(const _double& TimeDelta)
 {
 	ENGINE::CGameObject::Late_Init();
+
+	ENGINE::CTransform* pTrans = dynamic_cast<ENGINE::CTransform*>
+		(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player", L"Com_Transform", ENGINE::COMP_DYNAMIC));
 
 	if (nullptr == m_pParentBoneMatrix)
 	{
@@ -50,8 +59,6 @@ _int CSword::Update_Object(const _float & fTimeDelta)
 
 		m_pParentBoneMatrix = &pFrame->combinedTransformMatrix;
 
-		ENGINE::CTransform* pTrans = dynamic_cast<ENGINE::CTransform*>
-			(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player", L"Com_Transform", ENGINE::COMP_DYNAMIC));
 
 		if (nullptr == pTrans)
 			return 0;
@@ -59,9 +66,8 @@ _int CSword::Update_Object(const _float & fTimeDelta)
 		m_pParentWorldMatrix = &(pTrans->m_matWorld);
 	}
 	
-	ENGINE::CGameObject::Update_Object(fTimeDelta);
-
-	m_pTransform->Set_ParentMatrix(&(*m_pParentBoneMatrix * *m_pParentWorldMatrix));
+	ENGINE::CGameObject::Update_Object(TimeDelta);
+	m_pTransform->Set_ParentMatrix(&(*m_pParentBoneMatrix * *m_pParentWorldMatrix));	//공전 * 부모
 	
 	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_ALPHA, this);
 	return NO_EVENT;
@@ -70,6 +76,10 @@ _int CSword::Update_Object(const _float & fTimeDelta)
 void CSword::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
+
+	if(bAttack)
+		Check_EnemyColl(L"Snowman", L"Com_SphereColl");
+	
 	
 }
 
@@ -81,7 +91,7 @@ void CSword::Render_Object()
 
 	m_pMesh->Render_Meshes();
 
-	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pTransform->m_matWorld);
+	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pTransform->m_matWorld, _vec3(0.f, 0.f, -110.f));
 
 	//Render_ReSet();
 }
@@ -108,6 +118,33 @@ void CSword::Render_ReSet()
 	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 }
 
+void CSword::Check_EnemyColl(const _tchar* pObjTag, const _tchar* pCompTag)
+{
+
+	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
+
+	for (auto pList : pLayer->Get_MapObject(L"Snowman"))
+	{
+		
+		if (pLayer == nullptr)
+			return;
+
+		ENGINE::CSphereColl* pSphere = dynamic_cast<ENGINE::CSphereColl*>
+			(pList->Get_Component(L"Com_SphereColl", ENGINE::COMP_STATIC));
+
+		if (pSphere == nullptr)
+			continue;
+
+		_bool bColl = m_pCollider->Check_ComponentColl(pSphere);
+
+		if (bColl)
+			pSphere->Get_iHp(2);
+	}
+
+	bAttack = FALSE;
+}
+
+
 HRESULT CSword::Add_Component()
 {
 
@@ -129,9 +166,9 @@ HRESULT CSword::Add_Component()
 	pComponent->AddRef();
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Renderer", pComponent);
-
+	
 	pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev,
-		m_pMesh->Get_VtxMeshPos(), m_pMesh->Get_NumVtx(), m_pMesh->Get_Stride());
+		m_pMesh->Get_VtxMeshPos(), m_pMesh->Get_NumVtx(), m_pMesh->Get_Stride(), 40.f);
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider", pComponent);
 
@@ -151,5 +188,7 @@ CSword * CSword::Create(LPDIRECT3DDEVICE9 pGraphicDev, const _uint& iFlag)
 
 void CSword::Free()
 {
+
+
 	ENGINE::CGameObject::Free();
 }

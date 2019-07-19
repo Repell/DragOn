@@ -5,7 +5,7 @@ USING(ENGINE)
 IMPLEMENT_SINGLETON(CTimeMgr)
 
 CTimeMgr::CTimeMgr()
-	:m_fDeltaTime(0.f)
+	:m_DeltaTime(0.0)
 {
 	ZeroMemory(&m_OldTime, sizeof(LARGE_INTEGER));
 	ZeroMemory(&m_CurTime, sizeof(LARGE_INTEGER));
@@ -17,10 +17,10 @@ CTimeMgr::~CTimeMgr()
 {
 }
 
-const float & CTimeMgr::Get_DeltaTime()
+const _double & CTimeMgr::Get_DeltaTime()
 {
 	// TODO: 여기에 반환 구문을 삽입합니다.
-	return m_fDeltaTime;
+	return m_DeltaTime;
 }
 
 void CTimeMgr::Init_Time()
@@ -39,7 +39,7 @@ void CTimeMgr::Update_Time()
 
 	//QueryPerformanceFrequency(&m_CpuClock);
 
-	m_fDeltaTime = float(m_CurTime.QuadPart - m_OldTime.QuadPart) / m_CpuClock.QuadPart;
+	m_DeltaTime = _double(m_CurTime.QuadPart - m_OldTime.QuadPart) / m_CpuClock.QuadPart;
 
 	m_OldTime = m_CurTime;
 }

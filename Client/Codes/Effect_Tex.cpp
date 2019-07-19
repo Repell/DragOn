@@ -4,7 +4,7 @@
 
 CEffect_Tex::CEffect_Tex(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice),
-	m_fFrame(0.f), m_fMaxFrame(90.f), m_fLifeTime(0.f), m_fTime(0.f)
+	m_Frame(0.f), m_MaxFrame(90.f), m_LifeTime(0.f), m_Time(0.f)
 {
 }
 
@@ -18,10 +18,10 @@ void CEffect_Tex::Set_Pos(_vec3 vPos)
 	m_pTransform->m_vInfo[ENGINE::INFO_POS].y += 1.f;
 }
 
-void CEffect_Tex::Set_LifeTime(_float fLife, _float fDelay)
+void CEffect_Tex::Set_LifeTime(_double fLife, _double fDelay)
 {
-	m_fLifeTime = fLife;
-	m_fTime -= fDelay;
+	m_LifeTime = fLife;
+	m_Time -= fDelay;
 }
 
 HRESULT CEffect_Tex::Ready_Object()
@@ -34,16 +34,16 @@ HRESULT CEffect_Tex::Ready_Object()
 	return S_OK;
 }
 
-_int CEffect_Tex::Update_Object(const _float & fTimeDelta)
+_int CEffect_Tex::Update_Object(const _double& TimeDelta)
 {
 	//ENGINE::CGameObject::Late_Init();
-	m_fTime += fTimeDelta;
-	ENGINE::CGameObject::Update_Object(fTimeDelta);
+	m_Time += TimeDelta;
+	ENGINE::CGameObject::Update_Object(TimeDelta);
 
-	if (m_fTime > m_fLifeTime)
+	if (m_Time > m_LifeTime)
 		return END_EVENT;
 
-	Update_Frame(fTimeDelta);
+	Update_Frame(TimeDelta);
 	Update_Billboard();
 
 	Compute_ViewZ(&m_pTransform->m_vInfo[ENGINE::INFO_POS]);
@@ -61,9 +61,9 @@ void CEffect_Tex::Render_Object()
 {
 	Render_Set();
 
-	if (m_fTime >= 0.f)
+	if (m_Time >= 0.f)
 	{
-		m_pTexture->Render_Texture(m_fFrame);
+		m_pTexture->Render_Texture(m_Frame);
 		m_pBuffer->Render_Buffer();
 	}
 
@@ -104,11 +104,11 @@ HRESULT CEffect_Tex::Add_Component()
 
 void CEffect_Tex::Update_Frame(_float fTimeDelta)
 {
-	if(m_fTime > 0.f)
-	m_fFrame += m_fMaxFrame * fTimeDelta;
+	if(m_Time > 0.f)
+	m_Frame += m_MaxFrame * fTimeDelta;
 
-	if (m_fFrame > m_fMaxFrame)
-		m_fFrame = 0.f;
+	if (m_Frame > m_MaxFrame)
+		m_Frame = 0.f;
 }
 
 void CEffect_Tex::Update_Billboard()
@@ -175,7 +175,7 @@ CEffect_Tex * CEffect_Tex::Create(LPDIRECT3DDEVICE9 pDevice)
 	return pInstance;
 }
 
-CEffect_Tex * CEffect_Tex::Create(LPDIRECT3DDEVICE9 pDevice, _vec3 vPos, _float fLife, _float fDelay)
+CEffect_Tex * CEffect_Tex::Create(LPDIRECT3DDEVICE9 pDevice, _vec3 vPos, _double fLife, _double fDelay)
 {
 	CEffect_Tex* pInstance = new CEffect_Tex(pDevice);
 

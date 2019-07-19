@@ -49,6 +49,7 @@ public:
 		return vNewDir;
 	}
 
+
 }_vec3;
 
 #endif // MyTypeDef_h__

@@ -27,7 +27,7 @@ public:
 	~CToolRender();
 
 public:
-	void Update_Render(const _float& fTimeDelta);
+	void Update_Render(const _double& TimeDelta);
 	void Late_Update_Render();
 	void Render();
 

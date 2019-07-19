@@ -23,13 +23,13 @@ CComponent * CScene::Get_Component(const CLayer::LAYER_ID eLay, const wstring pO
 	return m_MapLayer[eLay]->Get_Component(pObjTag, pComponentTag, eID);
 }
 
-_int CScene::Update_Scene(const _float& fTimeDelta)
+_int CScene::Update_Scene(const _double& TimeDelta)
 {
 	MAP_LAYER::iterator iter_Begin = m_MapLayer.begin();
 	MAP_LAYER::iterator iter_End = m_MapLayer.end();
 
 	for (; iter_Begin != iter_End; ++iter_Begin)
-		iter_Begin->second->Update_Layer(fTimeDelta);
+		iter_Begin->second->Update_Layer(TimeDelta);
 
 	return 0;
 }

@@ -65,10 +65,10 @@ HRESULT CStaticObj::Late_Init()
 	return S_OK;
 }
 
-_int CStaticObj::Update_Object(const _float & fTimeDelta)
+_int CStaticObj::Update_Object(const _double& TimeDelta)
 {
 	ENGINE::CGameObject::Late_Init();
-	ENGINE::CGameObject::Update_Object(fTimeDelta);
+	ENGINE::CGameObject::Update_Object(TimeDelta);
 
 	m_pRender->Add_RenderGroup(ENGINE::RENDER_NONALPHA, this);
 	return 0;

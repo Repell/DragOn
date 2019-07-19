@@ -20,11 +20,11 @@ private:
 
 public:
 	void Set_Pos(_vec3 vPos);
-	void Set_LifeTime(_float fLife, _float fDelay = 0.f);
+	void Set_LifeTime(_double fLife, _double fDelay = 0.0);
 
 public:
 	virtual HRESULT Ready_Object() override;
-	virtual _int Update_Object(const _float& fTimeDelta) override;
+	virtual _int Update_Object(const _double& TimeDelta) override;
 	virtual void Late_Update_Object() override;
 	virtual void Render_Object() override;
 
@@ -44,14 +44,14 @@ private:
 	ENGINE::CRenderer*			m_pRenderer;
 
 private:
-	_float m_fFrame;
-	_float m_fMaxFrame;
-	_float m_fLifeTime;
-	_float m_fTime;
+	_double m_Frame;
+	_double m_MaxFrame;
+	_double m_LifeTime;
+	_double m_Time;
 
 public:
 	static CEffect_Tex* Create(LPDIRECT3DDEVICE9 pDevice);
-	static CEffect_Tex* Create(LPDIRECT3DDEVICE9 pDevice, _vec3 vPos, _float fLife, _float fDelay = 0);
+	static CEffect_Tex* Create(LPDIRECT3DDEVICE9 pDevice, _vec3 vPos, _double fLife, _double fDelay = 0);
 	virtual void Free();
 
 };

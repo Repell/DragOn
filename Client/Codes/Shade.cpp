@@ -23,10 +23,10 @@ HRESULT CShade::Ready_Object()
 	return S_OK;
 }
 
-_int CShade::Update_Object(const _float & fTimeDelta)
+_int CShade::Update_Object(const _double& TimeDelta)
 {
 	//ENGINE::CGameObject::Late_Init();
-	ENGINE::CGameObject::Update_Object(fTimeDelta);
+	ENGINE::CGameObject::Update_Object(TimeDelta);
 
 	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_ALPHA, this);
 

@@ -19,7 +19,7 @@ inline HRESULT Ready_GraphicDev(HWND hWnd, CGraphicDev::WINMODE eMode, const _ui
 
 //TimeMgr
 //Get
-inline const float& Get_DeltaTime();
+inline const _double& Get_DeltaTime();
 //Set
 //Public
 inline void Init_Time();

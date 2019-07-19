@@ -127,6 +127,9 @@
     <Filter Include="02.SubClass\02.Collidier">
       <UniqueIdentifier>{4a92049c-c148-493d-9e1a-68ba53dc2d45}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.SubClass\03.SphereCollision">
+      <UniqueIdentifier>{03bd5cd7-2b4d-41f1-bf2b-c83139d6fd4b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Codes\Management.h">
@@ -240,6 +243,9 @@
     <ClInclude Include="..\Codes\Collider.h">
       <Filter>02.SubClass\02.Collidier</Filter>
     </ClInclude>
+    <ClInclude Include="..\Codes\SphereColl.h">
+      <Filter>02.SubClass\03.SphereCollision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Management.cpp">
@@ -337,6 +343,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Collider.cpp">
       <Filter>02.SubClass\02.Collidier</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SphereColl.cpp">
+      <Filter>02.SubClass\03.SphereCollision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

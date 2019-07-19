@@ -24,13 +24,13 @@ HRESULT CManagement::SetUp_CurrentScene(CScene* pCurrentScene)
 	return S_OK;
 }
 
-_int CManagement::Update_Scene(const _float& fTimeDelta)
+_int CManagement::Update_Scene(const _double& TimeDelta)
 {
 
 	if (nullptr == m_pCurrentScene)
 		return -1;
 
-	m_pCurrentScene->Update_Scene(fTimeDelta);
+	m_pCurrentScene->Update_Scene(TimeDelta);
 
 	return 0;
 }

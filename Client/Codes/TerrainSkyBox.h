@@ -22,7 +22,7 @@ private:
 
 public:
 	virtual HRESULT Ready_Object() override;
-	virtual _int Update_Object(const _float& fTimeDelta) override;
+	virtual _int Update_Object(const _double& TimeDelta) override;
 	virtual void Late_Update_Object() override;
 	virtual void Render_Object() override;
 

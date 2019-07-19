@@ -12,7 +12,7 @@ CToolRender::~CToolRender()
 	Free();
 }
 
-void CToolRender::Update_Render(const _float& fTimeDelta)
+void CToolRender::Update_Render(const _double& TimeDelta)
 {
 	MAP_RENDER::iterator iter_Begin = m_mapRender.begin();
 	MAP_RENDER::iterator iter_End = m_mapRender.end();
@@ -23,7 +23,7 @@ void CToolRender::Update_Render(const _float& fTimeDelta)
 		iter = iter_Begin->second.begin();
 		for (; iter != iter_Begin->second.end();)
 		{
-			int iEvent = (*iter)->Update_Object(fTimeDelta);
+			int iEvent = (*iter)->Update_Object(TimeDelta);
 
 			if (999 == iEvent)
 			{

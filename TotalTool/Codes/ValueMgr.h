@@ -12,6 +12,7 @@ private:
 public:
 	//Static º¯¼ö
 	static TABSTATE eTab;
+	static _matrix matCam;
 	static _matrix matTerrain;
 	static _matrix matProj;
 	static _matrix matView;
@@ -24,6 +25,7 @@ public:
 	static _bool bWireFrm_Obj;
 	static _bool bMeshState;
 	static _bool bMakeLine;
+	static _bool bVisibleBone;
 
 	static _int iStaticCnt;
 	static _int iDynamicCnt;

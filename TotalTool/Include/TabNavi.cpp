@@ -59,6 +59,7 @@ BEGIN_MESSAGE_MAP(CTabNavi, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON1, &CTabNavi::OnBnClicked_SaveNavi)
 	ON_BN_CLICKED(IDC_BUTTON10, &CTabNavi::OnBnClicked_LoadNavi)
 	ON_BN_CLICKED(IDC_BUTTON11, &CTabNavi::OnBnClicked_DeleteNavi)
+	ON_BN_CLICKED(IDC_BUTTON14, &CTabNavi::OnBnClicked_DeleteAll)
 END_MESSAGE_MAP()
 
 
@@ -583,6 +584,24 @@ void CTabNavi::Pick_ObjectVtx()
 	_vec3* pVtxPos = new _vec3[dwVtx];
 
 	pVtxPos = pObj->Get_VtxMeshPos();
+
+	UpdateData(FALSE);
+}
+
+
+void CTabNavi::OnBnClicked_DeleteAll()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	CMainFrame* pMain = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+	CTotalToolView* pView = dynamic_cast<CTotalToolView*>(pMain->Get_MainWnd().GetPane(0, 0));
+	CToolRender* pRender = dynamic_cast<CToolRender*>(pView->m_pToolRender);
+	CNaviMaker* pNavi = dynamic_cast<CNaviMaker*>(pRender->Get_RenderList(L"NaviMaker").front());
+
+	UpdateData(TRUE);
+
+	m_TreeList.DeleteAllItems();
+
+	pNavi->Clear_MapNavi();
 
 	UpdateData(FALSE);
 }

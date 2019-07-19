@@ -224,6 +224,7 @@
     <ClInclude Include="MyForm.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TabAnimation.h" />
     <ClInclude Include="TabEffect.h" />
     <ClInclude Include="TabMesh.h" />
     <ClInclude Include="TabNavi.h" />
@@ -251,6 +252,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TabAnimation.cpp" />
     <ClCompile Include="TabEffect.cpp" />
     <ClCompile Include="TabMesh.cpp" />
     <ClCompile Include="TabNavi.cpp" />

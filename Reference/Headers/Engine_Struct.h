@@ -100,6 +100,17 @@ namespace ENGINE
 
 	const _ulong FVF_CUBE = D3DFVF_XYZ | D3DFVF_TEX1 | D3DFVF_TEXCOORDSIZE3(0);
 
+	typedef struct tagVertexSphere
+	{
+		D3DXVECTOR3	vPos;
+		D3DXVECTOR3	vNormal;
+		float fU;
+		float fV;
+
+	}VTX_SPHERE;
+	
+	const DWORD VTXFVF_SPHERE = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1;
+
 	typedef struct tagScreenVertex
 	{
 		_vec4		vPos;

@@ -46,7 +46,7 @@ HRESULT CLayer::Ready_Layer(void)
 	return S_OK;
 }
 
-_int CLayer::Update_Layer(const _float& fTimeDelta)
+_int CLayer::Update_Layer(const _double& TimeDelta)
 {
 	MAP_GAMEOBJ::iterator iter_Begin = m_mapObject.begin();
 	MAP_GAMEOBJ::iterator iter_End = m_mapObject.end();
@@ -59,7 +59,7 @@ _int CLayer::Update_Layer(const _float& fTimeDelta)
 		iter = iter_Begin->second.begin();
 		for (; iter != iter_Begin->second.end();)
 		{
-			iEvnet = (*iter)->Update_Object(fTimeDelta);
+			iEvnet = (*iter)->Update_Object(TimeDelta);
 
 			if (-1 == iEvnet)
 			{

@@ -26,7 +26,7 @@ public:
 
 public:
 	virtual HRESULT Ready_Object() override;
-	virtual _int Update_Object(const _float& fTimeDelta) override;
+	virtual _int Update_Object(const _double& TimeDelta) override;
 	virtual void Late_Update_Object() override;
 	virtual void Render_Object() override;
 
@@ -34,8 +34,8 @@ private:
 	HRESULT Add_Component();
 
 	HRESULT Ready_LogoLoad(LPDIRECT3DDEVICE9 pGraphicDev, LOADINGID eID);
-	void Update_Frame(const _float& fTimeDelta);
-	void Update_Frame2(const _float& fTimeDelta);
+	void Update_Frame(const _double& TimeDelta);
+	void Update_Frame2(const _double& TimeDelta);
 
 private:
 	ENGINE::CRcTex*					m_pBuffer;
@@ -45,8 +45,8 @@ private:
 	ENGINE::CShader*				m_pShader;
 
 	//Frame
-	_float m_fFrame;
-	_float m_fMaxFrame;
+	_double m_Frame;
+	_double m_MaxFrame;
 	_bool bLoading;
 
 public:

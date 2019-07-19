@@ -98,9 +98,9 @@ void CDynamicMesh::Set_AnimationSet(const _uint & iIndex)
 	m_pAniCon->Set_AnimationSet(iIndex);
 }
 
-void CDynamicMesh::Play_AnimationSet(const _float & fTimeDelta)
+void CDynamicMesh::Play_AnimationSet(const _double& TimeDelta)
 {
-	m_pAniCon->Play_AnimationSet(fTimeDelta);
+	m_pAniCon->Play_AnimationSet(TimeDelta);
 
 	//_matrix matTemp;
 	Update_FrameMatrix((D3DXFRAME_DERIVED*)m_pRootFrame, D3DXMatrixIdentity(&_matrix()));
@@ -114,6 +114,16 @@ const	D3DXFRAME_DERIVED* CDynamicMesh::Get_FrameByName(const char * pFrameName)
 _bool CDynamicMesh::Is_AnimationSetEnd(void)
 {
 	return m_pAniCon->Is_AnimationSetEnd();
+}
+
+D3DXMESHCONTAINER_DERIVED* CDynamicMesh::Get_MeshContainer()
+{
+	return m_MeshContainerList.front();
+}
+
+CAniControll * CDynamicMesh::Get_AniController()
+{
+	return m_pAniCon;
 }
 
 void CDynamicMesh::Update_FrameMatrix(D3DXFRAME_DERIVED * pFrame, const _matrix * pParentMatrix)

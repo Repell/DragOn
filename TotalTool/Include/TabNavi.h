@@ -47,6 +47,7 @@ private:	//afx
 	afx_msg void OnBnClicked_SaveNavi();
 	afx_msg void OnBnClicked_LoadNavi();
 	afx_msg void OnBnClicked_DeleteNavi();
+	afx_msg void OnBnClicked_DeleteAll();
 
 public:
 	void Pick_ObjectVtx();
@@ -76,4 +77,5 @@ public:
 	_int m_iMeshIndex;
 	CString strCurType;
 	CString strCurMesh;
+
 };

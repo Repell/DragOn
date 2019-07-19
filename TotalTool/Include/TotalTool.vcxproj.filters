@@ -80,6 +80,9 @@
     <Filter Include="04.MainFrm\03.TabNavi\00.NaviMaker">
       <UniqueIdentifier>{90bd0e7f-a04b-4201-b631-ef60ea397945}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.MainFrm\05.TabAnimation">
+      <UniqueIdentifier>{e5fc647d-9234-43fd-a809-214044b74428}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainFrm.h">
@@ -160,6 +163,7 @@
     <ClInclude Include="..\Codes\NaviMaker.h">
       <Filter>04.MainFrm\03.TabNavi\00.NaviMaker</Filter>
     </ClInclude>
+    <ClInclude Include="TabAnimation.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainFrm.cpp">
@@ -219,6 +223,7 @@
     <ClCompile Include="..\Codes\NaviMaker.cpp">
       <Filter>04.MainFrm\03.TabNavi\00.NaviMaker</Filter>
     </ClCompile>
+    <ClCompile Include="TabAnimation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TotalTool.rc">

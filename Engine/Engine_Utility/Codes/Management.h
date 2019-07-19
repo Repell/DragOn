@@ -20,10 +20,12 @@ public:
 								const wstring pObjTag,
 								const wstring pComponentTag,
 								COMPONENTID eID);
+	CLayer* Get_Layer(CLayer::LAYER_ID eID)
+	{		return m_pCurrentScene->Get_MapLayer(eID);	}
 	
 public:
 	HRESULT		SetUp_CurrentScene(CScene* pCurrentScene);
-	_int		Update_Scene(const _float& fTimeDelta);
+	_int		Update_Scene(const _double& TimeDelta);
 	void		Late_Update_Scene();
 	void		Render_Scene(LPDIRECT3DDEVICE9 pDevice);
 

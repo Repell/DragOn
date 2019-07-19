@@ -17,13 +17,15 @@ private:
 
 public:
 	const	D3DXFRAME_DERIVED* Get_FrameByName(const char* pFrameName);
+	D3DXMESHCONTAINER_DERIVED* Get_MeshContainer();
+	CAniControll*	Get_AniController();
 	_bool						Is_AnimationSetEnd(void);
 
 public:
 	HRESULT Ready_Meshes(const _tchar* pFilePath, const _tchar* pFileName);
 	void Render_Meshes();
 	void Set_AnimationSet(const _uint& iIndex);
-	void Play_AnimationSet(const _float& fTimeDelta);
+	void Play_AnimationSet(const _double& TimeDelta);
 
 private:
 	// 모든 뼈들을 순회하면서 뼈들이 가지고 있는 행렬(Combined Transform Matrix)을 갱신(적용)해주는 함수

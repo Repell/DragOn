@@ -19,14 +19,14 @@ private:
 public:
 	virtual HRESULT Ready_Object() override;
 	virtual HRESULT Late_Init();
-	virtual _int Update_Object(const _float& fTimeDelta) override;
+	virtual _int Update_Object(const _double& TimeDelta) override;
 	virtual void Late_Update_Object() override;
 
 private:
 	HRESULT Add_Component();
 	void Reset_Camera();
-	void Key_Input(const _float& fTimeDelta);
-	void Key_Spectre(const _float& fTimeDelta);
+	void Key_Input(const _double& TimeDelta);
+	void Key_Spectre(const _double& TimeDelta);
 	void Target_Renewal();
 	void Target_Spectre();
 		

@@ -132,15 +132,15 @@ BOOL CTabMesh::OnInitDialog()
 	m_fScaleY = 1.f;
 	m_fScaleZ = 1.f;
 
-	m_strPosX.Format(_T("%5.3f", m_fPosX));
-	m_strPosY.Format(_T("%5.3f", m_fPosY));
-	m_strPosZ.Format(_T("%5.3f", m_fPosZ));
-	m_strRotX.Format(_T("%5.3f", m_fRotX));
-	m_strRotY.Format(_T("%5.3f", m_fRotY));
-	m_strRotZ.Format(_T("%5.3f", m_fRotZ));
-	m_strScaleX.Format(_T("%5.3f", m_fScaleX));
-	m_strScaleY.Format(_T("%5.3f", m_fScaleY));
-	m_strScaleZ.Format(_T("%5.3f", m_fScaleZ));
+	m_strPosX.Format(L"%5.3f", m_fPosX);
+	m_strPosY.Format(L"%5.3f", m_fPosY);
+	m_strPosZ.Format(L"%5.3f", m_fPosZ);
+	m_strRotX.Format(L"%5.3f", m_fRotX);
+	m_strRotY.Format(L"%5.3f", m_fRotY);
+	m_strRotZ.Format(L"%5.3f", m_fRotZ);
+	m_strScaleX.Format(L"%5.3f", m_fScaleX);
+	m_strScaleY.Format(L"%5.3f", m_fScaleY);
+	m_strScaleZ.Format(L"%5.3f", m_fScaleZ);
 
 
 	UpdateData(FALSE);
@@ -654,9 +654,9 @@ void CTabMesh::OnEnChangeEdit_PosX()
 	//m_strPosY.Format(_T("%5.3f"), m_fPosY);
 	//m_strPosZ.Format(_T("%5.3f"), m_fPosZ);
 
-	m_fPosX = _wtof(m_strPosX);
-	m_fPosY = _wtof(m_strPosY);
-	m_fPosZ = _wtof(m_strPosZ);
+	m_fPosX = (float)_wtof(m_strPosX);
+	m_fPosY = (float)_wtof(m_strPosY);
+	m_fPosZ = (float)_wtof(m_strPosZ);
 
 	_vec3 vPos = { m_fPosX, m_fPosY, m_fPosZ };
 	_vec3 vRot = { m_fRotX, m_fRotY, m_fRotZ };
@@ -703,9 +703,9 @@ void CTabMesh::OnEnChangeEdit_PosY()
 
 	CTestObj* pObj = dynamic_cast<CTestObj*>(*iter);
 
-	m_fPosX = _wtof(m_strPosX);
-	m_fPosY = _wtof(m_strPosY);
-	m_fPosZ = _wtof(m_strPosZ);
+	m_fPosX = (float)_wtof(m_strPosX);
+	m_fPosY = (float)_wtof(m_strPosY);
+	m_fPosZ = (float)_wtof(m_strPosZ);
 
 	_vec3 vPos = { m_fPosX, m_fPosY, m_fPosZ };
 	_vec3 vRot = { m_fRotX, m_fRotY, m_fRotZ };
@@ -752,9 +752,9 @@ void CTabMesh::OnEnChangeEdit_PosZ()
 
 	CTestObj* pObj = dynamic_cast<CTestObj*>(*iter);
 
-	m_fPosX = _wtof(m_strPosX);
-	m_fPosY = _wtof(m_strPosY);
-	m_fPosZ = _wtof(m_strPosZ);
+	m_fPosX = (float)_wtof(m_strPosX);
+	m_fPosY = (float)_wtof(m_strPosY);
+	m_fPosZ = (float)_wtof(m_strPosZ);
 
 	_vec3 vPos = { m_fPosX, m_fPosY, m_fPosZ };
 	_vec3 vRot = { m_fRotX, m_fRotY, m_fRotZ };
@@ -801,9 +801,9 @@ void CTabMesh::OnEnChangeEdit_RotX()
 
 	CTestObj* pObj = dynamic_cast<CTestObj*>(*iter);
 
-	m_fRotX = _wtof(m_strRotX);
-	m_fRotY = _wtof(m_strRotY);
-	m_fRotZ = _wtof(m_strRotZ);
+	m_fRotX = (float)_wtof(m_strRotX);
+	m_fRotY = (float)_wtof(m_strRotY);
+	m_fRotZ = (float)_wtof(m_strRotZ);
 
 	_vec3 vPos = { m_fPosX, m_fPosY, m_fPosZ };
 	_vec3 vRot = { m_fRotX, m_fRotY, m_fRotZ };
@@ -850,9 +850,9 @@ void CTabMesh::OnEnChangeEdit_RotY()
 
 	CTestObj* pObj = dynamic_cast<CTestObj*>(*iter);
 
-	m_fRotX = _wtof(m_strRotX);
-	m_fRotY = _wtof(m_strRotY);
-	m_fRotZ = _wtof(m_strRotZ);
+	m_fRotX = (float)_wtof(m_strRotX);
+	m_fRotY = (float)_wtof(m_strRotY);
+	m_fRotZ = (float)_wtof(m_strRotZ);
 
 	_vec3 vPos = { m_fPosX, m_fPosY, m_fPosZ };
 	_vec3 vRot = { m_fRotX, m_fRotY, m_fRotZ };
@@ -899,9 +899,9 @@ void CTabMesh::OnEnChangeEdit_RotZ()
 
 	CTestObj* pObj = dynamic_cast<CTestObj*>(*iter);
 
-	m_fRotX = _wtof(m_strRotX);
-	m_fRotY = _wtof(m_strRotY);
-	m_fRotZ = _wtof(m_strRotZ);
+	m_fRotX = (float)_wtof(m_strRotX);
+	m_fRotY = (float)_wtof(m_strRotY);
+	m_fRotZ = (float)_wtof(m_strRotZ);
 
 	_vec3 vPos = { m_fPosX, m_fPosY, m_fPosZ };
 	_vec3 vRot = { m_fRotX, m_fRotY, m_fRotZ };
@@ -948,9 +948,9 @@ void CTabMesh::OnEnChangeEdit_ScaleX()
 
 	CTestObj* pObj = dynamic_cast<CTestObj*>(*iter);
 
-	m_fScaleX = _wtof(m_strScaleX);
-	m_fScaleY = _wtof(m_strScaleY);
-	m_fScaleZ = _wtof(m_strScaleZ);
+	m_fScaleX = (float)_wtof(m_strScaleX);
+	m_fScaleY = (float)_wtof(m_strScaleY);
+	m_fScaleZ = (float)_wtof(m_strScaleZ);
 
 	_vec3 vPos = { m_fPosX, m_fPosY, m_fPosZ };
 	_vec3 vRot = { m_fRotX, m_fRotY, m_fRotZ };
@@ -997,9 +997,9 @@ void CTabMesh::OnEnChangeEdit_ScaleY()
 
 	CTestObj* pObj = dynamic_cast<CTestObj*>(*iter);
 
-	m_fScaleX = _wtof(m_strScaleX);
-	m_fScaleY = _wtof(m_strScaleY);
-	m_fScaleZ = _wtof(m_strScaleZ);
+	m_fScaleX = (float)_wtof(m_strScaleX);
+	m_fScaleY = (float)_wtof(m_strScaleY);
+	m_fScaleZ = (float)_wtof(m_strScaleZ);
 
 	_vec3 vPos = { m_fPosX, m_fPosY, m_fPosZ };
 	_vec3 vRot = { m_fRotX, m_fRotY, m_fRotZ };
@@ -1046,9 +1046,9 @@ void CTabMesh::OnEnChangeEdit_ScaleZ()
 
 	CTestObj* pObj = dynamic_cast<CTestObj*>(*iter);
 
-	m_fScaleX = _wtof(m_strScaleX);
-	m_fScaleY = _wtof(m_strScaleY);
-	m_fScaleZ = _wtof(m_strScaleZ);
+	m_fScaleX = (float)_wtof(m_strScaleX);
+	m_fScaleY = (float)_wtof(m_strScaleY);
+	m_fScaleZ = (float)_wtof(m_strScaleZ);
 
 	_vec3 vPos = { m_fPosX, m_fPosY, m_fPosZ };
 	_vec3 vRot = { m_fRotX, m_fRotY, m_fRotZ };
@@ -1095,25 +1095,25 @@ void CTabMesh::OnLbnSelchange_PickStaticObj()
 	//pObj->Set_DeleteObj();
 
 	m_fPosX = vPos.x;
-	m_strPosX.Format(_T("%5.3f"), m_fPosX);
+	m_strPosX.Format(L"%5.3f", m_fPosX);
 	m_fPosY = vPos.y;
-	m_strPosY.Format(_T("%5.3f"), m_fPosY);
+	m_strPosY.Format(L"%5.3f", m_fPosY);
 	m_fPosZ = vPos.z;
-	m_strPosZ.Format(_T("%5.3f"), m_fPosZ);
+	m_strPosZ.Format(L"%5.3f", m_fPosZ);
 
 	m_fRotX = vRot.x;
-	m_strRotX.Format(_T("%5.3f"), m_fRotX);
+	m_strRotX.Format(L"%5.3f", m_fRotX);
 	m_fRotY = vRot.y;
-	m_strRotY.Format(_T("%5.3f"), m_fRotY);
+	m_strRotY.Format(L"%5.3f", m_fRotY);
 	m_fRotZ = vRot.z;
-	m_strRotZ.Format(_T("%5.3f"), m_fRotZ);
+	m_strRotZ.Format(L"%5.3f", m_fRotZ);
 
 	m_fScaleX = vScale.x;
-	m_strScaleX.Format(_T("%5.3f"), m_fScaleX);
+	m_strScaleX.Format(L"%5.3f", m_fScaleX);
 	m_fScaleY = vScale.y;
-	m_strScaleY.Format(_T("%5.3f"), m_fScaleY);
+	m_strScaleY.Format(L"%5.3f", m_fScaleY);
 	m_fScaleZ = vScale.z;
-	m_strScaleZ.Format(_T("%5.3f"), m_fScaleZ);
+	m_strScaleZ.Format(L"%5.3f", m_fScaleZ);
 
 	UpdateData(FALSE);
 }
@@ -1155,25 +1155,25 @@ void CTabMesh::OnLbnSelchange_PickDynamicObj()
 	//pObj->Set_DeleteObj();
 
 	m_fPosX = vPos.x;
-	m_strPosX.Format(_T("%5.3f"), m_fPosX);
+	m_strPosX.Format(L"%5.3f", m_fPosX);
 	m_fPosY = vPos.y;
-	m_strPosY.Format(_T("%5.3f"), m_fPosY);
+	m_strPosY.Format(L"%5.3f", m_fPosY);
 	m_fPosZ = vPos.z;
-	m_strPosZ.Format(_T("%5.3f"), m_fPosZ);
+	m_strPosZ.Format(L"%5.3f", m_fPosZ);
 
 	m_fRotX = vRot.x;
-	m_strRotX.Format(_T("%5.3f"), m_fRotX);
+	m_strRotX.Format(L"%5.3f", m_fRotX);
 	m_fRotY = vRot.y;
-	m_strRotY.Format(_T("%5.3f"), m_fRotY);
+	m_strRotY.Format(L"%5.3f", m_fRotY);
 	m_fRotZ = vRot.z;
-	m_strRotZ.Format(_T("%5.3f"), m_fRotZ);
+	m_strRotZ.Format(L"%5.3f", m_fRotZ);
 
 	m_fScaleX = vScale.x;
-	m_strScaleX.Format(_T("%5.3f"), m_fScaleX);
+	m_strScaleX.Format(L"%5.3f", m_fScaleX);
 	m_fScaleY = vScale.y;
-	m_strScaleY.Format(_T("%5.3f"), m_fScaleY);
+	m_strScaleY.Format(L"%5.3f", m_fScaleY);
 	m_fScaleZ = vScale.z;
-	m_strScaleZ.Format(_T("%5.3f"), m_fScaleZ);
+	m_strScaleZ.Format(L"%5.3f", m_fScaleZ);
 
 	UpdateData(FALSE);
 }
@@ -1280,7 +1280,7 @@ void CTabMesh::OnBnClicked_LoadMesh()	//Static
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	UpdateData(TRUE);
 
-	CFileDialog Dlg(TRUE, L"dat", L"*.dat", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+	CFileDialog Dlg(TRUE, L"dat", L"*.dat", OFN_HIDEREADONLY | OFN_READONLY,
 		L"Data Files(*.dat)|*.dat||", this);
 
 	TCHAR szPath[MAX_STR] = L"";

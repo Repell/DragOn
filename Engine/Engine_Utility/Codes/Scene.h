@@ -21,7 +21,7 @@ public:
 
 public:
 	virtual HRESULT Ready_Scene();
-	virtual _int Update_Scene(const _float& fTimeDelta);
+	virtual _int Update_Scene(const _double& TimeDelta);
 	virtual void Late_Update_Scene();
 	virtual void Render_Scene();
 

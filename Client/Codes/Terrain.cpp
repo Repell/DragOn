@@ -26,10 +26,10 @@ HRESULT CTerrain::Late_Init()
 	return S_OK;
 }
 
-_int CTerrain::Update_Object(const _float & fTimeDelta)
+_int CTerrain::Update_Object(const _double& TimeDelta)
 {
 	ENGINE::CGameObject::Late_Init();
-	ENGINE::CGameObject::Update_Object(fTimeDelta);
+	ENGINE::CGameObject::Update_Object(TimeDelta);
 	
 	
 

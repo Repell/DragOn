@@ -33,9 +33,19 @@ _uint CLoading::Loading_ForLogo()
 		RESOURCE_LOGO,
 		L"Mesh_Player",
 		ENGINE::MESH_DYNAMIC,
-		L"../Bin/Resources/Mesh/DynamicMesh/PlayerXfile/",
-		L"Player.X"),
+		L"../Bin/Resources/Mesh/DynamicMesh/Player_Sword/",
+		L"Player_Sword.X"),
 		E_FAIL);
+
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Snowman",
+		ENGINE::MESH_DYNAMIC,
+		L"../Bin/Resources/Mesh/DynamicMesh/Snowman/",
+		L"Snowman.X"),
+		E_FAIL);
+
+	///////////////// STATIC ////////////////////////
 
 	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
 		RESOURCE_LOGO,
@@ -53,34 +63,20 @@ _uint CLoading::Loading_ForLogo()
 		L"3D_BG.X"),
 		E_FAIL);
 
+	//Navi Mesh
 	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
 		RESOURCE_LOGO,
 		L"Mesh_Navi",
-		ENGINE::MESH_NAVI, L"../../Data/",L"Line.dat"),
+		ENGINE::MESH_NAVI, L"../../Data/",
+		L"Line.dat"),
 		E_FAIL);
-
-	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
-	//	RESOURCE_LOGO,
-	//	L"Pl_Sword",
-	//	ENGINE::MESH_DYNAMIC,
-	//	L"../Bin/Resources/Mesh/DynamicMesh/Player/",
-	//	L"Player_Sword.X"),
-	//	E_FAIL);
-
+	
 	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
 	//	RESOURCE_LOGO,
 	//	L"Pl_Spear",
 	//	ENGINE::MESH_DYNAMIC,
 	//	L"../Bin/Resources/Mesh/DynamicMesh/Player/",
 	//	L"Player_Spear.X"),
-	//	E_FAIL);
-
-	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
-	//	RESOURCE_LOGO,
-	//	L"Pl_Trans",
-	//	ENGINE::MESH_DYNAMIC,
-	//	L"../Bin/Resources/Mesh/DynamicMesh/Player/",
-	//	L"Player_Transform.X"),
 	//	E_FAIL);
 
 	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
@@ -194,6 +190,8 @@ HRESULT CLoading::LoadForTerrainDat()
 
 	FAILED_CHECK_RETURN(ENGINE::Ready_Buffers(m_pGraphicDev,
 		RESOURCE_PRELOAD, L"Buffer_Terrain", ENGINE::BUFFER_TERRAINTEX, iSizeX, iSizeZ, iInterval, iDetail), E_FAIL);
+
+	ENGINE::Safe_Delete_Array(szKey);
 
 }
 

@@ -4,7 +4,7 @@
 #include "Export_System.h"
 
 CFrameMgr::CFrameMgr()
-	: m_fDeletaTime(0.f), m_fSecForFrm(0.f), m_fpsTime(0.f),  m_iFPS(0), szFPS(L"")
+	: m_DeletaTime(0.0), m_SecForFrm(0.0), m_fpsTime(0.0),  m_iFPS(0), szFPS(L"")
 {
 	ZeroMemory(&m_OldTime, sizeof(LARGE_INTEGER));
 	ZeroMemory(&m_CurTime, sizeof(LARGE_INTEGER));
@@ -16,9 +16,9 @@ CFrameMgr::~CFrameMgr()
 {
 }
 
-void CFrameMgr::InitFrm(float Frm)
+void CFrameMgr::InitFrm(_double Frm)
 {
-	m_fSecForFrm = 1 / Frm;		//초당 FRAME 재생 수 설정 (1 / 60 ~ 144);
+	m_SecForFrm = 1 / Frm;		//초당 FRAME 재생 수 설정 (1 / 60 ~ 144);
 
 	QueryPerformanceCounter(&m_OldTime);
 	QueryPerformanceCounter(&m_CurTime);
@@ -32,16 +32,16 @@ bool CFrameMgr::LockFrm()
 	QueryPerformanceFrequency(&m_CpuClock);		//진동 수 체크
 
 	///진동 수를 시간단위로 변환 (Delta Time : Second단위)
-	m_fDeletaTime += float(m_CurTime.QuadPart - m_OldTime.QuadPart) / m_CpuClock.QuadPart;
+	m_DeletaTime += _double(m_CurTime.QuadPart - m_OldTime.QuadPart) / m_CpuClock.QuadPart;
 	//진동 수를 시간단위로 변환 (Delta Time : Milli Second단위)
 	//m_fDeletaTime += float(m_CurTime.QuadPart - m_OldTime.QuadPart) / (m_CpuClock.QuadPart / 1000);
 
 	m_OldTime = m_CurTime;
 
-	if (m_fSecForFrm <= m_fDeletaTime)
+	if (m_SecForFrm <= m_DeletaTime)
 	{
 		++m_iFPS;
-		m_fDeletaTime = 0.f;
+		m_DeletaTime = 0.0;
 		return true;
 	}
 	
@@ -53,11 +53,11 @@ void CFrameMgr::RenderFrm()
 {
 	m_fpsTime += ENGINE::Get_DeltaTime();
 
-	if (1.f < m_fpsTime)
+	if (1.0 < m_fpsTime)
 	{
 		swprintf_s(szFPS, L"FPS: %d", m_iFPS);
 		m_iFPS = 0;
-		m_fpsTime = 0.f;
+		m_fpsTime = 0.0;
 	}
 
 	SetWindowText(g_hWnd, szFPS);

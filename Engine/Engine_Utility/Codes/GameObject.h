@@ -22,7 +22,7 @@ public:
 public:
 	virtual HRESULT Ready_Object();
 	virtual HRESULT Late_Init();
-	virtual _int Update_Object(const _float& fTimeDelta);
+	virtual _int Update_Object(const _double& TimeDelta);
 	virtual void Late_Update_Object();
 	virtual void Render_Object();
 

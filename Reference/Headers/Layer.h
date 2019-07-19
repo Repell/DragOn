@@ -31,7 +31,7 @@ public:
 
 public:
 	virtual HRESULT Ready_Layer(void);
-	virtual _int Update_Layer(const _float& fTimeDelta);
+	virtual _int Update_Layer(const _double& TimeDelta);
 	virtual void Late_Update_Layer(void);
 	virtual void Render_Layer(void);
 	

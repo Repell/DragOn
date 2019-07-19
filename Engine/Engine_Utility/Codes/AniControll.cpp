@@ -63,6 +63,7 @@ void CAniControll::Set_AnimationSet(const _uint & iIndex)
 	m_pAniCon->GetAnimationSet(iIndex, &pAS);
 
 	m_dPeriod = pAS->GetPeriod();
+	
 
 	//0번트랙에 얻어온 애니메이션을 세팅
 	m_pAniCon->SetTrackAnimationSet(m_iNewTrack, pAS);

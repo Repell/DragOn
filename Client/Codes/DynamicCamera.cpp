@@ -45,15 +45,15 @@ HRESULT CDynamicCamera::Late_Init()
 	return S_OK;
 }
 
-_int CDynamicCamera::Update_Object(const _float & fTimeDelta)
+_int CDynamicCamera::Update_Object(const _double& TimeDelta)
 {
 	ENGINE::CGameObject::Late_Init();
-	ENGINE::CGameObject::Update_Object(fTimeDelta);
+	ENGINE::CGameObject::Update_Object(TimeDelta);
 
-	Key_Input(fTimeDelta);
+	Key_Input(TimeDelta);
 
 	if (bSpectre)
-		Key_Spectre(fTimeDelta);
+		Key_Spectre(TimeDelta);
 
 	return NO_EVENT;
 }
@@ -96,7 +96,7 @@ void CDynamicCamera::Reset_Camera()
 	m_pGraphicDev->SetTransform(D3DTS_PROJECTION, &m_matProj);
 }
 
-void CDynamicCamera::Key_Input(const _float& fTimeDelta)
+void CDynamicCamera::Key_Input(const _double& TimeDelta)
 {
 	if (ENGINE::Key_Down(ENGINE::dwKEY_F1))
 		Reset_Camera();
@@ -111,9 +111,9 @@ void CDynamicCamera::Key_Input(const _float& fTimeDelta)
 		m_fTargetDist = 3.f;
 
 	if (ENGINE::Key_Press(ENGINE::dwKEY_Q))
-		m_fCamAngle += ANGLE * fTimeDelta;
+		m_fCamAngle += ANGLE * TimeDelta;
 	if (ENGINE::Key_Press(ENGINE::dwKEY_E))
-		m_fCamAngle -= ANGLE * fTimeDelta;
+		m_fCamAngle -= ANGLE * TimeDelta;
 
 	if (m_fCamAngle > 90.f)
 		m_fCamAngle = 90.f;
@@ -122,7 +122,7 @@ void CDynamicCamera::Key_Input(const _float& fTimeDelta)
 
 }
 
-void CDynamicCamera::Key_Spectre(const _float & fTimeDelta)
+void CDynamicCamera::Key_Spectre(const _double& TimeDelta)
 {
 	_vec3 vNewDir = {};
 	//Fix Mouse
@@ -132,32 +132,32 @@ void CDynamicCamera::Key_Spectre(const _float & fTimeDelta)
 
 	_long dwMouseMove = 0;
 	if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_X))
-		m_pTransCom->m_vAngle.y += dwMouseMove * ANGLE * fTimeDelta;
+		m_pTransCom->m_vAngle.y += dwMouseMove * ANGLE * TimeDelta;
 
 	if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_Y))
-		m_pTransCom->m_vAngle.x += dwMouseMove * ANGLE * fTimeDelta;
+		m_pTransCom->m_vAngle.x += dwMouseMove * ANGLE * TimeDelta;
 
 
 	//Key Input
 	if (ENGINE::Key_Press(ENGINE::dwKEY_W))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS] += m_pTransCom->m_vDir * SPEED * fTimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS] += m_pTransCom->m_vDir * SPEED * TimeDelta;
 	if (ENGINE::Key_Press(ENGINE::dwKEY_S))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS] -= m_pTransCom->m_vDir * SPEED * fTimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS] -= m_pTransCom->m_vDir * SPEED * TimeDelta;
 	if (ENGINE::Key_Press(ENGINE::dwKEY_A))
 	{
 		m_pTransCom->m_vInfo[ENGINE::INFO_POS] +=
-			vNewDir.NewDir(&m_pTransCom->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * fTimeDelta;
+			vNewDir.NewDir(&m_pTransCom->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * TimeDelta;
 	}
 	if (ENGINE::Key_Press(ENGINE::dwKEY_D))
 	{
 		m_pTransCom->m_vInfo[ENGINE::INFO_POS] -=
-			vNewDir.NewDir(&m_pTransCom->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * fTimeDelta;
+			vNewDir.NewDir(&m_pTransCom->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * TimeDelta;
 	}
 
 	if (ENGINE::Key_Press(ENGINE::dwKEY_SPACE))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y += SPEED * fTimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y += SPEED * TimeDelta;
 	if (ENGINE::Key_Press(ENGINE::dwKEY_Shift))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y -= SPEED * fTimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y -= SPEED * TimeDelta;
 
 
 	if (ENGINE::Key_Down(ENGINE::dwKEY_F4) && bSpectre)

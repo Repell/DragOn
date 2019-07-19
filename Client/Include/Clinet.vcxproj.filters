@@ -74,6 +74,12 @@
     <Filter Include="02.SubApp\03.StaticObj">
       <UniqueIdentifier>{08105519-8d40-4435-bac1-a3da6499a17c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Clinet\02.Scene\09.TestStage\04.Monster">
+      <UniqueIdentifier>{744367fe-ae2a-43c0-aecf-e9551c9b8483}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Clinet\02.Scene\09.TestStage\04.Monster\00.Snowman">
+      <UniqueIdentifier>{fba9259c-275c-4007-9296-607ab71f1921}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clinet.h">
@@ -148,6 +154,9 @@
     <ClInclude Include="..\Codes\StaticObj.h">
       <Filter>02.SubApp\03.StaticObj</Filter>
     </ClInclude>
+    <ClInclude Include="..\Codes\Snowman.h">
+      <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\00.Snowman</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -200,6 +209,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\StaticObj.cpp">
       <Filter>02.SubApp\03.StaticObj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Snowman.cpp">
+      <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\00.Snowman</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

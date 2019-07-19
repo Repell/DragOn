@@ -8,6 +8,7 @@ CDynamicCamera::CDynamicCamera(LPDIRECT3DDEVICE9 pDev)
 	:ENGINE::CCamera(pDev), m_pTransCom(nullptr),
 	m_fTargetDist(0.f), m_fCamAngle(0.f), m_fCamSpeed(0.f), m_fTargetDistMax(10.f), bSpectre(TRUE)
 {
+	bKeyCheck = FALSE;
 }
 
 CDynamicCamera::~CDynamicCamera()
@@ -17,8 +18,6 @@ CDynamicCamera::~CDynamicCamera()
 HRESULT CDynamicCamera::Ready_Object()
 {
 	Add_Component();
-
-	
 
 	m_fTargetDist = 10.f;
 	m_fCamAngle = 45.f;
@@ -47,13 +46,25 @@ HRESULT CDynamicCamera::Late_Init()
 	return S_OK;
 }
 
-_int CDynamicCamera::Update_Object(const _float & fTimeDelta)
+_int CDynamicCamera::Update_Object(const _double& TimeDelta)
 {
 	ENGINE::CGameObject::Late_Init();
-	ENGINE::CGameObject::Update_Object(fTimeDelta);
+	ENGINE::CGameObject::Update_Object(TimeDelta);
 
-	Key_Input(fTimeDelta);
-	Key_Spectre(fTimeDelta);
+	if (ENGINE::Key_Down(ENGINE::dwKEY_F4))
+	{
+		if (bKeyCheck)
+			bKeyCheck = FALSE;
+		else
+			bKeyCheck = TRUE;
+	}
+
+	if (bKeyCheck)
+	{
+		Key_Input(TimeDelta);
+		Key_Spectre(TimeDelta);
+
+	}
 
 	Render_Line();
 
@@ -79,14 +90,14 @@ void CDynamicCamera::Render_Object()
 	Render_ReSet();
 	//Render_Font(&_vec2(10.f, 10.f));
 
-	if(CValueMgr::bAxisLine)
+	if (CValueMgr::bAxisLine)
 		Render_Line();
 }
 
 HRESULT CDynamicCamera::Add_Component()
 {
 	ENGINE::CComponent* pComponent = nullptr;
-	
+
 	//Transform
 	pComponent = m_pTransCom = ENGINE::CTransform::Create(_vec3(0.f, 0.f, 1.f));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
@@ -108,24 +119,29 @@ void CDynamicCamera::Reset_Camera()
 	m_pGraphicDev->SetTransform(D3DTS_PROJECTION, &m_matProj);
 }
 
-void CDynamicCamera::Key_Input(const _float& fTimeDelta)
+void CDynamicCamera::Key_Input(const _double& TimeDelta)
 {
+	POINT ptMouse = {};
+	GetCursorPos(&ptMouse);
+	ClientToScreen(g_hWnd, &ptMouse);
+
 	if (ENGINE::Key_Down(ENGINE::dwKEY_F1))
 		Reset_Camera();
 
 	_long dwMouseMove = 0;
-	if (dwMouseMove < ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_Z))
+	
+	if (ptMouse.x < 1200 && dwMouseMove < ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_Z))
 		m_fTargetDist -= m_fCamSpeed;
-	if (dwMouseMove > ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_Z))
+	if (ptMouse.x < 1200 && dwMouseMove > ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_Z))
 		m_fTargetDist += m_fCamSpeed;
 
 	if (m_fTargetDist < 2.5f)
 		m_fTargetDist = 3.f;
 
 	if (ENGINE::Key_Press(ENGINE::dwKEY_Q))
-		m_fCamAngle += ANGLE * fTimeDelta;
+		m_fCamAngle += ANGLE * TimeDelta;
 	if (ENGINE::Key_Press(ENGINE::dwKEY_E))
-		m_fCamAngle -= ANGLE * fTimeDelta;
+		m_fCamAngle -= ANGLE * TimeDelta;
 
 	if (m_fCamAngle > 90.f)
 		m_fCamAngle = 90.f;
@@ -134,7 +150,7 @@ void CDynamicCamera::Key_Input(const _float& fTimeDelta)
 
 }
 
-void CDynamicCamera::Key_Spectre(const _float & fTimeDelta)
+void CDynamicCamera::Key_Spectre(const _double& TimeDelta)
 {
 	//_vec3 vNewDir = {};
 	////Fix Mouse
@@ -156,35 +172,35 @@ void CDynamicCamera::Key_Spectre(const _float & fTimeDelta)
 	ClientToScreen(g_hWnd, &ptMouse);
 
 	if (ptMouse.x > 1850)
-		m_pTransCom->m_vAngle.y += 90.f * fTimeDelta;
+		m_pTransCom->m_vAngle.y += 90.f * TimeDelta;
 	else if (ptMouse.x < 70)
-		m_pTransCom->m_vAngle.y -= 90.f * fTimeDelta;
+		m_pTransCom->m_vAngle.y -= 90.f * TimeDelta;
 	if (ptMouse.y > 1080)
-		m_pTransCom->m_vAngle.x += 90.f * fTimeDelta;
+		m_pTransCom->m_vAngle.x += 90.f * TimeDelta;
 	else if (ptMouse.y < 80)
-		m_pTransCom->m_vAngle.x -= 90.f * fTimeDelta;
+		m_pTransCom->m_vAngle.x -= 90.f * TimeDelta;
 
 
 	//Key Input
 	if (ENGINE::Key_Press(ENGINE::dwKEY_W))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS] += m_pTransCom->m_vDir * SPEED * fTimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS] += m_pTransCom->m_vDir * SPEED * TimeDelta;
 	if (ENGINE::Key_Press(ENGINE::dwKEY_S))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS] -= m_pTransCom->m_vDir * SPEED * fTimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS] -= m_pTransCom->m_vDir * SPEED * TimeDelta;
 	if (ENGINE::Key_Press(ENGINE::dwKEY_A))
 	{
 		m_pTransCom->m_vInfo[ENGINE::INFO_POS] +=
-			vNewDir.NewDir(&m_pTransCom->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * fTimeDelta;
+			vNewDir.NewDir(&m_pTransCom->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * TimeDelta;
 	}
 	if (ENGINE::Key_Press(ENGINE::dwKEY_D))
 	{
 		m_pTransCom->m_vInfo[ENGINE::INFO_POS] -=
-			vNewDir.NewDir(&m_pTransCom->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * fTimeDelta;
+			vNewDir.NewDir(&m_pTransCom->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * TimeDelta;
 	}
 
 	if (ENGINE::Key_Press(ENGINE::dwKEY_SPACE))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y += SPEED * fTimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y += SPEED * TimeDelta;
 	if (ENGINE::Key_Press(ENGINE::dwKEY_Shift))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y -= SPEED * fTimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y -= SPEED * TimeDelta;
 
 
 }
@@ -266,6 +282,7 @@ void CDynamicCamera::Render_Set()
 
 	//SetTransform
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransCom->m_matWorld);
+	//CValueMgr::matCam = m_pTransCom->m_matWorld;
 }
 
 void CDynamicCamera::Render_ReSet()
@@ -309,7 +326,7 @@ void CDynamicCamera::Render_Line()
 	matLine = m_matView * m_matProj;
 
 	//ENGINE::LINE_3D vLine(m_pTransCom->m_vInfo[ENGINE::INFO_POS], 10.f);
-	ENGINE::LINE_3D vLine(_vec3(0.f, 0.f,0.f), 10.f);
+	ENGINE::LINE_3D vLine(_vec3(0.f, 0.f, 0.f), 10.f);
 
 	m_pLine->SetWidth(5.f);
 	m_pLine->Begin();

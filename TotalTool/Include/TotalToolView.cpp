@@ -46,7 +46,7 @@ CTotalToolView::CTotalToolView()
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
 
-
+	
 }
 
 CTotalToolView::~CTotalToolView()
@@ -167,16 +167,15 @@ void CTotalToolView::OnInitialUpdate()
 	//Init Time
 	m_pTime->Get_Instance()->Init_Time();
 
-	//OnTimer Init
-	SetTimer(1, 20, NULL);
-	bIsInit = true;
-
 	//Default Font
 	ENGINE::Ready_Font(m_pGraphicDev, L"Sp", L"스플래2K", 22, 24, FW_NORMAL);
 
 	//Key
 	ENGINE::Ready_InputDev(g_hInst, g_hWnd);
 
+	//OnTimer Init
+	SetTimer(1, 20, NULL);
+	bIsInit = true;
 }
 
 
@@ -187,9 +186,7 @@ void CTotalToolView::OnTimer(UINT_PTR nIDEvent)
 	g_hWnd = m_hWnd;
 	g_hInst = (HINSTANCE)GetWindowLong(m_hWnd, GWL_HINSTANCE);
 
-	//Crt Leak Search
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(936);
+
 
 	RECT rcView = {};
 	this->GetClientRect(&rcView);

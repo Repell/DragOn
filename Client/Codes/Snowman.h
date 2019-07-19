@@ -1,9 +1,8 @@
-#ifndef Player_h__
-#define Player_h__
+#ifndef Snowman_h__
+#define Snowman_h__
 
 #include "GameObject.h"
 #include "Effect_Tex.h"
-#include "Sword.h"
 
 namespace ENGINE
 {
@@ -16,14 +15,14 @@ namespace ENGINE
 	class CSphereColl;
 }
 
-class CPlayer : public ENGINE::CGameObject
+class CSnowman : public ENGINE::CGameObject
 {
 private:
-	explicit CPlayer(LPDIRECT3DDEVICE9 pDevice);
-	virtual ~CPlayer();
+	explicit CSnowman(LPDIRECT3DDEVICE9 pDevice);
+	virtual ~CSnowman();
 
 public:
-	virtual HRESULT Ready_Object() override;
+	virtual HRESULT Ready_Object(_vec3 vPos);
 	virtual HRESULT Late_Init();
 	virtual _int Update_Object(const _double& TimeDelta) override;
 	virtual void Late_Update_Object() override;
@@ -32,17 +31,11 @@ public:
 private:
 	void Render_Set();
 	void Render_ReSet();
+	void Chase_Target();
 
 private:
 	//Key Input, Camera, NaviMesh
-	_bool Key_check(const _double& TimeDelta);
-	void Jump_Check(const _double& TimeDelta);
-	_bool Check_EnemyColl();
-	//void Key_Old(_float fTimeDelta);
-
-
-private:
-	void UI_Sample();
+	_bool bAttack;
 
 private:
 	HRESULT Add_Component();
@@ -54,20 +47,12 @@ private:
 	ENGINE::CNaviMesh*		m_pNaviMesh;
 	//ENGINE::CCollider*			m_pCollider;
 	ENGINE::CSphereColl*	m_pSphereColl;
-	CSword*			m_pSword;
-
-private:
-	//Jump
-	_bool bJump;
-	_bool bUpDown;
-	_int iJumpCount;
 
 public:
-	static CPlayer* Create(LPDIRECT3DDEVICE9 pGraphicDev);
+	static CSnowman* Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos);
 	virtual void Free() override;
-
 
 
 };
 
-#endif // Player_h__
+#endif // Snowman_h__

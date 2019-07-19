@@ -6,6 +6,7 @@
 #include "Renderer.h"
 #include "Transform.h"
 #include "Collider.h"
+#include "SphereColl.h"
 #include "Calculator.h"
 #include "ProtoTypeMgr.h"
 

@@ -45,17 +45,37 @@ _vec3 CNaviMesh::MoveOn_NaviMesh(const _vec3 * pTargetPos, const _vec3 * pTarget
 
 	if (CCell::COMPARE_MOVE == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx))
 	{
+		//벽이 아닐경우 네비매쉬의 높이값 추가
 		vEndPos.y = Compute_OnTerrain(pTargetPos, &m_dwCurrentIdx);
 		return vEndPos;
 	}
 
 	else if (CCell::COMPARE_STOP == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx))
 	{
-		vEndPos.y = Compute_OnTerrain(pTargetPos, &m_dwCurrentIdx);
-		return *pTargetPos;
+		//벽일 경우 현재위치 리턴 -> 슬라이딩 벡터로 변환
+		return *pTargetPos;	
 	}
 
 	return _vec3(0.f, 0.f, 0.f);
+}
+
+_float CNaviMesh::MoveOn_Terrain(const _vec3 * pTargetPos, const _vec3 * pTargetDir)
+{
+	_vec3		vEndPos = *pTargetPos + *pTargetDir;
+
+	if (CCell::COMPARE_MOVE == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx))
+	{
+		vEndPos.y = Compute_OnTerrain(pTargetPos, &m_dwCurrentIdx);
+		return vEndPos.y;
+	}
+
+	else if (CCell::COMPARE_STOP == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx))
+	{
+		vEndPos.y = Compute_OnTerrain(pTargetPos, &m_dwCurrentIdx);
+		return vEndPos.y;
+	}
+
+	return 0.f;
 }
 
 

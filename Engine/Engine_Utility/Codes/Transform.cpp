@@ -28,7 +28,7 @@ HRESULT CTransform::Ready_Trasnform(_vec3 vLook)
 	return S_OK;
 }
 
-_int CTransform::Update_Component(const _float& fTimeDelta)
+_int CTransform::Update_Component(const _double& TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 

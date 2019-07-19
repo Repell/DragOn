@@ -18,7 +18,7 @@ public:
 
 public:
 	HRESULT Ready_Trasnform(_vec3 vLook);
-	virtual _int Update_Component(const _float& fTimeDelta) override;
+	virtual _int Update_Component(const _double& TimeDelta) override;
 	virtual void Late_Update_Component() override;
 	void Chase_Target(const _vec3* pTarget, const _float& fSpeed);
 	_matrix* Compute_LockTarget(const _vec3* pTargetPos);

@@ -577,7 +577,7 @@ void CTapTerrain::OnLbnSelchange_TextureBox()
 	list<ENGINE::CGameObject*>& pList = pView->m_pToolRender->Get_RenderList(L"Terrain");
 	CTerrain* pTerrain = dynamic_cast<CTerrain*>(pList.front());
 
-	_int	iIndex = m_TextureListBox.GetCurSel();
+	_ulong	iIndex = m_TextureListBox.GetCurSel();
 	strKey = L"";
 	m_TextureListBox.GetText(iIndex, strKey);
 

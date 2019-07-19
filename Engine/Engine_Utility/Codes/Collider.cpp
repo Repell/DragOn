@@ -1,4 +1,5 @@
 #include "Collider.h"
+#include "SphereColl.h"
 
 USING(ENGINE)
 
@@ -11,12 +12,22 @@ CCollider::CCollider(LPDIRECT3DDEVICE9 pDevice)
 
 CCollider::~CCollider()
 {
+	m_pMesh->Release();
 }
 
-HRESULT CCollider::Ready_Collider(const _vec3 * pPos, const _ulong & dwNumVtx, const _ulong & dwStride)
+_float CCollider::Get_Radius()
 {
-	D3DXComputeBoundingBox(pPos, dwNumVtx, sizeof(_vec3), &m_vMin, &m_vMax);
+	return (m_fRadius * m_fScale);
+}
 
+void CCollider::Set_Scale(_float fScale)
+{
+	m_fScale = fScale;
+}
+
+HRESULT CCollider::Ready_Collider(const _vec3 * pPos, const _ulong & dwNumVtx, const _ulong & dwStride, _float fRadius)
+{
+	D3DXComputeBoundingBox(pPos, dwNumVtx, sizeof(_vec3), &m_vMin, &m_vMax);	
 
 #ifdef _DEBUG
 	FAILED_CHECK_RETURN(m_pGraphicDev->CreateVertexBuffer(sizeof(VTX_CUBE) * 8,
@@ -48,8 +59,7 @@ HRESULT CCollider::Ready_Collider(const _vec3 * pPos, const _ulong & dwNumVtx, c
 
 	pVtxCube[3].vPos = D3DXVECTOR3(m_vMin.x, m_vMin.y, m_vMin.z);
 	pVtxCube[3].vTex = pVtxCube[3].vPos;
-
-
+	
 	pVtxCube[4].vPos = D3DXVECTOR3(m_vMin.x, m_vMax.y, m_vMax.z);
 	pVtxCube[4].vTex = pVtxCube[4].vPos;
 
@@ -85,8 +95,7 @@ HRESULT CCollider::Ready_Collider(const _vec3 * pPos, const _ulong & dwNumVtx, c
 	pIndex[3]._0 = 4;
 	pIndex[3]._1 = 3;
 	pIndex[3]._2 = 7;
-
-
+	
 	// +y
 	pIndex[4]._0 = 4;
 	pIndex[4]._1 = 5;
@@ -141,13 +150,19 @@ HRESULT CCollider::Ready_Collider(const _vec3 * pPos, const _ulong & dwNumVtx, c
 
 #endif
 
+	Ready_Collider_Sphere(fRadius);
+
 	return S_OK;
 }
 
-void CCollider::Render_Collider(COLLTYPE eType, const _matrix * pCollMatrix)
+void CCollider::Render_Collider(COLLTYPE eType, const _matrix * pCollMatrix, _vec3 CollPos)
 {
-	m_matColWorld = *pCollMatrix;
-
+	_matrix matRevolve;	
+	D3DXMatrixIdentity(&matRevolve);
+	D3DXMatrixTranslation(&matRevolve, CollPos.x, CollPos.y, CollPos.z);	// 로컬 상태의 공전매트릭스(줄어든 스케일만큼 값이 커야함)
+	
+	m_matColWorld = matRevolve * *pCollMatrix;		//공전, 부모
+	
 #ifdef _DEBUG
 	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, pCollMatrix);
@@ -161,17 +176,71 @@ void CCollider::Render_Collider(COLLTYPE eType, const _matrix * pCollMatrix)
 	m_pGraphicDev->SetIndices(m_pIB);
 	m_pGraphicDev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
 
+	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_matColWorld);
+	m_pMesh->DrawSubset(0);
+
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 #endif
 }
 
-CCollider * CCollider::Create(LPDIRECT3DDEVICE9 pDevice, const _vec3 * pPos, const _ulong & dwNumVtx, const _ulong & dwStride)
+_bool CCollider::Check_ComponentColl(CSphereColl * pSphere)
+{
+	_float fDist = 0.f;
+	_vec3 vDiff = { 0.f, 0.f, 0.f };
+	_vec3 vCollPos = { 0.f, 0.f, 0.f };
+	memcpy(vCollPos, m_matColWorld.m[3], sizeof(_vec3));
+
+	_vec3 vTarget = pSphere->Get_CollPos();
+	_float fTargetRad = pSphere->Get_Radius();
+
+	vDiff = vTarget - vCollPos;
+	fDist = D3DXVec3Length(&vDiff);
+
+	if (fDist <= (fTargetRad + (m_fRadius* m_fScale)))
+		return TRUE;
+
+	return FALSE;
+}
+
+HRESULT CCollider::Ready_Collider_Sphere(_float fRadius)
+{
+	//D3DXComputeBoundingSphere(pPos, dwNumVtx, sizeof(_vec3), &m_vCenter, &m_fRadius);
+
+	//_vec3 vDir = *D3DXVec3Normalize(&vDir, &m_vCenter);
+
+	LPD3DXMESH pMesh;
+	D3DXCreateSphere(m_pGraphicDev, fRadius, 10, 10, &pMesh, nullptr);
+	m_fRadius = fRadius;
+
+	//Clone을 해야만 우리가 직접만든 FVF 포맷을 적용시켜 사용할 수 있음
+	pMesh->CloneMeshFVF(D3DXMESH_SYSTEMMEM, ENGINE::VTXFVF_SPHERE, m_pGraphicDev, &m_pMesh);
+	pMesh->Release();
+		
+	//ENGINE::VTX_SPHERE* pCube;
+	//if (SUCCEEDED(m_pMesh->LockVertexBuffer(0, (void**)&pCube)))
+	//{
+	//	int numVtx = m_pMesh->GetNumVertices();
+
+	//	for (int i = 0; i < numVtx; ++i)
+	//	{
+	//		pCube[i].vPos.x += 5.f;
+	//		pCube[i].vPos.y += 5.f;
+	//		pCube[i].vPos.z += 5.f;
+	//	}
+
+	//	m_pMesh->UnlockVertexBuffer();
+	//}
+
+	return S_OK;
+}
+
+CCollider * CCollider::Create(LPDIRECT3DDEVICE9 pDevice, const _vec3 * pPos, const _ulong & dwNumVtx, const _ulong & dwStride, _float fRadius)
 {
 	CCollider* pInstance = new CCollider(pDevice);
 
-	if (FAILED(pInstance->Ready_Collider(pPos, dwNumVtx, dwStride)))
+	if (FAILED(pInstance->Ready_Collider(pPos, dwNumVtx, dwStride, fRadius)))
 		Safe_Release(pInstance);
 
 	return pInstance;

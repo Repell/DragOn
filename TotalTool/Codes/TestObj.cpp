@@ -71,7 +71,7 @@ HRESULT CTestObj::Ready_MeshObject(wstring strMesh)
 		m_pDynamicCom->Set_AnimationSet(0);
 
 	m_pTransCom->m_vInfo[ENGINE::INFO_POS] = { 0.f, 0.f, 0.f };
-	m_pTransCom->m_vScale = { 1.f, 1.f, 1.f };
+	m_pTransCom->m_vScale = { 0.1f, 0.1f, 0.1f };
 
 	return S_OK;
 }
@@ -92,13 +92,13 @@ HRESULT CTestObj::Late_Init()
 	return S_OK;
 }
 
-_int CTestObj::Update_Object(const _float & fTimeDelta)
+_int CTestObj::Update_Object(const _double& TimeDelta)
 {
 	ENGINE::CGameObject::Late_Init();
-	ENGINE::CGameObject::Update_Object(fTimeDelta);
+	ENGINE::CGameObject::Update_Object(TimeDelta);
 
 	if(m_pDynamicCom != nullptr)
-		m_pDynamicCom->Play_AnimationSet(fTimeDelta);
+		m_pDynamicCom->Play_AnimationSet(TimeDelta);
 
 	if (bDelete)
 		return 999;

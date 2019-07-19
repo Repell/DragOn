@@ -24,6 +24,7 @@ CMyForm::CMyForm()
 
 CMyForm::~CMyForm()
 {
+
 }
 
 void CMyForm::DoDataExchange(CDataExchange* pDX)
@@ -65,7 +66,7 @@ void CMyForm::OnInitialUpdate()
 	m_TabTWO = L" Mesh Tool ";
 	m_TabTHREE = L"  Navi Tool  ";
 	m_TabFOUR = L"  Effect Tool  ";
-	m_TabFIVE = L"  NOPE  ";
+	m_TabFIVE = L"  Animation Tool  ";
 
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 	m_Tab.InsertItem(0, m_TabONE);
@@ -89,6 +90,9 @@ void CMyForm::OnInitialUpdate()
 
 	m_pTabEffect.Create(IDD_TABFOUR, &m_Tab);
 	m_pTabEffect.SetWindowPos(NULL, 5, 25, Rc.Width() - 5, Rc.Height() - 25, SWP_NOZORDER);
+
+	m_pTabAnimation.Create(IDD_ANIMATION, &m_Tab);
+	m_pTabAnimation.SetWindowPos(NULL, 5, 25, Rc.Width() - 5, Rc.Height() - 25, SWP_NOZORDER);
 
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 }
@@ -130,6 +134,11 @@ void CMyForm::OnTcnSelchange_Tab(NMHDR *pNMHDR, LRESULT *pResult)
 		m_pTabEffect.ShowWindow(SW_SHOW);
 		m_pWndShow = &m_pTabEffect;
 		m_eTab = TABEFFECT;
+		break;
+	case 4:
+		m_pTabAnimation.ShowWindow(SW_SHOW);
+		m_pWndShow = &m_pTabAnimation;
+		m_eTab = TABANIMATION;
 		break;
 	}
 

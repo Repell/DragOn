@@ -98,10 +98,8 @@ private:
 	_float m_fRotY;
 	_float m_fRotZ;
 
-
-
 public:
-	_uint m_iTex;
+	_ulong m_iTex;
 	CString strKey;
 
 

@@ -5,6 +5,7 @@
 #include "TabMesh.h"		//TWO
 #include "TabNavi.h"		//THREE
 #include "TabEffect.h"	//FOUR
+#include "TabAnimation.h" //FIVE	
 
 // CMyForm Æû ºäÀÔ´Ï´Ù.
 
@@ -60,6 +61,7 @@ public:
 	CTabMesh		m_pTabMesh;
 	CTabNavi		m_pTabNavi;
 	CTabEffect	m_pTabEffect;
+	CTabAnimation		m_pTabAnimation;
 
 };
 

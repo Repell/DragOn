@@ -19,15 +19,19 @@ private:
 	virtual ~CSword();
 
 public:
+	void Set_bAttack(_bool bState);
+
+public:
 	virtual HRESULT Ready_Object(const _uint& iFlag);
 	virtual HRESULT Late_Init();
-	virtual _int Update_Object(const _float& fTimeDelta) override;
+	virtual _int Update_Object(const _double& TimeDelta) override;
 	virtual void Late_Update_Object() override;
 	virtual void Render_Object() override;
 
 private:
 	void Render_Set();
 	void Render_ReSet();
+	void Check_EnemyColl(const _tchar* pObjTag, const _tchar* pCompTag);
 
 private:
 	HRESULT Add_Component();
@@ -39,11 +43,11 @@ private:
 	ENGINE::CCollider*			m_pCollider;
 
 private:
-	_vec3				m_vDir;
+	_bool bAttack;
 	_uint				m_iFlag;
 	const _matrix*		m_pParentBoneMatrix;
 	const _matrix*		m_pParentWorldMatrix;
-	_matrix matWorld;
+
 
 public:
 	static CSword* Create(LPDIRECT3DDEVICE9 pGraphicDev, const _uint& iFlag);

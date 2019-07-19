@@ -3,13 +3,17 @@
 
 #include "Export_Function.h"
 
-#define SPEED 5.f
+#define SPEED 2.f
 #define ANGLE 60.f
+#define  RADIUS 75.f
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pDevice)
 	:	CGameObject(pDevice),
 	m_pMesh(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr), m_pNaviMesh(nullptr)
 {
+	bJump = FALSE;
+	bUpDown = FALSE;
+	iJumpCount = 0;
 }
 
 CPlayer::~CPlayer()
@@ -20,7 +24,7 @@ HRESULT CPlayer::Ready_Object()
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
-	m_pMesh->Set_AnimationSet(57);
+	m_pMesh->Set_AnimationSet(109);
 
 	m_pNaviMesh->Set_CurrentIdx(3);
 
@@ -31,25 +35,30 @@ HRESULT CPlayer::Ready_Object()
 
 HRESULT CPlayer::Late_Init()
 {
+	m_pSword = dynamic_cast<CSword*>
+		(ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT)->Get_MapObject(L"Sword").front());
+
 	m_pTransform->m_vScale = { 0.01f, 0.01f, 0.01f };
-	m_pTransform->m_vInfo[ENGINE::INFO_POS] = { 1.f, 0.1f, 1.f };
+	m_pTransform->m_vInfo[ENGINE::INFO_POS] = { 50.f, 0.1f, 2.f };
+	m_pSphereColl->Set_Scale(0.01f);
 
 	return S_OK;
 }
 
-_int CPlayer::Update_Object(const _float & fTimeDelta)
+_int CPlayer::Update_Object(const _double& TimeDelta)
 {
 	ENGINE::CGameObject::Late_Init();
-	ENGINE::CGameObject::Update_Object(fTimeDelta);
+	ENGINE::CGameObject::Update_Object(TimeDelta);
 
 	if (m_pTransform->bCamTarget)
 	{
-		if (Key_check(fTimeDelta))
-			m_pMesh->Set_AnimationSet(55);
+		if (Key_check(TimeDelta))
+			m_pMesh->Set_AnimationSet(109);
 	}
+	Jump_Check(TimeDelta);
 		//Key_Old(fTimeDelta);
 
-	m_pMesh->Play_AnimationSet(fTimeDelta);
+	m_pMesh->Play_AnimationSet(TimeDelta);
 
 	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_NONALPHA, this);
 	return NO_EVENT;
@@ -58,17 +67,31 @@ _int CPlayer::Update_Object(const _float & fTimeDelta)
 void CPlayer::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
+
+	if (ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON))
+	{
+		CGameObject* pObject = CEffect_Tex::Create(m_pGraphicDev, m_pTransform->m_vInfo[ENGINE::INFO_POS], 1.f, 0.5f);
+		ENGINE::Get_Management()->Add_GameObject(ENGINE::CLayer::OBJECT, L"kaboom", pObject);
+		m_pMesh->Set_AnimationSet(90);
+
+		m_pSword->Set_bAttack(TRUE);
+	}
+
 }
 
 void CPlayer::Render_Object()
 {
 	//Render_Set();
 
+	//Check_EnemyColl();
+
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 
 	m_pNaviMesh->Render_NaviMesh();
 
 	m_pMesh->Render_Meshes();
+
+	m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld);
 
 	//Render_ReSet();
 }
@@ -98,7 +121,7 @@ void CPlayer::Render_ReSet()
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
-bool CPlayer::Key_check(_float fTimeDelta)
+_bool CPlayer::Key_check(const _double& TimeDelta)
 {
 	_vec3 vNewDir = m_pTransform->m_vInfo[ENGINE::INFO_LOOK];
 	_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
@@ -110,7 +133,7 @@ bool CPlayer::Key_check(_float fTimeDelta)
 
 	_long dwMouseMove = 0;
 	if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_X))
-		m_pTransform->m_vAngle.y += dwMouseMove * ANGLE *fTimeDelta;
+		m_pTransform->m_vAngle.y += dwMouseMove * ANGLE *TimeDelta;
 
 	//if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_Y))
 	//	m_pTransform->m_vAngle.x += dwMouseMove * ANGLE *fTimeDelta;
@@ -124,28 +147,37 @@ bool CPlayer::Key_check(_float fTimeDelta)
 	if (ENGINE::Key_Press(ENGINE::dwKEY_W))
 	{
 		D3DXVec3Normalize(&vNewDir, &vNewDir);
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vNewDir * fTimeDelta * -SPEED));
-			
-		m_pMesh->Set_AnimationSet(54);
+
+		if (!Check_EnemyColl())
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vNewDir * TimeDelta * -SPEED));
+		else
+		{
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] -= vNewDir.Reverse(&vNewDir)* TimeDelta;
+			return FALSE;
+		}
+
+		m_pMesh->Set_AnimationSet(106);
 	}
 	if (ENGINE::Key_Press(ENGINE::dwKEY_S))
 	{
 		D3DXVec3Normalize(&vNewDir, &vNewDir);
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vNewDir * fTimeDelta * SPEED));
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vNewDir * TimeDelta * SPEED));
 
-		m_pMesh->Set_AnimationSet(54);
+		m_pMesh->Set_AnimationSet(106);
 	}
 	if (ENGINE::Key_Press(ENGINE::dwKEY_A))
-		m_pTransform->m_vAngle.y -= ANGLE *fTimeDelta;
+		m_pTransform->m_vAngle.y -= ANGLE *TimeDelta;
 
 	if (ENGINE::Key_Press(ENGINE::dwKEY_D))
-		m_pTransform->m_vAngle.y += ANGLE *fTimeDelta;
+		m_pTransform->m_vAngle.y += ANGLE *TimeDelta;
 
-	if (ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON))
+
+
+	if (ENGINE::Key_Down(ENGINE::dwKEY_SPACE))
 	{
-		CGameObject* pObject = CEffect_Tex::Create(m_pGraphicDev, vPos, 1.f, 0.5f);
-		ENGINE::Get_Management()->Add_GameObject(ENGINE::CLayer::OBJECT, L"kaboom", pObject);
-		m_pMesh->Set_AnimationSet(30);
+		bJump = true;
+		bUpDown = true;
+		m_pMesh->Set_AnimationSet(101);
 	}
 
 	//if (m_pMesh->Is_AnimationSetEnd())
@@ -155,53 +187,96 @@ bool CPlayer::Key_check(_float fTimeDelta)
 
 }
 
-void CPlayer::Key_Old(_float fTimeDelta)
+//void CPlayer::Key_Old(_float fTimeDelta)
+//{
+//	_vec3 vNewDir = {};
+//	//Fix Mouse
+//	POINT pt = { WINCX >> 1, WINCY >> 1 };
+//	ClientToScreen(g_hWnd, &pt);
+//	SetCursorPos(pt.x, pt.y);
+//
+//	_long dwMouseMove = 0;
+//	if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_X))
+//		m_pTransform->m_vAngle.y += dwMouseMove * ANGLE * fTimeDelta;
+//
+//	//if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_Y))
+//	//	m_pTransform->m_vAngle.x += dwMouseMove * ANGLE * fTimeDelta;
+//
+//	if (m_pTransform->bCamTarget && ENGINE::Key_Down(ENGINE::dwKEY_F4))
+//	{
+//		if (m_pTransform->bCamTarget)
+//			m_pTransform->bCamTarget = false;
+//	}
+//
+//	//Key Input
+//	if (ENGINE::Key_Press(ENGINE::dwKEY_W))
+//	{
+//		m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pTransform->m_vDir * SPEED * fTimeDelta;
+//		m_pMesh->Set_AnimationSet(54);
+//	}
+//	if (ENGINE::Key_Press(ENGINE::dwKEY_S))
+//	{
+//		m_pTransform->m_vInfo[ENGINE::INFO_POS] -= m_pTransform->m_vDir * SPEED * fTimeDelta;
+//		m_pMesh->Set_AnimationSet(54);
+//	}
+//	if (ENGINE::Key_Press(ENGINE::dwKEY_A))
+//	{
+//		m_pTransform->m_vInfo[ENGINE::INFO_POS] +=
+//			vNewDir.NewDir(&m_pTransform->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * fTimeDelta;
+//		m_pMesh->Set_AnimationSet(54);
+//	}
+//	if (ENGINE::Key_Press(ENGINE::dwKEY_D))
+//	{
+//		m_pTransform->m_vInfo[ENGINE::INFO_POS] -=
+//			vNewDir.NewDir(&m_pTransform->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * fTimeDelta;
+//		m_pMesh->Set_AnimationSet(54);
+//	}
+//
+//	if (m_pMesh->Is_AnimationSetEnd())
+//		m_pMesh->Set_AnimationSet(57);
+//
+//}
+
+void CPlayer::Jump_Check(const _double& TimeDelta)
 {
-	_vec3 vNewDir = {};
-	//Fix Mouse
-	POINT pt = { WINCX >> 1, WINCY >> 1 };
-	ClientToScreen(g_hWnd, &pt);
-	SetCursorPos(pt.x, pt.y);
-
-	_long dwMouseMove = 0;
-	if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_X))
-		m_pTransform->m_vAngle.y += dwMouseMove * ANGLE * fTimeDelta;
-
-	//if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_Y))
-	//	m_pTransform->m_vAngle.x += dwMouseMove * ANGLE * fTimeDelta;
-
-	if (m_pTransform->bCamTarget && ENGINE::Key_Down(ENGINE::dwKEY_F4))
+	if (iJumpCount < 25 && bUpDown && bJump)
 	{
-		if (m_pTransform->bCamTarget)
-			m_pTransform->bCamTarget = false;
+		++iJumpCount;
+		m_pTransform->m_fJump = (iJumpCount * 10) * TimeDelta;
+		if (iJumpCount >= 25)
+			bUpDown = FALSE;
 	}
+	else if (iJumpCount > 0 && !bUpDown && bJump)
+	{
+		m_pTransform->m_fJump = (iJumpCount * 10) * TimeDelta;
+		--iJumpCount;
+		if (iJumpCount == 0)
+		{
+			bJump = FALSE;
+			m_pTransform->m_fJump = 0.f;
+			//_float fY = m_pNaviMesh->MoveOn_Terrain(&m_pTransform->m_vInfo[ENGINE::INFO_POS], &m_pTransform->m_vInfo[ENGINE::INFO_LOOK]);
+			//m_pTransform->m_vInfo[ENGINE::INFO_POS].y = fY;
+		}
+	}
+}
 
-	//Key Input
-	if (ENGINE::Key_Press(ENGINE::dwKEY_W))
-	{
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pTransform->m_vDir * SPEED * fTimeDelta;
-		m_pMesh->Set_AnimationSet(54);
-	}
-	if (ENGINE::Key_Press(ENGINE::dwKEY_S))
-	{
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] -= m_pTransform->m_vDir * SPEED * fTimeDelta;
-		m_pMesh->Set_AnimationSet(54);
-	}
-	if (ENGINE::Key_Press(ENGINE::dwKEY_A))
-	{
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] +=
-			vNewDir.NewDir(&m_pTransform->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * fTimeDelta;
-		m_pMesh->Set_AnimationSet(54);
-	}
-	if (ENGINE::Key_Press(ENGINE::dwKEY_D))
-	{
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] -=
-			vNewDir.NewDir(&m_pTransform->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * fTimeDelta;
-		m_pMesh->Set_AnimationSet(54);
-	}
+_bool CPlayer::Check_EnemyColl()
+{
+	//const _tchar* pObjTag, const _tchar* pCompTag
+	//_tchar szStr[MAX_PATH] = L"충돌했음!";
 
-	if (m_pMesh->Is_AnimationSetEnd())
-		m_pMesh->Set_AnimationSet(57);
+	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
+
+	for (auto pList : pLayer->Get_MapObject(L"Snowman"))
+	{
+		ENGINE::CSphereColl* pSphere = dynamic_cast<ENGINE::CSphereColl*>
+			(pList->Get_Component(L"Com_SphereColl", ENGINE::COMP_STATIC));
+
+		if (pSphere == nullptr)
+			return FALSE;
+
+		return m_pSphereColl->Check_ComponentColl(pSphere);
+	}
 
 }
 
@@ -263,12 +338,17 @@ HRESULT CPlayer::Add_Component()
 	pComponent = m_pNaviMesh = dynamic_cast<ENGINE::CNaviMesh*>
 		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Mesh_Navi"));
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_NaviMesh", pComponent);
-
-	////Collider
+	
+	//Collider
 	//pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev,
 	//	m_pMesh->Get_VtxMeshPos(), m_pMesh->Get_NumVtx(), m_pMesh->Get_Stride());
 	//NULL_CHECK_RETURN(pComponent, E_FAIL);
 	//m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider", pComponent);
+
+	//Sphere Collider
+	pComponent = m_pSphereColl = ENGINE::CSphereColl::Create(m_pGraphicDev, RADIUS, 10);
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_SphereColl", pComponent);
 
 	////////////////////////////
 	return S_OK;

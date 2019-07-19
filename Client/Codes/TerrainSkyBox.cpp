@@ -24,11 +24,11 @@ HRESULT CTerrainSkyBox::Ready_Object()
 	return S_OK;
 }
 
-_int CTerrainSkyBox::Update_Object(const _float& fTimeDelta)
+_int CTerrainSkyBox::Update_Object(const _double& TimeDelta)
 {
 	Get_CameraPos();
 	// ▲ 프레임 갱신 전 렌더
-	ENGINE::CGameObject::Update_Object(fTimeDelta);
+	ENGINE::CGameObject::Update_Object(TimeDelta);
 	// ▼ 프레임 갱신 후 렌더
 
 	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_PRIORITY, this);
