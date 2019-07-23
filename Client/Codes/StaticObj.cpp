@@ -3,8 +3,8 @@
 
 #include "Export_Function.h"
 
-#define SPEED 5.f
-#define ANGLE 90.f
+#define _SPEED 5.f
+#define _ANGLE 90.f
 
 CStaticObj::CStaticObj(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CGameObject(pGraphicDev)

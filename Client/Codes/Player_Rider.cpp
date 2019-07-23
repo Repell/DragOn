@@ -3,9 +3,9 @@
 
 #include "Export_Function.h"
 
-#define SPEED 4.f
-#define ANGLE 60.f
-#define  RADIUS 75.f
+#define _SPEED 4.f
+#define _ANGLE 60.f
+#define  _RADIUS 75.f
 
 CPlayer_Rider::CPlayer_Rider(LPDIRECT3DDEVICE9 pDevice)
 	:	CGameObject(pDevice),
@@ -144,7 +144,7 @@ _bool CPlayer_Rider::Key_check(const _double& TimeDelta)
 
 	_long dwMouseMove = 0;
 	if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_X))
-		m_pTransform->m_vAngle.y += dwMouseMove * ANGLE *TimeDelta;
+		m_pTransform->m_vAngle.y += dwMouseMove * _ANGLE *TimeDelta;
 
 	//if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_Y))
 	//	m_pTransform->m_vAngle.x += dwMouseMove * ANGLE *fTimeDelta;
@@ -160,7 +160,7 @@ _bool CPlayer_Rider::Key_check(const _double& TimeDelta)
 		D3DXVec3Normalize(&vNewDir, &vNewDir);
 
 		if (!Check_EnemyColl())
-			m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vNewDir * TimeDelta * -SPEED));
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vNewDir * TimeDelta * -_SPEED));
 		else
 		{
 			m_pTransform->m_vInfo[ENGINE::INFO_POS] -= vNewDir.Reverse(&vNewDir)* TimeDelta;
@@ -172,15 +172,15 @@ _bool CPlayer_Rider::Key_check(const _double& TimeDelta)
 	if (ENGINE::Key_Press(ENGINE::dwKEY_S))
 	{
 		D3DXVec3Normalize(&vNewDir, &vNewDir);
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vNewDir * TimeDelta * SPEED));
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vNewDir * TimeDelta * _SPEED));
 
 		m_pMesh->Set_AnimationSet(106);
 	}
 	if (ENGINE::Key_Press(ENGINE::dwKEY_A))
-		m_pTransform->m_vAngle.y -= ANGLE *TimeDelta;
+		m_pTransform->m_vAngle.y -= _ANGLE *TimeDelta;
 
 	if (ENGINE::Key_Press(ENGINE::dwKEY_D))
-		m_pTransform->m_vAngle.y += ANGLE *TimeDelta;
+		m_pTransform->m_vAngle.y += _ANGLE *TimeDelta;
 
 
 
@@ -382,7 +382,7 @@ HRESULT CPlayer_Rider::Add_Component()
 	//m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider", pComponent);
 
 	//Sphere Collider
-	pComponent = m_pSphereColl = ENGINE::CSphereColl::Create(m_pGraphicDev, RADIUS, 10);
+	pComponent = m_pSphereColl = ENGINE::CSphereColl::Create(m_pGraphicDev, _RADIUS, 10);
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_SphereColl", pComponent);
 

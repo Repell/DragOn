@@ -16,6 +16,7 @@ public:
 	_float Get_Radius();
 	void Set_Scale(_float fScale);
 	_int Get_iHp(_int iDamage = 0);
+	void Set_Invisible(_bool bState);
 
 public:
 	HRESULT Ready_SphereColl(_float fRadius, _int iHp);
@@ -42,6 +43,7 @@ public:
 
 	//Life
 	_int m_iHp;
+	_bool m_bInvisible;
 
 public:
 	static CSphereColl* Create(LPDIRECT3DDEVICE9 pDevice, _float fRadius, _int iHp);

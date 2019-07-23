@@ -6,7 +6,7 @@
 #include "TabNavi.h"
 #include "TabAnimation.h"
 
-#define RADIUS 1.f
+#define _RADIUS 1.f
 
 CNaviMaker::CNaviMaker(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CGameObject(pGraphicDev), m_pSprite(ENGINE::Get_GraphicDev()->Get_Sprite()),
@@ -428,7 +428,7 @@ _bool CNaviMaker::Coll_NaviPoint()
 		vDiff = m_vPickPos - iter->second.vPointA;
 		fDist = D3DXVec3Length(&vDiff);
 
-		if (fDist <= (RADIUS + RADIUS))
+		if (fDist <= (_RADIUS + _RADIUS))
 		{
 			m_iCurPoint = 0;
 			m_iCurNavi = iter->first;
@@ -438,7 +438,7 @@ _bool CNaviMaker::Coll_NaviPoint()
 		vDiff = m_vPickPos - iter->second.vPointB;
 		fDist = D3DXVec3Length(&vDiff);
 
-		if (fDist <= (RADIUS + RADIUS))
+		if (fDist <= (_RADIUS + _RADIUS))
 		{
 			m_iCurPoint = 1;
 			m_iCurNavi = iter->first;
@@ -448,7 +448,7 @@ _bool CNaviMaker::Coll_NaviPoint()
 		vDiff = m_vPickPos - iter->second.vPointC;
 		fDist = D3DXVec3Length(&vDiff);
 
-		if (fDist <= (RADIUS + RADIUS))
+		if (fDist <= (_RADIUS + _RADIUS))
 		{
 			m_iCurPoint = 2;
 			m_iCurNavi = iter->first;

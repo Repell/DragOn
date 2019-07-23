@@ -3,9 +3,9 @@
 
 #include "Export_Function.h"
 
-#define SPEED 3.f
-#define ANGLE 60.f
-#define  RADIUS 125.f
+#define _SPEED 3.f
+#define _ANGLE 60.f
+#define  _RADIUS 125.f
 
 CSnowman::CSnowman(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice),
@@ -146,7 +146,7 @@ void CSnowman::Chase_Target(const _double& TimeDelta)
 	}
 	else	if (fDist < 10.f && !bColl)
 	{
-		m_pTransform->Stalk_Target(m_pTargetTransform, TimeDelta, SPEED);
+		m_pTransform->Stalk_Target(m_pTargetTransform, TimeDelta, _SPEED);
 		m_pMesh->Set_AnimationSet(7);
 	}
 	else
@@ -209,7 +209,7 @@ HRESULT CSnowman::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider", pComponent);
 
 	//Sphere Collider
-	pComponent = m_pSphereColl = ENGINE::CSphereColl::Create(m_pGraphicDev, RADIUS, 10);
+	pComponent = m_pSphereColl = ENGINE::CSphereColl::Create(m_pGraphicDev, _RADIUS, 10);
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_SphereColl", pComponent);
 

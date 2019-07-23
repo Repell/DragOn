@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "TestObj.h"
 
-#define SPEED 5.f
-#define ANGLE 90.f
+#define _SPEED 5.f
+#define _ANGLE 90.f
 
 CTestObj::CTestObj(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CGameObject(pGraphicDev), bDelete(FALSE), bMeshState(FALSE) 

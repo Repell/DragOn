@@ -3,7 +3,7 @@
 USING(ENGINE)
 
 CSphereColl::CSphereColl(LPDIRECT3DDEVICE9 pDevice)
-	: m_pGraphicDev(pDevice), m_fScale(0.01f)
+	: m_pGraphicDev(pDevice), m_fScale(0.01f), m_bInvisible(FALSE)
 {
 	m_pGraphicDev->AddRef();
 }
@@ -29,10 +29,15 @@ void CSphereColl::Set_Scale(_float fScale)
 
 _int CSphereColl::Get_iHp(_int iDamage)
 {
-	if(iDamage > 0)
+	if(iDamage > 0 && !m_bInvisible)
 		m_iHp -= iDamage;
 
 	return m_iHp;
+}
+
+void CSphereColl::Set_Invisible(_bool bState)
+{
+	m_bInvisible = bState;
 }
 
 HRESULT CSphereColl::Ready_SphereColl(_float fRadius, _int iHp)

@@ -1,7 +1,7 @@
 #include "TriTex.h"
 #include "Texture.h"
 
-#define  RADIUS 1.f
+#define  _RADIUS 1.f
 
 USING(ENGINE)
 
@@ -101,7 +101,7 @@ HRESULT CTriTex::Ready_Buffer()
 	m_pIB->Unlock();
 
 	for (int i = 0; i < 3; ++i)
-		D3DXCreateSphere(m_pGraphicDev, RADIUS, 10, 10, &Sphere[i], nullptr);
+		D3DXCreateSphere(m_pGraphicDev, _RADIUS, 10, 10, &Sphere[i], nullptr);
 
 	return S_OK;
 }

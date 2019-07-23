@@ -2,6 +2,8 @@
 
 USING(ENGINE)
 
+#define _ANGLE 60.f
+
 CTransform::CTransform()
 	: m_vScale(1.f, 1.f, 1.f),
 	m_vAngle(0.f, 0.f, 0.f),
@@ -10,11 +12,43 @@ CTransform::CTransform()
 	m_fJump(0.f),
 	bCamTarget(true)
 {
-	
+	bRotate = FALSE;
+	m_eCurDir = DIR_UP;
 }
 
 CTransform::~CTransform()
 {
+}
+
+_vec3 CTransform::Get_vLookDir()
+{
+	_vec3 vLookPos = m_vInfo[ENGINE::INFO_LOOK];;
+	vLookPos.y = 0.f;
+
+	return vLookPos;
+}
+
+_vec3 CTransform::Get_vInfoPos(ENGINE::INFO eInfo)
+{
+	_vec3 vPos;
+
+	switch (eInfo)
+	{
+	case ENGINE::INFO_RIGHT:
+		vPos = m_vInfo[ENGINE::INFO_RIGHT];
+		break;
+	case ENGINE::INFO_UP:
+		vPos = m_vInfo[ENGINE::INFO_UP];
+		break;
+	case ENGINE::INFO_LOOK:
+		vPos = m_vInfo[ENGINE::INFO_LOOK];
+		break;
+	case ENGINE::INFO_POS:
+		vPos = m_vInfo[ENGINE::INFO_POS];
+		break;
+	}
+
+	return vPos;
 }
 
 HRESULT CTransform::Ready_Trasnform(_vec3 vLook)
@@ -30,6 +64,12 @@ HRESULT CTransform::Ready_Trasnform(_vec3 vLook)
 
 _int CTransform::Update_Component(const _double& TimeDelta)
 {
+	if (bRotate)
+	{
+		m_RotTime += TimeDelta;
+		Rotation_AngleY(TimeDelta);
+	}
+
 	D3DXMatrixIdentity(&m_matWorld);
 
 	m_vInfo[INFO_POS].y += m_fJump;
@@ -52,13 +92,13 @@ _int CTransform::Update_Component(const _double& TimeDelta)
 	D3DXMatrixRotationX(&matRot[ROT_X], D3DXToRadian(m_vAngle.x));
 	D3DXMatrixRotationY(&matRot[ROT_Y], D3DXToRadian(m_vAngle.y));
 	D3DXMatrixRotationZ(&matRot[ROT_Z], D3DXToRadian(m_vAngle.z));
-	
+
 	for (_ulong i = 0; i < INFO_POS; ++i)
 	{
 		for (_ulong j = 0; j < ROT_END; ++j)
-			D3DXVec3TransformNormal(&m_vInfo[i], &m_vInfo[i], &matRot[j]);	
+			D3DXVec3TransformNormal(&m_vInfo[i], &m_vInfo[i], &matRot[j]);
 	}
-	
+
 	//Translation
 	for (_ulong i = 0; i < INFO_END; ++i)
 		memcpy(&m_matWorld.m[i][0], &m_vInfo[i], sizeof(_vec3));
@@ -71,11 +111,11 @@ _int CTransform::Update_Component(const _double& TimeDelta)
 
 void CTransform::Late_Update_Component()
 {
-	if (m_vAngle.x >= 360.f || m_vAngle.x <= -360.f)
+	if (m_vAngle.x > 360.f || m_vAngle.x < -360.f)
 		m_vAngle.x = 0.f;
-	else if (m_vAngle.y >= 360.f || m_vAngle.y <= -360.f)
+	else if (m_vAngle.y > 360.f || m_vAngle.y < -360.f)
 		m_vAngle.y = 0.f;
-	else if (m_vAngle.z >= 360.f || m_vAngle.z <= -360.f)
+	else if (m_vAngle.z > 360.f || m_vAngle.z < -360.f)
 		m_vAngle.z = 0.f;
 
 }
@@ -116,11 +156,11 @@ _matrix * CTransform::Compute_LockTarget(const _vec3 * pTargetPos)
 	//float fAngle = acosf(fCos);
 	////로테이션 Axis 로 회전축 적용(적용할 행렬, 회전축, 각도)
 	//D3DXMatrixRotationAxis(&matRot, &vAxis, fAngle);
-	
+
 	///New Style
 	return D3DXMatrixRotationAxis(&matRot, &vAxis,
 		acosf(D3DXVec3Dot(D3DXVec3Normalize(&vLookDir, &vLookDir),
-						D3DXVec3Normalize(&vUp, &m_vInfo[INFO_LOOK]))));
+			D3DXVec3Normalize(&vUp, &m_vInfo[INFO_LOOK]))));
 }
 
 void CTransform::Move_TargetPos(const _vec3 * pTargetPos, const _float& fSpeed, const _float& fTimeDelta)
@@ -128,7 +168,7 @@ void CTransform::Move_TargetPos(const _vec3 * pTargetPos, const _float& fSpeed, 
 	_vec3 vNewDir = *pTargetPos - m_vInfo[INFO_POS];
 	_float fDist = D3DXVec3Length(&vNewDir);
 
-	if(fDist > 1.f)
+	if (fDist > 1.f)
 		m_vInfo[INFO_POS] += *D3DXVec3Normalize(&vNewDir, &vNewDir) * fSpeed * fTimeDelta;
 }
 
@@ -155,6 +195,40 @@ void CTransform::Stalk_Target(CTransform * pTransform, const _double& fTime, con
 {
 	_vec3 vLookDir = pTransform->m_vInfo[INFO_POS] - m_vInfo[INFO_POS];
 	m_vInfo[INFO_POS] += *D3DXVec3Normalize(&vLookDir, &vLookDir) * fSpeed * fTime;
+}
+
+void CTransform::Fix_AngleY(_float fAngleY, eDirect eDir)
+{
+	m_eCurDir = eDir;
+
+	if (m_eCurDir == m_ePreDir)
+		return;
+
+	m_fFixAngleY = fAngleY;
+	
+	//m_fFixAngleY = m_vAngle.y - fAngleY;
+
+	//if (m_fFixAngleY < 0.f)
+	//	m_fFixAngleY += 360.f;
+	//else if (m_fFixAngleY > 360.f)
+	//	m_fFixAngleY -= 360.f;
+
+	//m_vAngle.y = m_fFixAngleY;
+
+	m_ePreDir = m_eCurDir;
+	bRotate = TRUE;
+	m_RotTime = 0.0;
+}
+
+void CTransform::Rotation_AngleY(const _double & TimeDelta)
+{
+	m_vAngle.y += m_fFixAngleY * TimeDelta;
+
+	if (m_RotTime > 1.0)
+	{
+		bRotate = FALSE;
+		m_RotTime = 0.0;
+	}
 }
 
 CTransform * CTransform::Create(_vec3& vLook)

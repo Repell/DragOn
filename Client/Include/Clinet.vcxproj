@@ -172,6 +172,7 @@
   <ItemGroup>
     <ClInclude Include="..\Codes\Effect_Tex.h" />
     <ClInclude Include="..\Codes\Michael.h" />
+    <ClInclude Include="..\Codes\NewPlayer.h" />
     <ClInclude Include="..\Codes\Player.h" />
     <ClInclude Include="..\Codes\Player_Rider.h" />
     <ClInclude Include="..\Codes\Shade.h" />
@@ -202,6 +203,7 @@
   <ItemGroup>
     <ClCompile Include="..\Codes\Effect_Tex.cpp" />
     <ClCompile Include="..\Codes\Michael.cpp" />
+    <ClCompile Include="..\Codes\NewPlayer.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
     <ClCompile Include="..\Codes\Player_Rider.cpp" />
     <ClCompile Include="..\Codes\Shade.cpp" />

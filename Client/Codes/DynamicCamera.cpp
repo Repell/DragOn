@@ -3,8 +3,8 @@
 
 #include "Export_Function.h"
 
-#define SPEED 15.f
-#define ANGLE 60.f
+#define _SPEED 15.f
+#define _ANGLE 60.f
 
 CDynamicCamera::CDynamicCamera(LPDIRECT3DDEVICE9 pDev)
 	:ENGINE::CCamera(pDev), m_pCamTarget(nullptr),
@@ -112,9 +112,9 @@ void CDynamicCamera::Key_Input(const _double& TimeDelta)
 		m_fTargetDist = 3.f;
 
 	if (ENGINE::Key_Press(ENGINE::dwKEY_Q))
-		m_fCamAngle += ANGLE * TimeDelta;
+		m_fCamAngle += _ANGLE * TimeDelta;
 	if (ENGINE::Key_Press(ENGINE::dwKEY_E))
-		m_fCamAngle -= ANGLE * TimeDelta;
+		m_fCamAngle -= _ANGLE * TimeDelta;
 
 	if (m_fCamAngle > 90.f)
 		m_fCamAngle = 90.f;
@@ -133,32 +133,32 @@ void CDynamicCamera::Key_Spectre(const _double& TimeDelta)
 
 	_long dwMouseMove = 0;
 	if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_X))
-		m_pTransCom->m_vAngle.y += dwMouseMove * ANGLE * TimeDelta;
+		m_pTransCom->m_vAngle.y += dwMouseMove * _ANGLE * TimeDelta;
 
 	if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_Y))
-		m_pTransCom->m_vAngle.x += dwMouseMove * ANGLE * TimeDelta;
+		m_pTransCom->m_vAngle.x += dwMouseMove * _ANGLE * TimeDelta;
 
 
 	//Key Input
 	if (ENGINE::Key_Press(ENGINE::dwKEY_W))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS] += m_pTransCom->m_vDir * SPEED * TimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS] += m_pTransCom->m_vDir * _SPEED * TimeDelta;
 	if (ENGINE::Key_Press(ENGINE::dwKEY_S))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS] -= m_pTransCom->m_vDir * SPEED * TimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS] -= m_pTransCom->m_vDir * _SPEED * TimeDelta;
 	if (ENGINE::Key_Press(ENGINE::dwKEY_A))
 	{
 		m_pTransCom->m_vInfo[ENGINE::INFO_POS] +=
-			vNewDir.NewDir(&m_pTransCom->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * TimeDelta;
+			vNewDir.NewDir(&m_pTransCom->m_vDir, &_vec3(0.f, 1.f, 0.f)) * _SPEED * TimeDelta;
 	}
 	if (ENGINE::Key_Press(ENGINE::dwKEY_D))
 	{
 		m_pTransCom->m_vInfo[ENGINE::INFO_POS] -=
-			vNewDir.NewDir(&m_pTransCom->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * TimeDelta;
+			vNewDir.NewDir(&m_pTransCom->m_vDir, &_vec3(0.f, 1.f, 0.f)) * _SPEED * TimeDelta;
 	}
 
 	if (ENGINE::Key_Press(ENGINE::dwKEY_SPACE))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y += SPEED * TimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y += _SPEED * TimeDelta;
 	if (ENGINE::Key_Press(ENGINE::dwKEY_Shift))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y -= SPEED * TimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y -= _SPEED * TimeDelta;
 
 
 	if (ENGINE::Key_Down(ENGINE::dwKEY_F4) && bSpectre)
@@ -190,12 +190,20 @@ void CDynamicCamera::Target_Renewal()
 
 	//카메라의 위치
 	vEye += m_pCamTarget->m_vInfo[ENGINE::INFO_POS];
-	m_vEye = vEye;
+
+	if (vEye.y < m_vEye.y)
+		vEye.y = m_vEye.y;
+	else
+		m_vEye = vEye;
 
 	_vec3 vAt = m_pCamTarget->m_vInfo[ENGINE::INFO_POS];
 	vAt.y += m_pCamTarget->m_fJump;
+
+	if (vAt.y < 0.f)
+		vAt.y = 0.1f;
+
 	m_pTransCom->m_vInfo[ENGINE::INFO_POS] = vAt;		//Spectre Cam StartPos
-	vAt.y += 1.25f;
+	vAt.y += 0.5f;
 
 	//if (m_pCamTarget->m_vAngle.x > 44.f || m_pCamTarget->m_vAngle.x < -135.f)
 	//	ENGINE::CCamera::Make_ViewMatrix(&vEye, &vAt, &_vec3(0.f, -1.f, 0.f));

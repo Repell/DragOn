@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "DynamicCamera.h"
 
-#define SPEED 20.f
-#define ANGLE 90.f
+#define _SPEED 20.f
+#define _ANGLE 90.f
 
 CDynamicCamera::CDynamicCamera(LPDIRECT3DDEVICE9 pDev)
 	:ENGINE::CCamera(pDev), m_pTransCom(nullptr),
@@ -139,9 +139,9 @@ void CDynamicCamera::Key_Input(const _double& TimeDelta)
 		m_fTargetDist = 3.f;
 
 	if (ENGINE::Key_Press(ENGINE::dwKEY_Q))
-		m_fCamAngle += ANGLE * TimeDelta;
+		m_fCamAngle += _ANGLE * TimeDelta;
 	if (ENGINE::Key_Press(ENGINE::dwKEY_E))
-		m_fCamAngle -= ANGLE * TimeDelta;
+		m_fCamAngle -= _ANGLE * TimeDelta;
 
 	if (m_fCamAngle > 90.f)
 		m_fCamAngle = 90.f;
@@ -183,24 +183,24 @@ void CDynamicCamera::Key_Spectre(const _double& TimeDelta)
 
 	//Key Input
 	if (ENGINE::Key_Press(ENGINE::dwKEY_W))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS] += m_pTransCom->m_vDir * SPEED * TimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS] += m_pTransCom->m_vDir * _SPEED * TimeDelta;
 	if (ENGINE::Key_Press(ENGINE::dwKEY_S))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS] -= m_pTransCom->m_vDir * SPEED * TimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS] -= m_pTransCom->m_vDir * _SPEED * TimeDelta;
 	if (ENGINE::Key_Press(ENGINE::dwKEY_A))
 	{
 		m_pTransCom->m_vInfo[ENGINE::INFO_POS] +=
-			vNewDir.NewDir(&m_pTransCom->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * TimeDelta;
+			vNewDir.NewDir(&m_pTransCom->m_vDir, &_vec3(0.f, 1.f, 0.f)) * _SPEED * TimeDelta;
 	}
 	if (ENGINE::Key_Press(ENGINE::dwKEY_D))
 	{
 		m_pTransCom->m_vInfo[ENGINE::INFO_POS] -=
-			vNewDir.NewDir(&m_pTransCom->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * TimeDelta;
+			vNewDir.NewDir(&m_pTransCom->m_vDir, &_vec3(0.f, 1.f, 0.f)) * _SPEED * TimeDelta;
 	}
 
 	if (ENGINE::Key_Press(ENGINE::dwKEY_SPACE))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y += SPEED * TimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y += _SPEED * TimeDelta;
 	if (ENGINE::Key_Press(ENGINE::dwKEY_Shift))
-		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y -= SPEED * TimeDelta;
+		m_pTransCom->m_vInfo[ENGINE::INFO_POS].y -= _SPEED * TimeDelta;
 
 
 }

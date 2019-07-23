@@ -25,6 +25,7 @@ public:
 	HRESULT Ready_Meshes(const _tchar* pFilePath, const _tchar* pFileName);
 	void Render_Meshes();
 	void Set_AnimationSet(const _uint& iIndex);
+	void Set_QuickSet(const _uint& iIndex);
 	void Play_AnimationSet(const _double& TimeDelta);
 
 private:

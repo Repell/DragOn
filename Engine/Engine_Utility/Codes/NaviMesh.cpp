@@ -59,6 +59,28 @@ _vec3 CNaviMesh::MoveOn_NaviMesh(const _vec3 * pTargetPos, const _vec3 * pTarget
 	return _vec3(0.f, 0.f, 0.f);
 }
 
+_vec3 CNaviMesh::MoveOn_NaviMesh_Dir(const _vec3 * pTargetPos, const _vec3 * pTargetDir)
+{
+	_vec3		vEndPos = *pTargetPos + *pTargetDir;
+
+	if (CCell::COMPARE_MOVE == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx))
+	{
+		//벽이 아닐경우 네비매쉬의 높이값 추가
+		_vec3 vReturn = *pTargetDir;
+		vReturn.y = Compute_OnTerrain(pTargetPos, &m_dwCurrentIdx);
+
+		return vReturn;
+	}
+
+	else if (CCell::COMPARE_STOP == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx))
+	{
+		//벽일 경우 현재위치 리턴 -> 슬라이딩 벡터로 변환
+		return _vec3(0.f, 0.f, 0.f);
+	}
+
+	return _vec3(0.f, 0.f, 0.f);
+}
+
 _float CNaviMesh::MoveOn_Terrain(const _vec3 * pTargetPos, const _vec3 * pTargetDir)
 {
 	_vec3		vEndPos = *pTargetPos + *pTargetDir;

@@ -3,17 +3,22 @@
 
 #include "Export_Function.h"
 
-#define SPEED 4.f
-#define ANGLE 60.f
-#define  RADIUS 75.f
+#define _SPEED 4.f
+#define _ANGLE 60.f
+#define  _RADIUS 75.f
+#define _GRAVITY 2.8f
+#define _JUMPPOWER 0.75f
+
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pDevice)
-	:	CGameObject(pDevice),
+	: CGameObject(pDevice),
 	m_pMesh(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr), m_pNaviMesh(nullptr)
 {
 	bJump = FALSE;
-	bUpDown = FALSE;
-	iJumpCount = 0;
+	m_bAnimate = FALSE;
+	m_bDash = FALSE;
+	JumpTime = 0.0;
+	m_DashDelay = 0.0;
 }
 
 CPlayer::~CPlayer()
@@ -49,20 +54,27 @@ HRESULT CPlayer::Late_Init()
 
 _int CPlayer::Update_Object(const _double& TimeDelta)
 {
+	if (!m_bDash)
+		m_DashDelay += TimeDelta;
+
 	ENGINE::CGameObject::Late_Init();
 	ENGINE::CGameObject::Update_Object(TimeDelta);
 
 	if (m_pTransform->bCamTarget)
 	{
 		if (Key_check(TimeDelta))
-			m_pMesh->Set_AnimationSet(109);
+			Animate_FSM(109);
 	}
-	Jump_Check(TimeDelta);
-		//Key_Old(fTimeDelta);
+	if (bJump)
+		Jump_Func(TimeDelta);
 
 	m_pMesh->Play_AnimationSet(TimeDelta);
-
 	
+	if(m_bAnimate = m_pMesh->Is_AnimationSetEnd());
+	{
+		m_bDash = m_bAnimate;
+	}
+
 	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_NONALPHA, this);
 	return NO_EVENT;
 }
@@ -134,140 +146,151 @@ _bool CPlayer::Key_check(const _double& TimeDelta)
 	_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
 	vNewDir.y = 0.f;
 
-	//POINT pt = { WINCX >> 1, WINCY >> 1 };
-	//ClientToScreen(g_hWnd, &pt);
-	//SetCursorPos(pt.x, pt.y);
+	POINT pt = { WINCX >> 1, WINCY >> 1 };
+	ClientToScreen(g_hWnd, &pt);
+	SetCursorPos(pt.x, pt.y);
 
 	_long dwMouseMove = 0;
-	//if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_X))
-	//	m_pTransform->m_vAngle.y += dwMouseMove * ANGLE *TimeDelta;
+	if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_X))
+		m_pTransform->m_vAngle.y += dwMouseMove * _ANGLE *TimeDelta;
 
 	//if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_Y))
-	//	m_pTransform->m_vAngle.x += dwMouseMove * ANGLE *fTimeDelta;
+	//	m_pTransform->m_vAngle.x += dwMouseMove * ANGLE *TimeDelta;
 
 	if (m_pTransform->bCamTarget && ENGINE::Key_Down(ENGINE::dwKEY_F4))
 	{
-		if(m_pTransform->bCamTarget)
+		if (m_pTransform->bCamTarget)
 			m_pTransform->bCamTarget = false;
 	}
 
 
 	if (ENGINE::Key_Press(ENGINE::dwKEY_W))
 	{
-		D3DXVec3Normalize(&vNewDir, &vNewDir);
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vNewDir * TimeDelta * -SPEED));
-		m_pMesh->Set_AnimationSet(106);
+		if (ENGINE::Key_Down(ENGINE::dwKEY_Shift) && !m_bDash && m_DashDelay > 1.5)
+		{
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pNaviMesh->MoveOn_NaviMesh_Dir(&vPos, &(vNewDir * -500.f));
+			Animate_FSM(105);
+			m_bAnimate = TRUE;
+			m_bDash = TRUE;
+		}
+		else
+		{
+			D3DXVec3Normalize(&vNewDir, &vNewDir);
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pNaviMesh->MoveOn_NaviMesh_Dir(&vPos, &(vNewDir * TimeDelta * -_SPEED));
+			Animate_FSM(106);
+		}
+
 	}
 	if (ENGINE::Key_Press(ENGINE::dwKEY_S))
 	{
-		D3DXVec3Normalize(&vNewDir, &vNewDir);
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vNewDir * TimeDelta * SPEED));
-		m_pMesh->Set_AnimationSet(106);
+		if (ENGINE::Key_Down(ENGINE::dwKEY_Shift) && !m_bDash  && m_DashDelay > 1.5)
+		{
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pNaviMesh->MoveOn_NaviMesh_Dir(&vPos, &(vNewDir * 500.f));
+			Animate_FSM(104);
+			m_bAnimate = TRUE;
+			m_bDash = TRUE;
+		}
+		else
+		{
+			D3DXVec3Normalize(&vNewDir, &vNewDir);
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pNaviMesh->MoveOn_NaviMesh_Dir(&vPos, &(vNewDir * TimeDelta * _SPEED));
+			Animate_FSM(106);
+		}
 	}
+
 	if (ENGINE::Key_Press(ENGINE::dwKEY_A))
-		m_pTransform->m_vAngle.y -= ANGLE *TimeDelta;
+	{
+		if (ENGINE::Key_Down(ENGINE::dwKEY_Shift) && !m_bDash  && m_DashDelay > 1.5)
+		{
+			_vec3 vLeft = vNewDir.NewDir(&m_pTransform->m_vDir, &_vec3(0.f, 1.f, 0.f));
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pNaviMesh->MoveOn_NaviMesh_Dir(&vPos, &(vLeft * -5.f));
+			Animate_FSM(102);
+			m_bAnimate = TRUE;
+			m_bDash = TRUE;
+		}
+		else
+		{
+			_vec3 vLeft = vNewDir.NewDir(&m_pTransform->m_vDir, &_vec3(0.f, 1.f, 0.f));
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pNaviMesh->MoveOn_NaviMesh_Dir(&vPos, &(-vLeft * TimeDelta * _SPEED));
+		}
+	}
 
 	if (ENGINE::Key_Press(ENGINE::dwKEY_D))
-		m_pTransform->m_vAngle.y += ANGLE *TimeDelta;
+	{
+		if (ENGINE::Key_Down(ENGINE::dwKEY_Shift) && !m_bDash && m_DashDelay > 1.5)
+		{
+			_vec3 vRight = vNewDir.NewDir(&m_pTransform->m_vDir, &_vec3(0.f, 1.f, 0.f));
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pNaviMesh->MoveOn_NaviMesh_Dir(&vPos, &(vRight * 5.f));
+			Animate_FSM(103);
+			m_bAnimate = TRUE;
+			m_bDash = TRUE;
+		}
+		else
+		{
+			_vec3 vRight = vNewDir.NewDir(&m_pTransform->m_vDir, &_vec3(0.f, 1.f, 0.f));
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pNaviMesh->MoveOn_NaviMesh_Dir(&vPos, &(vRight * TimeDelta * _SPEED));
+		}
+	}
 
-	//if (ENGINE::Key_Press(ENGINE::dwKEY_A))
-	//{
-	//	vNewDir = vNewDir.NewDir(&m_pTransform->m_vDir, &_vec3(0.f, 1.f, 0.f));
-	//	m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(-vNewDir * TimeDelta * SPEED));
-	//}
 
-	//if (ENGINE::Key_Press(ENGINE::dwKEY_D))
-	//{
-	//	vNewDir = vNewDir.NewDir(&m_pTransform->m_vDir, &_vec3(0.f, 1.f, 0.f));
-	//	m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vNewDir * TimeDelta * SPEED));
-	//}
-
-
-	if (ENGINE::Key_Down(ENGINE::dwKEY_SPACE))
+	if (ENGINE::Key_Down(ENGINE::dwKEY_SPACE) && !m_bAnimate)
 	{
 		bJump = true;
-		bUpDown = true;
-		m_pMesh->Set_AnimationSet(101);
+		m_bAnimate = TRUE;
+		Animate_FSM(101);
 	}
 
 	//if (m_pMesh->Is_AnimationSetEnd())
 	//	m_pMesh->Set_AnimationSet(57);
 
 	return m_pMesh->Is_AnimationSetEnd();
-
 }
 
-//void CPlayer::Key_Old(_float fTimeDelta)
+//void CPlayer::Jump_Check(const _double& TimeDelta)
 //{
-//	_vec3 vNewDir = {};
-//	//Fix Mouse
-//	POINT pt = { WINCX >> 1, WINCY >> 1 };
-//	ClientToScreen(g_hWnd, &pt);
-//	SetCursorPos(pt.x, pt.y);
-//
-//	_long dwMouseMove = 0;
-//	if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_X))
-//		m_pTransform->m_vAngle.y += dwMouseMove * ANGLE * fTimeDelta;
-//
-//	//if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_Y))
-//	//	m_pTransform->m_vAngle.x += dwMouseMove * ANGLE * fTimeDelta;
-//
-//	if (m_pTransform->bCamTarget && ENGINE::Key_Down(ENGINE::dwKEY_F4))
+//	if (iJumpCount < 25 && bUpDown && bJump)
 //	{
-//		if (m_pTransform->bCamTarget)
-//			m_pTransform->bCamTarget = false;
+//		++iJumpCount;
+//		m_pTransform->m_fJump = (iJumpCount * 10) * TimeDelta;
+//		if (iJumpCount >= 25)
+//			bUpDown = FALSE;
 //	}
-//
-//	//Key Input
-//	if (ENGINE::Key_Press(ENGINE::dwKEY_W))
+//	else if (iJumpCount > 0 && !bUpDown && bJump)
 //	{
-//		m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pTransform->m_vDir * SPEED * fTimeDelta;
-//		m_pMesh->Set_AnimationSet(54);
+//		m_pTransform->m_fJump = (iJumpCount * 10) * TimeDelta;
+//		--iJumpCount;
+//		if (iJumpCount == 0)
+//		{
+//			bJump = FALSE;
+//			m_pTransform->m_fJump = 0.f;
+//			//_float fY = m_pNaviMesh->MoveOn_Terrain(&m_pTransform->m_vInfo[ENGINE::INFO_POS], &m_pTransform->m_vInfo[ENGINE::INFO_LOOK]);
+//			//m_pTransform->m_vInfo[ENGINE::INFO_POS].y = fY;
+//		}
 //	}
-//	if (ENGINE::Key_Press(ENGINE::dwKEY_S))
-//	{
-//		m_pTransform->m_vInfo[ENGINE::INFO_POS] -= m_pTransform->m_vDir * SPEED * fTimeDelta;
-//		m_pMesh->Set_AnimationSet(54);
-//	}
-//	if (ENGINE::Key_Press(ENGINE::dwKEY_A))
-//	{
-//		m_pTransform->m_vInfo[ENGINE::INFO_POS] +=
-//			vNewDir.NewDir(&m_pTransform->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * fTimeDelta;
-//		m_pMesh->Set_AnimationSet(54);
-//	}
-//	if (ENGINE::Key_Press(ENGINE::dwKEY_D))
-//	{
-//		m_pTransform->m_vInfo[ENGINE::INFO_POS] -=
-//			vNewDir.NewDir(&m_pTransform->m_vDir, &_vec3(0.f, 1.f, 0.f)) * SPEED * fTimeDelta;
-//		m_pMesh->Set_AnimationSet(54);
-//	}
-//
-//	if (m_pMesh->Is_AnimationSetEnd())
-//		m_pMesh->Set_AnimationSet(57);
-//
 //}
 
-void CPlayer::Jump_Check(const _double& TimeDelta)
+void CPlayer::Jump_Func(const _double& TimeDelta)
 {
-	if (iJumpCount < 25 && bUpDown && bJump)
+	_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
+	//y=-a*x+b에서 (a: 중력가속도, b: 초기 점프속도)
+	//적분하여 y = (-a/2)*x*x + (b*x) 공식을 얻는다.(x: 점프시간, y: 오브젝트의 높이)
+	//변화된 높이 height를 기존 높이 _posY에 더한다.
+	float height = (JumpTime * JumpTime * (-_GRAVITY) / 2) + (JumpTime * _JUMPPOWER);
+	//_transform.position = new Vector3(_transform.position.x, _posY + height, _transform.position.z);
+	m_pTransform->m_fJump = height;
+	//점프시간을 증가시킨다.
+	JumpTime += TimeDelta;
+
+	//처음의 높이 보다 더 내려 갔을때 => 점프전 상태로 복귀한다.
+	if (m_pTransform->m_vInfo[ENGINE::INFO_POS].y < 0.1f)
 	{
-		++iJumpCount;
-		m_pTransform->m_fJump = (iJumpCount * 10) * TimeDelta;
-		if (iJumpCount >= 25)
-			bUpDown = FALSE;
+		bJump = FALSE;
+		JumpTime = 0.0f;
+		m_pTransform->m_fJump = 0.f;
+		m_pTransform->m_vInfo[ENGINE::INFO_POS].y = 0.1f;
+		m_pMesh->Set_AnimationSet(99);
 	}
-	else if (iJumpCount > 0 && !bUpDown && bJump)
-	{
-		m_pTransform->m_fJump = (iJumpCount * 10) * TimeDelta;
-		--iJumpCount;
-		if (iJumpCount == 0)
-		{
-			bJump = FALSE;
-			m_pTransform->m_fJump = 0.f;
-			//_float fY = m_pNaviMesh->MoveOn_Terrain(&m_pTransform->m_vInfo[ENGINE::INFO_POS], &m_pTransform->m_vInfo[ENGINE::INFO_LOOK]);
-			//m_pTransform->m_vInfo[ENGINE::INFO_POS].y = fY;
-		}
-	}
+
 }
 
 _bool CPlayer::Check_EnemyColl()
@@ -288,6 +311,17 @@ _bool CPlayer::Check_EnemyColl()
 		return m_pSphereColl->Check_ComponentColl(pSphere);
 	}
 
+}
+
+VOID CPlayer::Animate_FSM(_uint iAniState)
+{
+	m_iCurAniState = iAniState;
+
+	if (!m_bAnimate && m_iCurAniState != m_iPreAniState)
+	{
+		m_pMesh->Set_AnimationSet(m_iCurAniState);
+		m_iPreAniState = m_iCurAniState;
+	}
 }
 
 void CPlayer::UI_Sample()
@@ -312,7 +346,7 @@ void CPlayer::UI_Sample()
 	}
 
 	//위치 조절(Pos)
-	matView.m[3][1] = -225.f;	
+	matView.m[3][1] = -225.f;
 
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &matWorld);	//항등
 	m_pGraphicDev->SetTransform(D3DTS_VIEW, &matView);		//항등 *= 스케일값, 위치값 적용
@@ -328,7 +362,7 @@ HRESULT CPlayer::Add_Component()
 	ENGINE::CComponent* pComponent = nullptr;
 	/////////INSERT COMPONENT/////////
 
-	pComponent = m_pMesh =dynamic_cast<ENGINE::CDynamicMesh*>
+	pComponent = m_pMesh = dynamic_cast<ENGINE::CDynamicMesh*>
 		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Mesh_Player"));
 	NULL_CHECK_RETURN(m_pMesh, E_FAIL);
 	m_MapComponent[ENGINE::COMP_DYNAMIC].emplace(L"Com_Mesh", pComponent);
@@ -348,7 +382,7 @@ HRESULT CPlayer::Add_Component()
 	pComponent = m_pNaviMesh = dynamic_cast<ENGINE::CNaviMesh*>
 		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Mesh_Navi"));
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_NaviMesh", pComponent);
-	
+
 	//Collider
 	//pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev,
 	//	m_pMesh->Get_VtxMeshPos(), m_pMesh->Get_NumVtx(), m_pMesh->Get_Stride());
@@ -356,7 +390,7 @@ HRESULT CPlayer::Add_Component()
 	//m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider", pComponent);
 
 	//Sphere Collider
-	pComponent = m_pSphereColl = ENGINE::CSphereColl::Create(m_pGraphicDev, RADIUS, 10);
+	pComponent = m_pSphereColl = ENGINE::CSphereColl::Create(m_pGraphicDev, _RADIUS, 10);
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_SphereColl", pComponent);
 

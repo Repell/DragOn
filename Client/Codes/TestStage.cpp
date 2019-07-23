@@ -74,7 +74,7 @@ HRESULT CTestStage::Add_GameObject_Layer()
 
 	//Normal
 
-	pObject = CPlayer::Create(m_pGraphicDev);
+	pObject = CNewPlayer::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pObject, E_FAIL);
 	pObject_Layer->Add_GameObject(L"Player", pObject);
 

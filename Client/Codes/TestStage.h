@@ -7,6 +7,7 @@
 #include "TerrainSkyBox.h"
 
 //Dynamic
+#include "NewPlayer.h"
 #include "Player.h"
 #include "Michael.h"
 #include "Player_Rider.h"

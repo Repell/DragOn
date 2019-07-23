@@ -18,6 +18,18 @@ namespace ENGINE
 
 class CPlayer : public ENGINE::CGameObject
 {
+public:
+	enum eANIMATESTATE
+	{
+		ANI_DASH_W,
+		ANI_DASH_S,
+		ANI_DASH_A,
+		ANI_DASH_D,
+		ANI_JUMP,
+		ANI_END
+	};
+
+
 private:
 	explicit CPlayer(LPDIRECT3DDEVICE9 pDevice);
 	virtual ~CPlayer();
@@ -36,10 +48,21 @@ private:
 private:
 	//Key Input, Camera, NaviMesh
 	_bool Key_check(const _double& TimeDelta);
-	void Jump_Check(const _double& TimeDelta);
+	//void Jump_Check(const _double& TimeDelta);
+	void Jump_Func(const _double& TimeDelta);
 	_bool Check_EnemyColl();
 	//void Key_Old(_float fTimeDelta);
 
+private:
+	VOID Animate_FSM(_uint iAniState);
+	typedef VOID(CPlayer::*ANIFSM)();
+	ANIFSM AniStateFunc;
+
+	_uint m_iCurAniState;
+	_uint m_iPreAniState;
+
+	//eANIMATESTATE m_eCurAniState;
+	//eANIMATESTATE m_ePreAniState;
 
 private:
 	void UI_Sample();
@@ -59,14 +82,13 @@ private:
 private:
 	//Jump
 	_bool bJump;
-	_bool bUpDown;
-	_int iJumpCount;
-	
+	_float fPosY;
+	_double JumpTime;
+			
 	//Animated
-	_bool bAnimate;
-
-	//Temp
-	_float fTemp;
+	_bool m_bAnimate;
+	_bool m_bDash;
+	_double m_DashDelay;
 
 public:
 	static CPlayer* Create(LPDIRECT3DDEVICE9 pGraphicDev);

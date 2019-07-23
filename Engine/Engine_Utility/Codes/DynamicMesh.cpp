@@ -98,6 +98,11 @@ void CDynamicMesh::Set_AnimationSet(const _uint & iIndex)
 	m_pAniCon->Set_AnimationSet(iIndex);
 }
 
+void CDynamicMesh::Set_QuickSet(const _uint & iIndex)
+{
+	m_pAniCon->Set_QuickSet(iIndex);
+}
+
 void CDynamicMesh::Play_AnimationSet(const _double& TimeDelta)
 {
 	m_pAniCon->Play_AnimationSet(TimeDelta);

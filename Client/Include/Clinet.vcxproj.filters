@@ -89,6 +89,9 @@
     <Filter Include="01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29\00.Player_Rider\00.Spear">
       <UniqueIdentifier>{253b6cb8-48cd-409f-9a1d-96d2b62f321c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Clinet\02.Scene\09.TestStage\06.NewPlayer">
+      <UniqueIdentifier>{9f8bd0c5-7ffc-4f22-b6b5-75b885436c19}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clinet.h">
@@ -175,6 +178,9 @@
     <ClInclude Include="..\Codes\Spear.h">
       <Filter>01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29\00.Player_Rider\00.Spear</Filter>
     </ClInclude>
+    <ClInclude Include="..\Codes\NewPlayer.h">
+      <Filter>01.Clinet\02.Scene\09.TestStage\06.NewPlayer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -239,6 +245,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Spear.cpp">
       <Filter>01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29\00.Player_Rider\00.Spear</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\NewPlayer.cpp">
+      <Filter>01.Clinet\02.Scene\09.TestStage\06.NewPlayer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

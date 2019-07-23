@@ -6,7 +6,7 @@
 #include "TabNavi.h"
 #include "TabAnimation.h"
 
-#define RADIUS 1.f
+#define _RADIUS 1.f
 
 CMouseCtn::CMouseCtn(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CGameObject(pGraphicDev), m_pSprite(ENGINE::Get_GraphicDev()->Get_Sprite()),
@@ -736,7 +736,7 @@ _bool CMouseCtn::Coll_Sphere(ENGINE::LINE_3D pLine)
 	vDiff = m_vPickPos - pLine.vLine_X[0];
 	fDist = D3DXVec3Length(&vDiff);
 
-	if (fDist <= (RADIUS + RADIUS))
+	if (fDist <= (_RADIUS + _RADIUS))
 	{
 		m_iCurNavi_Tri = 0;
 		return true;
@@ -745,7 +745,7 @@ _bool CMouseCtn::Coll_Sphere(ENGINE::LINE_3D pLine)
 	vDiff = m_vPickPos - pLine.vLine_Y[0];
 	fDist = D3DXVec3Length(&vDiff);
 
-	if (fDist <= (RADIUS + RADIUS))
+	if (fDist <= (_RADIUS + _RADIUS))
 	{
 		m_iCurNavi_Tri = 1;
 		return true;
@@ -754,7 +754,7 @@ _bool CMouseCtn::Coll_Sphere(ENGINE::LINE_3D pLine)
 	vDiff = m_vPickPos - pLine.vLine_Z[0];
 	fDist = D3DXVec3Length(&vDiff);
 
-	if (fDist <= (RADIUS + RADIUS))
+	if (fDist <= (_RADIUS + _RADIUS))
 	{
 		m_iCurNavi_Tri = 2;
 		return true;

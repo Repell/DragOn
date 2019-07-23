@@ -8,7 +8,8 @@ CAniControll::CAniControll(LPD3DXANIMATIONCONTROLLER pAniCon)
 	m_iNewTrack(1),
 	m_iOldAniIndex(99),
 	m_fAccTime(0.f),
-	m_dPeriod(0.0)
+	m_dPeriod(0.0),
+	m_iIndex(0)
 {
 	m_pAniCon->AddRef();
 }
@@ -18,7 +19,8 @@ CAniControll::CAniControll(const CAniControll & rhs)
 	m_iNewTrack(rhs.m_iNewTrack),
 	m_iOldAniIndex(rhs.m_iOldAniIndex),
 	m_fAccTime(rhs.m_fAccTime),
-	m_dPeriod(0.0)
+	m_dPeriod(0.0),
+	m_iIndex(0)
 {
 	rhs.m_pAniCon->CloneAnimationController(rhs.m_pAniCon->GetMaxNumAnimationOutputs(),
 		rhs.m_pAniCon->GetMaxNumAnimationSets(),
@@ -45,6 +47,11 @@ _bool CAniControll::Is_AnimationSetEnd()
 	return FALSE;
 }
 
+_double CAniControll::Get_Current_AnimationTime()
+{
+	return m_dPeriod;
+}
+
 HRESULT CAniControll::Ready_AniControll()
 {
 	return S_OK;
@@ -54,6 +61,8 @@ void CAniControll::Set_AnimationSet(const _uint & iIndex)
 {
 	if (m_iOldAniIndex == iIndex)
 		return;
+
+	m_iIndex = iIndex;
 
 	m_iNewTrack = (m_iCurrentTrack == 0 ? 1 : 0);
 
@@ -102,12 +111,30 @@ void CAniControll::Set_AnimationSet(const _uint & iIndex)
 
 }
 
-void CAniControll::Play_AnimationSet(const _float & fTimeDelta)
+void CAniControll::Set_QuickSet(const _uint & iIndex)
+{
+	LPD3DXANIMATIONSET		pAS = NULL;
+
+	m_iIndex = iIndex;
+
+	m_pAniCon->GetAnimationSet(iIndex, &pAS);
+	// m_pAniCtrl->GetAnimationSetByName(); 애니메이션 셋을 문자열로 찾아 가져오는 함수
+
+	m_dPeriod = pAS->GetPeriod();
+
+	// 0번 트랙에 얻어온 애니메이션 셋을 올려놓는다(세팅한다)
+	m_pAniCon->SetTrackAnimationSet(m_iCurrentTrack, pAS);
+
+	// 0번 트랙을 활성화해라(재생하라는 명령이 아님, 트랙 활성화일 뿐)
+	m_pAniCon->SetTrackEnable(m_iCurrentTrack, TRUE);
+}
+
+void CAniControll::Play_AnimationSet(const _double & TimeDelta)
 {
 	//애니메이션 재생 함수, 2번쨰 인자는 애니메이션 동작에 따른 이펙트나 사운드를 재생하기위한 주소
-	m_pAniCon->AdvanceTime(fTimeDelta, nullptr);
+	m_pAniCon->AdvanceTime(TimeDelta, nullptr);
 
-	m_fAccTime += fTimeDelta;
+	m_fAccTime += TimeDelta;
 }
 
 CAniControll * CAniControll::Create(LPD3DXANIMATIONCONTROLLER pAniCon)

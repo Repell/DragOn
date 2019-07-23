@@ -17,17 +17,20 @@ private:
 public:
 	LPD3DXANIMATIONCONTROLLER Get_AniControll() { return m_pAniCon; }
 	_bool Is_AnimationSetEnd();
+	_double Get_Current_AnimationTime();
 
 public:
 	HRESULT Ready_AniControll();
 	void Set_AnimationSet(const _uint& iIndex);
-	void Play_AnimationSet(const _float& fTimeDelta);
+	void Set_QuickSet(const _uint& iIndex);
+	void Play_AnimationSet(const _double& TimeDelta);
 
 private:
 	LPD3DXANIMATIONCONTROLLER m_pAniCon;
 	_uint	m_iCurrentTrack;
 	_uint m_iNewTrack;
 	_uint m_iOldAniIndex;
+	_uint m_iIndex;
 	
 	_float m_fAccTime;
 	_double m_dPeriod;

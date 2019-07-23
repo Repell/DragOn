@@ -66,6 +66,7 @@ void CSword::Render_Object()
 {
 	//Render_Set();
 
+	//m_pTransform->m_matWorld._42 *= -1.f;
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 
 	m_pMesh->Render_Meshes();
