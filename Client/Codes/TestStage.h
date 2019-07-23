@@ -6,10 +6,15 @@
 #include "Terrain.h"
 #include "TerrainSkyBox.h"
 
+//Dynamic
 #include "Player.h"
-#include "Sword.h"
-#include "StaticObj.h"
+#include "Michael.h"
+#include "Player_Rider.h"
 #include "Snowman.h"
+//Static
+#include "StaticObj.h"
+#include "Sword.h"
+#include "Spear.h"
 
 #include "Effect_Tex.h"
 #include "Shade.h"

@@ -1,26 +1,26 @@
 #include "stdafx.h"
-#include "Sword.h"
+#include "Spear.h"
 
 #include "Export_Function.h"
 
-CSword::CSword(LPDIRECT3DDEVICE9 pDevice)
+CSpear::CSpear(LPDIRECT3DDEVICE9 pDevice)
 	:	CGameObject(pDevice),
 	m_pMesh(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr),
 	m_pParentBoneMatrix(nullptr), m_pParentWorldMatrix(nullptr)
 {
 }
 
-CSword::~CSword()
+CSpear::~CSpear()
 {
 
 }
 
-void CSword::Set_bAttack(_bool bState)
+void CSpear::Set_bAttack(_bool bState)
 {
 	bAttack = bState;
 }
 
-HRESULT CSword::Ready_Object(const _uint& iFlag)
+HRESULT CSpear::Ready_Object(const _uint& iFlag)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
@@ -34,13 +34,13 @@ HRESULT CSword::Ready_Object(const _uint& iFlag)
 	return S_OK;
 }
 
-HRESULT CSword::Late_Init()
+HRESULT CSpear::Late_Init()
 {
 
 	return S_OK;
 }
 
-_int CSword::Update_Object(const _double& TimeDelta)
+_int CSpear::Update_Object(const _double& TimeDelta)
 {
 	ENGINE::CGameObject::Late_Init();
 	
@@ -53,7 +53,7 @@ _int CSword::Update_Object(const _double& TimeDelta)
 	return NO_EVENT;
 }
 
-void CSword::Late_Update_Object()
+void CSpear::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
 
@@ -62,20 +62,19 @@ void CSword::Late_Update_Object()
 	
 }
 
-void CSword::Render_Object()
+void CSpear::Render_Object()
 {
 	//Render_Set();
-
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 
 	m_pMesh->Render_Meshes();
 
-	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pTransform->m_matWorld, _vec3(0.f, 0.f, -110.f));
+	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pTransform->m_matWorld, _vec3(0.f, 0.f, -125.f));
 
 	//Render_ReSet();
 }
 
-void CSword::Render_Set()
+void CSpear::Render_Set()
 {
 	//Alpha Test Begin
 	m_pGraphicDev->SetRenderState(D3DRS_ALPHAREF, 0x000000ff);
@@ -89,7 +88,7 @@ void CSword::Render_Set()
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 }
 
-void CSword::Render_ReSet()
+void CSpear::Render_ReSet()
 {
 	//Alpha Test End
 	m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
@@ -97,7 +96,7 @@ void CSword::Render_ReSet()
 	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 }
 
-void CSword::Check_EnemyColl(const _tchar* pObjTag, const _tchar* pCompTag)
+void CSpear::Check_EnemyColl(const _tchar* pObjTag, const _tchar* pCompTag)
 {
 
 	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
@@ -123,15 +122,15 @@ void CSword::Check_EnemyColl(const _tchar* pObjTag, const _tchar* pCompTag)
 	bAttack = FALSE;
 }
 
-void CSword::Get_ParentMatrix()
+void CSpear::Get_ParentMatrix()
 {
 	ENGINE::CTransform* pTrans = dynamic_cast<ENGINE::CTransform*>
-		(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player", L"Com_Transform", ENGINE::COMP_DYNAMIC));
+		(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player_Rider", L"Com_Transform", ENGINE::COMP_DYNAMIC));
 
 	if (nullptr == m_pParentBoneMatrix)
 	{
 		ENGINE::CDynamicMesh* pPlayerMesh = dynamic_cast<ENGINE::CDynamicMesh*>
-			(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player", L"Com_Mesh", ENGINE::COMP_DYNAMIC));
+			(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player_Rider", L"Com_Mesh", ENGINE::COMP_DYNAMIC));
 
 		if (nullptr == pPlayerMesh)
 			return;
@@ -149,14 +148,14 @@ void CSword::Get_ParentMatrix()
 }
 
 
-HRESULT CSword::Add_Component()
+HRESULT CSpear::Add_Component()
 {
 
 	ENGINE::CComponent* pComponent = nullptr;
 	/////////INSERT COMPONENT/////////
 
 	pComponent = m_pMesh =dynamic_cast<ENGINE::CStaticMesh*>
-		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Mesh_Sword"));
+		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Mesh_Spear"));
 	NULL_CHECK_RETURN(m_pMesh, E_FAIL);
 	m_MapComponent[ENGINE::COMP_DYNAMIC].emplace(L"Com_Mesh", pComponent);
 
@@ -179,9 +178,9 @@ HRESULT CSword::Add_Component()
 	return S_OK;
 }
 
-CSword * CSword::Create(LPDIRECT3DDEVICE9 pGraphicDev, const _uint& iFlag)
+CSpear * CSpear::Create(LPDIRECT3DDEVICE9 pGraphicDev, const _uint& iFlag)
 {
-	CSword* pInstance = new CSword(pGraphicDev);
+	CSpear* pInstance = new CSpear(pGraphicDev);
 
 	if (FAILED(pInstance->Ready_Object(iFlag)))
 		ENGINE::Safe_Release(pInstance);
@@ -189,7 +188,7 @@ CSword * CSword::Create(LPDIRECT3DDEVICE9 pGraphicDev, const _uint& iFlag)
 	return pInstance;
 }
 
-void CSword::Free()
+void CSpear::Free()
 {
 
 

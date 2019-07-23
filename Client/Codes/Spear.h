@@ -1,5 +1,5 @@
-#ifndef Sword_h__
-#define Sword_h__
+#ifndef Spear_h__
+#define Spear_h__
 
 #include "GameObject.h"
 
@@ -12,11 +12,11 @@ namespace ENGINE
 	class CCollider;
 }
 
-class CSword : public ENGINE::CGameObject
+class CSpear : public ENGINE::CGameObject
 {
 private:
-	explicit CSword(LPDIRECT3DDEVICE9 pDevice);
-	virtual ~CSword();
+	explicit CSpear(LPDIRECT3DDEVICE9 pDevice);
+	virtual ~CSpear();
 
 public:
 	void Set_bAttack(_bool bState);
@@ -51,11 +51,11 @@ private:
 
 
 public:
-	static CSword* Create(LPDIRECT3DDEVICE9 pGraphicDev, const _uint& iFlag);
+	static CSpear* Create(LPDIRECT3DDEVICE9 pGraphicDev, const _uint& iFlag);
 	virtual void Free() override;
 
 
 
 };
 
-#endif // Sword_h__
+#endif // Spear_h__

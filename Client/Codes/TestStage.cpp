@@ -72,6 +72,8 @@ HRESULT CTestStage::Add_GameObject_Layer()
 	ENGINE::CGameObject* pObject = nullptr;
 	////////////INSERT GAME OBJECT////////////
 
+	//Normal
+
 	pObject = CPlayer::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pObject, E_FAIL);
 	pObject_Layer->Add_GameObject(L"Player", pObject);
@@ -79,6 +81,22 @@ HRESULT CTestStage::Add_GameObject_Layer()
 	pObject = CSword::Create(m_pGraphicDev, 0);
 	NULL_CHECK_RETURN(pObject, E_FAIL);
 	pObject_Layer->Add_GameObject(L"Sword", pObject);
+
+	//Rider
+
+	//pObject = CMichael::Create(m_pGraphicDev, _vec3(40.f, 0.1f, 15.f));
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Player_Michael", pObject);
+
+	//pObject = CPlayer_Rider::Create(m_pGraphicDev);
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Player_Rider", pObject);
+
+	//pObject = CSpear::Create(m_pGraphicDev, 0);
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Spear", pObject);
+
+	//ETC
 
 	pObject = CEffect_Tex::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pObject, E_FAIL);
@@ -88,13 +106,13 @@ HRESULT CTestStage::Add_GameObject_Layer()
 	NULL_CHECK_RETURN(pObject, E_FAIL);
 	pObject_Layer->Add_GameObject(L"Shade", pObject);
 
-	pObject = CSnowman::Create(m_pGraphicDev, _vec3(40.f, 0.1f, 3.f));
+	pObject = CSnowman::Create(m_pGraphicDev, _vec3(40.f, 0.1f, 6.f));
 	NULL_CHECK_RETURN(pObject, E_FAIL);
 	pObject_Layer->Add_GameObject(L"Snowman", pObject);
 
-	pObject = CSnowman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 3.f));
-	NULL_CHECK_RETURN(pObject, E_FAIL);
-	pObject_Layer->Add_GameObject(L"Snowman", pObject);
+	//pObject = CSnowman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 3.f));
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Snowman", pObject);
 
 
 	//////////////INSERT LAYER//////////////

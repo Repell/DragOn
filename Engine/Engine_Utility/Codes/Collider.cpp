@@ -165,16 +165,16 @@ void CCollider::Render_Collider(COLLTYPE eType, const _matrix * pCollMatrix, _ve
 	
 #ifdef _DEBUG
 	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	m_pGraphicDev->SetTransform(D3DTS_WORLD, pCollMatrix);
 	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
 
 	m_pGraphicDev->SetTexture(0, m_pTexture[eType]);
 
-	m_pGraphicDev->SetStreamSource(0, m_pVB, 0, sizeof(VTX_CUBE));
-	m_pGraphicDev->SetFVF(FVF_CUBE);
-	m_pGraphicDev->SetIndices(m_pIB);
-	m_pGraphicDev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
+	//m_pGraphicDev->SetTransform(D3DTS_WORLD, pCollMatrix);
+	//m_pGraphicDev->SetStreamSource(0, m_pVB, 0, sizeof(VTX_CUBE));
+	//m_pGraphicDev->SetFVF(FVF_CUBE);
+	//m_pGraphicDev->SetIndices(m_pIB);
+	//m_pGraphicDev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
 
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_matColWorld);
 	m_pMesh->DrawSubset(0);
@@ -187,16 +187,13 @@ void CCollider::Render_Collider(COLLTYPE eType, const _matrix * pCollMatrix, _ve
 
 _bool CCollider::Check_ComponentColl(CSphereColl * pSphere)
 {
-	_float fDist = 0.f;
-	_vec3 vDiff = { 0.f, 0.f, 0.f };
 	_vec3 vCollPos = { 0.f, 0.f, 0.f };
 	memcpy(vCollPos, m_matColWorld.m[3], sizeof(_vec3));
 
-	_vec3 vTarget = pSphere->Get_CollPos();
 	_float fTargetRad = pSphere->Get_Radius();
 
-	vDiff = vTarget - vCollPos;
-	fDist = D3DXVec3Length(&vDiff);
+	_vec3 vDiff = pSphere->Get_CollPos() - vCollPos;
+	_float fDist = D3DXVec3Length(&vDiff);
 
 	if (fDist <= (fTargetRad + (m_fRadius* m_fScale)))
 		return TRUE;
@@ -218,29 +215,15 @@ HRESULT CCollider::Ready_Collider_Sphere(_float fRadius)
 	pMesh->CloneMeshFVF(D3DXMESH_SYSTEMMEM, ENGINE::VTXFVF_SPHERE, m_pGraphicDev, &m_pMesh);
 	pMesh->Release();
 		
-	//ENGINE::VTX_SPHERE* pCube;
-	//if (SUCCEEDED(m_pMesh->LockVertexBuffer(0, (void**)&pCube)))
-	//{
-	//	int numVtx = m_pMesh->GetNumVertices();
-
-	//	for (int i = 0; i < numVtx; ++i)
-	//	{
-	//		pCube[i].vPos.x += 5.f;
-	//		pCube[i].vPos.y += 5.f;
-	//		pCube[i].vPos.z += 5.f;
-	//	}
-
-	//	m_pMesh->UnlockVertexBuffer();
-	//}
 
 	return S_OK;
 }
 
-CCollider * CCollider::Create(LPDIRECT3DDEVICE9 pDevice, const _vec3 * pPos, const _ulong & dwNumVtx, const _ulong & dwStride, _float fRadius)
+CCollider * CCollider::Create(LPDIRECT3DDEVICE9 pDevice, _float fRadius)
 {
 	CCollider* pInstance = new CCollider(pDevice);
 
-	if (FAILED(pInstance->Ready_Collider(pPos, dwNumVtx, dwStride, fRadius)))
+	if (FAILED(pInstance->Ready_Collider_Sphere(fRadius)))
 		Safe_Release(pInstance);
 
 	return pInstance;

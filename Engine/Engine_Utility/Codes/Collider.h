@@ -43,8 +43,7 @@ private:
 	LPD3DXMESH m_pMesh;
 
 public:
-	static CCollider* Create(LPDIRECT3DDEVICE9 pDevice,
-		const _vec3* pPos, const _ulong& dwNumVtx, const _ulong& dwStride, _float fRadius);
+	static CCollider* Create(LPDIRECT3DDEVICE9 pDevice, _float fRadius);
 	virtual void Free();
 
 };

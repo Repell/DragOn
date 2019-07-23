@@ -91,6 +91,7 @@ void CDynamicCamera::Reset_Camera()
 	m_fTargetDist = 7.f;
 	m_fCamAngle = -25.f;
 	m_fCamSpeed = 1.f;
+	m_fCamAngleY = 180.f;
 
 	m_pGraphicDev->SetTransform(D3DTS_VIEW, &m_matView);
 	m_pGraphicDev->SetTransform(D3DTS_PROJECTION, &m_matProj);

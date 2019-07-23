@@ -1,5 +1,5 @@
-#ifndef Snowman_h__
-#define Snowman_h__
+#ifndef Michael_h__
+#define Michael_h__
 
 #include "GameObject.h"
 #include "Effect_Tex.h"
@@ -15,11 +15,11 @@ namespace ENGINE
 	class CSphereColl;
 }
 
-class CSnowman : public ENGINE::CGameObject
+class CMichael : public ENGINE::CGameObject
 {
 private:
-	explicit CSnowman(LPDIRECT3DDEVICE9 pDevice);
-	virtual ~CSnowman();
+	explicit CMichael(LPDIRECT3DDEVICE9 pDevice);
+	virtual ~CMichael();
 
 public:
 	virtual HRESULT Ready_Object(_vec3 vPos);
@@ -57,10 +57,10 @@ private:
 	_matrix m_pBoneMatrix;
 
 public:
-	static CSnowman* Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos);
+	static CMichael* Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos);
 	virtual void Free() override;
 
 
 };
 
-#endif // Snowman_h__
+#endif // Michael_h__

@@ -116,7 +116,7 @@ void CFileInfo::DirInfoExtract(const wstring & strFullPath, map<wstring, ENGINE:
 				}
 
 				//continue; // 수정필요 ㅅㅂ
-				break;
+				//break;
 			}
 
 			

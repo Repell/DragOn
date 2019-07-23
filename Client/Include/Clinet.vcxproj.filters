@@ -80,6 +80,15 @@
     <Filter Include="01.Clinet\02.Scene\09.TestStage\04.Monster\00.Snowman">
       <UniqueIdentifier>{fba9259c-275c-4007-9296-607ab71f1921}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29">
+      <UniqueIdentifier>{6af2da9a-4b5d-4461-ab1a-1bb4b076192a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29\00.Player_Rider">
+      <UniqueIdentifier>{dcb9f199-9857-44bb-bed2-4a937a3bfcb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29\00.Player_Rider\00.Spear">
+      <UniqueIdentifier>{253b6cb8-48cd-409f-9a1d-96d2b62f321c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clinet.h">
@@ -157,6 +166,15 @@
     <ClInclude Include="..\Codes\Snowman.h">
       <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\00.Snowman</Filter>
     </ClInclude>
+    <ClInclude Include="..\Codes\Player_Rider.h">
+      <Filter>01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29\00.Player_Rider</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Michael.h">
+      <Filter>01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Spear.h">
+      <Filter>01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29\00.Player_Rider\00.Spear</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -212,6 +230,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Snowman.cpp">
       <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\00.Snowman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Player_Rider.cpp">
+      <Filter>01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29\00.Player_Rider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Michael.cpp">
+      <Filter>01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Spear.cpp">
+      <Filter>01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29\00.Player_Rider\00.Spear</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

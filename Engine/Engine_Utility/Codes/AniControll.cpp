@@ -60,7 +60,7 @@ void CAniControll::Set_AnimationSet(const _uint & iIndex)
 	LPD3DXANIMATIONSET pAS = nullptr;
 
 	//애니메이션의 인덱스를 검색하는 함수
-	m_pAniCon->GetAnimationSet(iIndex, &pAS);
+	m_pAniCon->GetAnimationSet(iIndex, &pAS);	//애니메이션 셋 포인터를 얻어옴
 
 	m_dPeriod = pAS->GetPeriod();
 	

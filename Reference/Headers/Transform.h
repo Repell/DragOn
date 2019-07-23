@@ -23,6 +23,8 @@ public:
 	void Chase_Target(const _vec3* pTarget, const _float& fSpeed);
 	_matrix* Compute_LockTarget(const _vec3* pTargetPos);
 	void Move_TargetPos(const _vec3* pTargetPos, const _float& fSpeed, const _float& fTimeDelta);
+	_float Fix_TargetLookAngleY(CTransform* pTarget, _float fSearchDist);
+	void Stalk_Target(CTransform* pTransform, const _double& fTime, const _float fSpeed);
 
 public:
 	_vec3 m_vLook;

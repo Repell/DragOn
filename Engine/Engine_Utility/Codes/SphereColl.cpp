@@ -12,7 +12,7 @@ CSphereColl::~CSphereColl()
 {
 }
 
-_vec3 CSphereColl::Get_CollPos()
+_vec3& CSphereColl::Get_CollPos()
 {
 	return m_vCollPos;
 }

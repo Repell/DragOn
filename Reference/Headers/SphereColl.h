@@ -12,7 +12,7 @@ private:
 	virtual ~CSphereColl();
 
 public:
-	_vec3 Get_CollPos();
+	_vec3& Get_CollPos();
 	_float Get_Radius();
 	void Set_Scale(_float fScale);
 	_int Get_iHp(_int iDamage = 0);

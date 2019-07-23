@@ -171,9 +171,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Codes\Effect_Tex.h" />
+    <ClInclude Include="..\Codes\Michael.h" />
     <ClInclude Include="..\Codes\Player.h" />
+    <ClInclude Include="..\Codes\Player_Rider.h" />
     <ClInclude Include="..\Codes\Shade.h" />
     <ClInclude Include="..\Codes\Snowman.h" />
+    <ClInclude Include="..\Codes\Spear.h" />
     <ClInclude Include="..\Codes\StaticObj.h" />
     <ClInclude Include="..\Codes\Sword.h" />
     <ClInclude Include="..\Codes\Terrain.h" />
@@ -198,9 +201,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Effect_Tex.cpp" />
+    <ClCompile Include="..\Codes\Michael.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
+    <ClCompile Include="..\Codes\Player_Rider.cpp" />
     <ClCompile Include="..\Codes\Shade.cpp" />
     <ClCompile Include="..\Codes\Snowman.cpp" />
+    <ClCompile Include="..\Codes\Spear.cpp" />
     <ClCompile Include="..\Codes\StaticObj.cpp" />
     <ClCompile Include="..\Codes\Sword.cpp" />
     <ClCompile Include="..\Codes\Terrain.cpp" />

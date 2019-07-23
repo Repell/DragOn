@@ -61,6 +61,12 @@ private:
 	_bool bJump;
 	_bool bUpDown;
 	_int iJumpCount;
+	
+	//Animated
+	_bool bAnimate;
+
+	//Temp
+	_float fTemp;
 
 public:
 	static CPlayer* Create(LPDIRECT3DDEVICE9 pGraphicDev);

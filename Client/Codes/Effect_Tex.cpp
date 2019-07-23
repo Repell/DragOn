@@ -59,15 +59,17 @@ void CEffect_Tex::Late_Update_Object()
 
 void CEffect_Tex::Render_Object()
 {
-	Render_Set();
+	//Render_Set();
 
-	if (m_Time >= 0.f)
+	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
+
+	if (m_Time >= 0.f)		//Delay Render
 	{
 		m_pTexture->Render_Texture(m_Frame);
 		m_pBuffer->Render_Buffer();
 	}
 
-	Render_ReSet();
+	//Render_ReSet();
 }
 
 HRESULT CEffect_Tex::Add_Component()

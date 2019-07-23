@@ -132,6 +132,31 @@ void CTransform::Move_TargetPos(const _vec3 * pTargetPos, const _float& fSpeed, 
 		m_vInfo[INFO_POS] += *D3DXVec3Normalize(&vNewDir, &vNewDir) * fSpeed * fTimeDelta;
 }
 
+_float CTransform::Fix_TargetLookAngleY(CTransform * pTarget, _float fSearchDist)
+{
+	_vec3 vNewDir = pTarget->m_vInfo[INFO_POS] - m_vInfo[INFO_POS];
+	_float fDistance = D3DXVec3Length(&vNewDir);
+
+	if (fSearchDist < fDistance)
+		return fDistance;
+
+	D3DXVec3Normalize(&vNewDir, &vNewDir);
+	D3DXVec3Normalize(&m_vLook, &m_vLook);
+	_float fRad = D3DXVec3Dot(&m_vLook, &vNewDir);
+	m_vAngle.y = D3DXToDegree(acosf(fRad));
+
+	if (pTarget->m_vInfo[ENGINE::INFO_POS].x > m_vInfo[ENGINE::INFO_POS].x)
+		m_vAngle.y *= -1.f;
+
+	return fDistance;
+}
+
+void CTransform::Stalk_Target(CTransform * pTransform, const _double& fTime, const _float fSpeed)
+{
+	_vec3 vLookDir = pTransform->m_vInfo[INFO_POS] - m_vInfo[INFO_POS];
+	m_vInfo[INFO_POS] += *D3DXVec3Normalize(&vLookDir, &vLookDir) * fSpeed * fTime;
+}
+
 CTransform * CTransform::Create(_vec3& vLook)
 {
 	CTransform* pInstance = new CTransform;

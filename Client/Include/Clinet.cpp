@@ -8,7 +8,7 @@
 
 #include "Export_System.h"
 
-#define FPS 144.0
+#define FPS 60.0
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
