@@ -106,13 +106,13 @@ HRESULT CTestStage::Add_GameObject_Layer()
 	NULL_CHECK_RETURN(pObject, E_FAIL);
 	pObject_Layer->Add_GameObject(L"Shade", pObject);
 
-	pObject = CTroll::Create(m_pGraphicDev, _vec3(40.f, 0.1f, 6.f));
-	NULL_CHECK_RETURN(pObject, E_FAIL);
-	pObject_Layer->Add_GameObject(L"Snowman", pObject);
+	//pObject = CTroll::Create(m_pGraphicDev, _vec3(40.f, 0.1f, 6.f));
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Troll", pObject);
 
-	pObject = CTroll::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 3.f));
-	NULL_CHECK_RETURN(pObject, E_FAIL);
-	pObject_Layer->Add_GameObject(L"Snowman", pObject);
+	//pObject = CTroll::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 3.f));
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Troll", pObject);
 	
 	//////////////INSERT LAYER//////////////
 	m_MapLayer.emplace(ENGINE::CLayer::OBJECT, pObject_Layer);

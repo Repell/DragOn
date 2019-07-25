@@ -38,8 +38,6 @@ private:
 private:
 	//Mouse Func
 	_vec3 MouseFunc();
-
-private:
 	//Key Check Func
 	_bool Key_Check_Func(const _double& TimeDelta);
 
@@ -86,6 +84,9 @@ private:
 	_bool m_bJump;
 	_float m_fPosY;
 	_double m_JumpTime;
+	_float m_fGravity = 1.8f;
+	_float m_fJumpPower = 0.5f;
+
 	//Dash
 	_bool m_bDash;
 	_vec3 m_vDashDir;

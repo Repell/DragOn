@@ -6,8 +6,8 @@
 #define _SPEED 3.f
 #define _ANGLE 45.f
 #define  _RADIUS 75.f
-#define _GRAVITY 3.8f
-#define _JUMPPOWER 1.25f
+//#define _GRAVITY 4.8f
+//#define _JUMPPOWER 1.25f
 #define  _IDLE 110
 
 CNewPlayer::CNewPlayer(LPDIRECT3DDEVICE9 pDevice)
@@ -148,29 +148,47 @@ _int CNewPlayer::Update_Object(const _double & TimeDelta)
 		if (!m_bDash && m_pTransform->bCamTarget)
 			m_bAnimate = Key_Check_Func(TimeDelta);
 
-		if (!m_bAttack[0] && ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON))
-		{
-			Animate_FSM(m_iAniSet[0]);
-			m_bAttack[0] = TRUE;
-			m_pSword->Set_AttackState(TRUE, m_iCurAniState, 2);
-		}
+		//if (!m_bAttack[0] && ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON))
+		//{
+		//	Animate_FSM(m_iAniSet[0]);
+		//	m_bAttack[0] = TRUE;
+		//	m_pSword->Set_AttackState(TRUE, m_iCurAniState, 2);
+		//}
 
 		if (!m_bAnimate && !m_bDash && !m_bAttack[0] && !m_bJump)
-			Animate_FSM(_IDLE);
-
-		if (m_bDash && m_iCurAniState > 101 && m_iCurAniState < 106)
 		{
-			if (m_pMesh->Is_AnimationSetEnd())
+				Animate_FSM(_IDLE);		
+		}
+
+		if (m_bDash && m_iCurAniState >= 37 && m_iCurAniState <= 41)
+		{
+
+			if (m_iCurAniState == 37 && m_pMesh->Is_AnimationSetEnd())
+			{
+				//m_fGravity = 4.8f;
+				m_TimeAccel = 1;
+				m_bDash = FALSE;
+			}
+			else if (m_iCurAniState != 37 && m_pMesh->Is_AnimationSetEnd())
 			{
 				m_bAnimate = FALSE;
-				m_bDash = FALSE;
-				m_TimeAccel = 1;
+				//m_bDash = FALSE;
+				if(!m_bJump)
+					Animate_FSM(37);
+				m_DashTime = 0.0;
 				m_vDashDir = { 0.f, 0.f, 0.f };
 				m_pSphereColl->Set_Invisible(FALSE);
 			}
+
+			if (m_bJump && m_iCurAniState >= 37 && m_iCurAniState <= 41)
+			{
+				m_pSphereColl->Set_Invisible(FALSE);
+				m_TimeAccel = 1;
+				m_bDash = FALSE;
+			}
 		}
 
-		if (m_bDash)
+		if (m_bDash && m_iCurAniState != 37)
 			Dash_Func(TimeDelta);
 
 		if (m_bAttack[0])
@@ -283,7 +301,7 @@ _bool CNewPlayer::Key_Check_Func(const _double & TimeDelta)
 			m_vDashDir = -vLeft;
 			m_pTransform->m_vInfo[ENGINE::INFO_POS] -= vLeft * _SPEED * TimeDelta;
 			m_pSphereColl->Set_Invisible(TRUE);
-			Animate_FSM(102);
+			Animate_FSM(39);
 			m_bDash = TRUE;
 			m_TimeAccel = 2;
 
@@ -304,7 +322,7 @@ _bool CNewPlayer::Key_Check_Func(const _double & TimeDelta)
 			m_vDashDir = vRight;
 			m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRight * _SPEED * TimeDelta;
 			m_pSphereColl->Set_Invisible(TRUE);
-			Animate_FSM(103);
+			Animate_FSM(38);
 			m_TimeAccel = 2;
 			m_bDash = TRUE;
 
@@ -337,7 +355,7 @@ _bool CNewPlayer::Key_Check_Func(const _double & TimeDelta)
 			m_pTransform->m_vInfo[ENGINE::INFO_POS] -= vNewDir * _SPEED * TimeDelta;
 			m_pSphereColl->Set_Invisible(TRUE);
 			//Animate_FSM(105);
-			Animate_Quick(105);
+			Animate_FSM(41);
 			//m_pMesh->Set_QuickSet(105);
 			//m_iCurAniState = 105;
 			//m_iPreAniState = m_iCurAniState;
@@ -362,7 +380,9 @@ _bool CNewPlayer::Key_Check_Func(const _double & TimeDelta)
 				//m_pTransform->m_vInfo[ENGINE::INFO_POS] -= vNewDir * _SPEED * TimeDelta;
 			}
 
-			Animate_FSM(107);
+			if (!m_bJump)
+				Animate_Quick(107);
+
 			return TRUE;
 		}
 	}
@@ -376,7 +396,7 @@ _bool CNewPlayer::Key_Check_Func(const _double & TimeDelta)
 			m_pTransform->m_vInfo[ENGINE::INFO_POS] += vNewDir * _SPEED * TimeDelta;
 			m_pSphereColl->Set_Invisible(TRUE);
 			//Animate_FSM(104);
-			Animate_Quick(104);
+			Animate_FSM(40);
 			//m_pMesh->Set_QuickSet(104);
 			//m_iCurAniState = 104;
 			//m_iPreAniState = m_iCurAniState;
@@ -392,7 +412,10 @@ _bool CNewPlayer::Key_Check_Func(const _double & TimeDelta)
 				m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRevDir * _SPEED * TimeDelta;
 			else
 				m_pTransform->m_vInfo[ENGINE::INFO_POS] += vNewDir * _SPEED * TimeDelta;
-			Animate_FSM(106);
+			
+			if (!m_bJump)
+				Animate_Quick(106);
+
 			return TRUE;
 		}
 	}
@@ -458,26 +481,31 @@ void CNewPlayer::Jump_Func(const _double & TimeDelta)
 	//y=-a*x+b에서 (a: 중력가속도, b: 초기 점프속도)
 	//적분하여 y = (-a/2)*x*x + (b*x) 공식을 얻는다.(x: 점프시간, y: 오브젝트의 높이)
 	//변화된 높이 height를 기존 높이 _posY에 더한다.
-	float height = (m_JumpTime * m_JumpTime * (-_GRAVITY) / 2) + (m_JumpTime * _JUMPPOWER);
+	float height = 0.f;
+	if(!m_bDash)
+		height = (m_JumpTime * m_JumpTime * (-m_fGravity) / 2) + (m_JumpTime * m_fJumpPower);
 	//_transform.position = new Vector3(_transform.position.x, _posY + height, _transform.position.z);
 	m_pTransform->m_fJump = height;
+
 	//점프시간을 증가시킨다.
+	if (!m_bDash)
 	m_JumpTime += TimeDelta;
 
 	//처음의 높이 보다 더 내려 갔을때 => 점프전 상태로 복귀한다.
 	if (m_pTransform->m_vInfo[ENGINE::INFO_POS].y < 0.1f)
 	{
 		m_bJump = FALSE;
-		m_JumpTime = 0.0f;
+		m_JumpTime = 0.0;
 		m_pTransform->m_fJump = 0.f;
 		m_pTransform->m_vInfo[ENGINE::INFO_POS].y = 0.1f;
-		if (!m_bHit)
-			m_pMesh->Set_AnimationSet(99);
+		//if (!m_bHit)
+		//	Animate_FSM(99);
 	}
 }
 
 void CNewPlayer::Dash_Func(const _double & TimeDelta)
 {
+	m_DashTime += TimeDelta;
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_vDashDir * 10.f * TimeDelta;
 
 	m_pSword->Set_AttackState(FALSE, 0);

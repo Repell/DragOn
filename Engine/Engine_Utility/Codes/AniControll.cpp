@@ -128,6 +128,7 @@ void CAniControll::Set_QuickSet(const _uint & iIndex)
 	// 0번 트랙에 얻어온 애니메이션 셋을 올려놓는다(세팅한다)
 	m_pAniCon->SetTrackAnimationSet(m_iCurrentTrack, pAS);
 
+
 	// 0번 트랙을 활성화해라(재생하라는 명령이 아님, 트랙 활성화일 뿐)
 	m_pAniCon->SetTrackEnable(m_iCurrentTrack, TRUE);
 
