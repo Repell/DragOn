@@ -77,9 +77,6 @@
     <Filter Include="01.Clinet\02.Scene\09.TestStage\04.Monster">
       <UniqueIdentifier>{744367fe-ae2a-43c0-aecf-e9551c9b8483}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Clinet\02.Scene\09.TestStage\04.Monster\00.Snowman">
-      <UniqueIdentifier>{fba9259c-275c-4007-9296-607ab71f1921}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29">
       <UniqueIdentifier>{6af2da9a-4b5d-4461-ab1a-1bb4b076192a}</UniqueIdentifier>
     </Filter>
@@ -91,6 +88,9 @@
     </Filter>
     <Filter Include="01.Clinet\02.Scene\09.TestStage\06.NewPlayer">
       <UniqueIdentifier>{9f8bd0c5-7ffc-4f22-b6b5-75b885436c19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Clinet\02.Scene\09.TestStage\04.Monster\00.Troll">
+      <UniqueIdentifier>{fba9259c-275c-4007-9296-607ab71f1921}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -166,9 +166,6 @@
     <ClInclude Include="..\Codes\StaticObj.h">
       <Filter>02.SubApp\03.StaticObj</Filter>
     </ClInclude>
-    <ClInclude Include="..\Codes\Snowman.h">
-      <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\00.Snowman</Filter>
-    </ClInclude>
     <ClInclude Include="..\Codes\Player_Rider.h">
       <Filter>01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29\00.Player_Rider</Filter>
     </ClInclude>
@@ -180,6 +177,9 @@
     </ClInclude>
     <ClInclude Include="..\Codes\NewPlayer.h">
       <Filter>01.Clinet\02.Scene\09.TestStage\06.NewPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Troll.h">
+      <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\00.Troll</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -234,9 +234,6 @@
     <ClCompile Include="..\Codes\StaticObj.cpp">
       <Filter>02.SubApp\03.StaticObj</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Snowman.cpp">
-      <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\00.Snowman</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\Player_Rider.cpp">
       <Filter>01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29\00.Player_Rider</Filter>
     </ClCompile>
@@ -248,6 +245,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\NewPlayer.cpp">
       <Filter>01.Clinet\02.Scene\09.TestStage\06.NewPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Troll.cpp">
+      <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\00.Troll</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

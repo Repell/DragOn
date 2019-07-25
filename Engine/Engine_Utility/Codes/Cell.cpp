@@ -88,12 +88,13 @@ _bool CCell::Compare_Point(const _vec3 * pFirstPoint, const _vec3 * pSecondPoint
 	return FALSE;
 }
 
-CCell::COMPARE CCell::Compare(const _vec3 * pEndPos, _ulong * pCellIndex)
+CCell::COMPARE CCell::Compare(const _vec3 * pEndPos, _ulong * pCellIndex, _vec3* vNormal)
 {
 	for (_ulong i = 0; i < LINE_END; ++i)
 	{
 		if (CLine::COMPARE_OUT == m_pLine[i]->Compare(&_vec2(pEndPos->x, pEndPos->z)))
 		{
+			*vNormal = m_pLine[i]->Get_Normal();
 			if (nullptr == m_pNeighbor[i])
 				return COMPARE_STOP;
 

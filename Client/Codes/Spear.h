@@ -19,7 +19,7 @@ private:
 	virtual ~CSpear();
 
 public:
-	void Set_bAttack(_bool bState);
+	void Set_AttackState(_bool bState);
 
 public:
 	virtual HRESULT Ready_Object(const _uint& iFlag);

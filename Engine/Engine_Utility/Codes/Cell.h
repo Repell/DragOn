@@ -32,7 +32,7 @@ public:
 		const _vec3* pPointB,
 		const _vec3* pPointC);
 	_bool Compare_Point(const _vec3* pFirstPoint, const _vec3*pSecondPoint, CCell* pCell);
-	COMPARE		Compare(const _vec3* pEndPos, _ulong* pCellIndex);
+	COMPARE		Compare(const _vec3* pEndPos, _ulong* pCellIndex, _vec3* vNormal);
 	void Render_Cell();
 
 private:

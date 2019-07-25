@@ -1,5 +1,5 @@
-#ifndef Snowman_h__
-#define Snowman_h__
+#ifndef Troll_h__
+#define Troll_h__
 
 #include "GameObject.h"
 #include "Effect_Tex.h"
@@ -15,11 +15,11 @@ namespace ENGINE
 	class CSphereColl;
 }
 
-class CSnowman : public ENGINE::CGameObject
+class CTroll : public ENGINE::CGameObject
 {
 private:
-	explicit CSnowman(LPDIRECT3DDEVICE9 pDevice);
-	virtual ~CSnowman();
+	explicit CTroll(LPDIRECT3DDEVICE9 pDevice);
+	virtual ~CTroll();
 
 public:
 	virtual HRESULT Ready_Object(_vec3 vPos);
@@ -34,12 +34,25 @@ private:
 	void Find_BoneMatrix();
 	void Chase_Target(const _double& TimeDelta);
 	void Attack_Target();
+	_bool Check_EnemyColl(_vec3* vRevDir);
+
+private:
+	VOID Animate_FSM(_uint iAniState);
 
 private:
 	//Key Input, Camera, NaviMesh
-	_bool bAttack;
-	_float fDist;
-	_uint iCurAniSet;
+	_bool m_bAttack;
+	_float m_fDist;
+	_uint m_iCurAniSet;
+	_uint m_iPreAniSet;
+
+private:
+	_bool m_bSleep;
+	_bool m_bFront;
+	_bool m_bDead;
+
+private:
+	_double m_TimeDelta;
 private:
 	HRESULT Add_Component();
 
@@ -57,10 +70,10 @@ private:
 	_matrix m_pBoneMatrix;
 
 public:
-	static CSnowman* Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos);
+	static CTroll* Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos);
 	virtual void Free() override;
 
 
 };
 
-#endif // Snowman_h__
+#endif // Troll_h__

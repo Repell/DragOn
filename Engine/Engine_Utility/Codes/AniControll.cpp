@@ -86,18 +86,18 @@ void CAniControll::Set_AnimationSet(const _uint & iIndex)
 
 	//현재 진행되는 동작을 끄거켜는 함수
 	//3번째 인자값은 반드시 더블타입이어야한다.
-	m_pAniCon->KeyTrackEnable(m_iCurrentTrack, FALSE, m_fAccTime + 0.25);
+	m_pAniCon->KeyTrackEnable(m_iCurrentTrack, FALSE, _double(m_fAccTime + 0.1));
 
 	//0.25라는 인터벌 값동안 재생되던 키프레임의 속도를 제어하는 함수(2번째 인자 : 속도의 상수 값은 무조건 1로 가정)
-	m_pAniCon->KeyTrackSpeed(m_iCurrentTrack, 1.f, m_fAccTime, 0.25, D3DXTRANSITION_LINEAR);
+	m_pAniCon->KeyTrackSpeed(m_iCurrentTrack, 1.f, m_fAccTime, 0.1, D3DXTRANSITION_LINEAR);
 
 	//애니메이션 셋 합성 시 에 가중치를 지정해주는 함수
-	m_pAniCon->KeyTrackWeight(m_iCurrentTrack, 0.1f, m_fAccTime, 0.25, D3DXTRANSITION_LINEAR);
+	m_pAniCon->KeyTrackWeight(m_iCurrentTrack, 0.1f, m_fAccTime, 0.1, D3DXTRANSITION_LINEAR);
 
 	//0번 트랙 활성화
 	m_pAniCon->SetTrackEnable(m_iNewTrack, TRUE);
-	m_pAniCon->KeyTrackSpeed(m_iNewTrack, 1.f, m_fAccTime, 0.25, D3DXTRANSITION_LINEAR);
-	m_pAniCon->KeyTrackWeight(m_iNewTrack, 0.9f, m_fAccTime, 0.25, D3DXTRANSITION_LINEAR);
+	m_pAniCon->KeyTrackSpeed(m_iNewTrack, 1.f, m_fAccTime, 0.1, D3DXTRANSITION_LINEAR);
+	m_pAniCon->KeyTrackWeight(m_iNewTrack, 0.9f, m_fAccTime, 0.1, D3DXTRANSITION_LINEAR);
 
 	m_pAniCon->ResetTime();	//AdvanceTime 함수가 호출되면 애니메이션이 재생되는 동안 내부적으로 시간을 누적하는데 그 시간값 초기화
 	m_fAccTime = 0.f;
@@ -113,6 +113,9 @@ void CAniControll::Set_AnimationSet(const _uint & iIndex)
 
 void CAniControll::Set_QuickSet(const _uint & iIndex)
 {
+	if (m_iOldAniIndex == iIndex)
+		return;
+
 	LPD3DXANIMATIONSET		pAS = NULL;
 
 	m_iIndex = iIndex;
@@ -127,6 +130,8 @@ void CAniControll::Set_QuickSet(const _uint & iIndex)
 
 	// 0번 트랙을 활성화해라(재생하라는 명령이 아님, 트랙 활성화일 뿐)
 	m_pAniCon->SetTrackEnable(m_iCurrentTrack, TRUE);
+
+	m_iOldAniIndex = iIndex;
 }
 
 void CAniControll::Play_AnimationSet(const _double & TimeDelta)

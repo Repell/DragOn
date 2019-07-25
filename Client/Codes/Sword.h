@@ -19,7 +19,7 @@ private:
 	virtual ~CSword();
 
 public:
-	void Set_bAttack(_bool bState);
+	void Set_AttackState(_bool bState, _uint iCurAni, _uint iPower = 0);
 
 public:
 	virtual HRESULT Ready_Object(const _uint& iFlag);
@@ -29,7 +29,7 @@ public:
 	virtual void Render_Object() override;
 
 private:
-	void Render_Set();
+	void Render_Set(); 
 	void Render_ReSet();
 	void Check_EnemyColl(const _tchar* pObjTag, const _tchar* pCompTag);
 	void Get_ParentMatrix();
@@ -45,6 +45,9 @@ private:
 
 private:
 	_bool bAttack;
+	_uint iDamage;
+	_uint m_iCurAni;
+	_uint m_iOldAni;
 	_uint				m_iFlag;
 	const _matrix*		m_pParentBoneMatrix;
 	const _matrix*		m_pParentWorldMatrix;

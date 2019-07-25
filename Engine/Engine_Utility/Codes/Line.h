@@ -17,6 +17,9 @@ private:
 	virtual ~CLine();
 
 public:
+	_vec3 Get_Normal();
+
+public:
 	HRESULT		Ready_Line(const _vec2* pPointA, const _vec2* pPointB);
 	COMPARE		Compare(const _vec2* pEndPos);
 

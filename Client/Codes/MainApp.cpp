@@ -3,7 +3,6 @@
 
 #include "Export_Function.h"
 
-
 CMainApp::CMainApp()
 {
 }

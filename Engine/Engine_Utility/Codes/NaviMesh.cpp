@@ -42,15 +42,15 @@ void CNaviMesh::Render_NaviMesh()
 _vec3 CNaviMesh::MoveOn_NaviMesh(const _vec3 * pTargetPos, const _vec3 * pTargetDir)
 {
 	_vec3		vEndPos = *pTargetPos + *pTargetDir;
-
-	if (CCell::COMPARE_MOVE == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx))
+	_vec3 vNormal = {};
+	if (CCell::COMPARE_MOVE == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx, &vNormal))
 	{
 		//벽이 아닐경우 네비매쉬의 높이값 추가
 		vEndPos.y = Compute_OnTerrain(pTargetPos, &m_dwCurrentIdx);
 		return vEndPos;
 	}
 
-	else if (CCell::COMPARE_STOP == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx))
+	else if (CCell::COMPARE_STOP == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx, &vNormal))
 	{
 		//벽일 경우 현재위치 리턴 -> 슬라이딩 벡터로 변환
 		return *pTargetPos;	
@@ -62,8 +62,9 @@ _vec3 CNaviMesh::MoveOn_NaviMesh(const _vec3 * pTargetPos, const _vec3 * pTarget
 _vec3 CNaviMesh::MoveOn_NaviMesh_Dir(const _vec3 * pTargetPos, const _vec3 * pTargetDir)
 {
 	_vec3		vEndPos = *pTargetPos + *pTargetDir;
+	_vec3 vNormal;
 
-	if (CCell::COMPARE_MOVE == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx))
+	if (CCell::COMPARE_MOVE == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx, &vNormal))
 	{
 		//벽이 아닐경우 네비매쉬의 높이값 추가
 		_vec3 vReturn = *pTargetDir;
@@ -72,10 +73,14 @@ _vec3 CNaviMesh::MoveOn_NaviMesh_Dir(const _vec3 * pTargetPos, const _vec3 * pTa
 		return vReturn;
 	}
 
-	else if (CCell::COMPARE_STOP == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx))
+	else if (CCell::COMPARE_STOP == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx, &vNormal))
 	{
 		//벽일 경우 현재위치 리턴 -> 슬라이딩 벡터로 변환
-		return _vec3(0.f, 0.f, 0.f);
+		_vec3 SlidVector = *pTargetDir - D3DXVec3Dot(pTargetDir, &vNormal) * vNormal;
+		/// 방향 - 내적(방향, 부딫힌 선분의 법선 벡터) * 법선 벡터
+
+		//_vec3 vReturn = -*pTargetDir;
+		return SlidVector;
 	}
 
 	return _vec3(0.f, 0.f, 0.f);
@@ -84,14 +89,15 @@ _vec3 CNaviMesh::MoveOn_NaviMesh_Dir(const _vec3 * pTargetPos, const _vec3 * pTa
 _float CNaviMesh::MoveOn_Terrain(const _vec3 * pTargetPos, const _vec3 * pTargetDir)
 {
 	_vec3		vEndPos = *pTargetPos + *pTargetDir;
+	_vec3 vNormal;
 
-	if (CCell::COMPARE_MOVE == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx))
+	if (CCell::COMPARE_MOVE == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx, &vNormal))
 	{
 		vEndPos.y = Compute_OnTerrain(pTargetPos, &m_dwCurrentIdx);
 		return vEndPos.y;
 	}
 
-	else if (CCell::COMPARE_STOP == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx))
+	else if (CCell::COMPARE_STOP == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx, &vNormal))
 	{
 		vEndPos.y = Compute_OnTerrain(pTargetPos, &m_dwCurrentIdx);
 		return vEndPos.y;
@@ -219,6 +225,13 @@ _float CNaviMesh::Compute_OnTerrain(const _vec3 * pPos, _ulong * pCellIndex)
 		m_vecCell[(*pCellIndex)]->Get_Point(CCell::POINT_C));
 
 	return (-d3Plane.a * pPos->x - d3Plane.c * pPos->z - d3Plane.d) / d3Plane.b;
+}
+
+_vec3 CNaviMesh::SlideVector()
+{
+
+
+	return _vec3();
 }
 
 CNaviMesh * CNaviMesh::Create(LPDIRECT3DDEVICE9 pDevice, wstring strPath, wstring strName)

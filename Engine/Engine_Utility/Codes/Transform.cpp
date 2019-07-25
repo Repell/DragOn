@@ -12,8 +12,11 @@ CTransform::CTransform()
 	m_fJump(0.f),
 	bCamTarget(true)
 {
+	m_bFront = FALSE;
 	bRotate = FALSE;
 	m_eCurDir = DIR_UP;
+	m_bDead = FALSE;
+	m_fRotate = 0;
 }
 
 CTransform::~CTransform()
@@ -64,11 +67,8 @@ HRESULT CTransform::Ready_Trasnform(_vec3 vLook)
 
 _int CTransform::Update_Component(const _double& TimeDelta)
 {
-	if (bRotate)
-	{
-		m_RotTime += TimeDelta;
-		Rotation_AngleY(TimeDelta);
-	}
+	m_TimeDelta = TimeDelta;
+	//Rotation_AngleY(TimeDelta);
 
 	D3DXMatrixIdentity(&m_matWorld);
 
@@ -183,12 +183,45 @@ _float CTransform::Fix_TargetLookAngleY(CTransform * pTarget, _float fSearchDist
 	D3DXVec3Normalize(&vNewDir, &vNewDir);
 	D3DXVec3Normalize(&m_vLook, &m_vLook);
 	_float fRad = D3DXVec3Dot(&m_vLook, &vNewDir);
+	//m_vAngle.y = D3DXToDegree(acosf(fRad));
+	//if (pTarget->m_vInfo[ENGINE::INFO_POS].x > m_vInfo[ENGINE::INFO_POS].x)
+	//	m_vAngle.y *= -1.f;
+	//////////////////////////////////////////////
+
+	m_fRotate = D3DXToDegree(acosf(fRad));
+	if (pTarget->m_vInfo[ENGINE::INFO_POS].x > m_vInfo[ENGINE::INFO_POS].x)
+		m_fRotate *= -1.f;
+
+	_float fRotY = (m_fRotate - m_vAngle.y) * 1.f * m_TimeDelta;
+
+	if (m_vAngle.y > m_fRotate - 1.5f && m_vAngle.y < m_fRotate + 1.5f)
+		return fDistance;
+
+	m_vAngle.y += fRotY;
+	
+	//////////////////////////////////////////////
+	return fDistance;
+}
+
+_float CTransform::Fix_TargetLook(CTransform * pTarget, _float fSearchDist)
+{
+	_vec3 vNewDir = pTarget->m_vInfo[INFO_POS] - m_vInfo[INFO_POS];
+	_float fDistance = D3DXVec3Length(&vNewDir);
+
+	if (fSearchDist < fDistance)
+		return fDistance;
+
+	D3DXVec3Normalize(&vNewDir, &vNewDir);
+	D3DXVec3Normalize(&m_vLook, &m_vLook);
+	_float fRad = D3DXVec3Dot(&m_vLook, &vNewDir);
+
 	m_vAngle.y = D3DXToDegree(acosf(fRad));
 
 	if (pTarget->m_vInfo[ENGINE::INFO_POS].x > m_vInfo[ENGINE::INFO_POS].x)
 		m_vAngle.y *= -1.f;
 
-	return fDistance;
+	if (fSearchDist < fDistance)
+		return fDistance;
 }
 
 void CTransform::Stalk_Target(CTransform * pTransform, const _double& fTime, const _float fSpeed)
@@ -197,38 +230,48 @@ void CTransform::Stalk_Target(CTransform * pTransform, const _double& fTime, con
 	m_vInfo[INFO_POS] += *D3DXVec3Normalize(&vLookDir, &vLookDir) * fSpeed * fTime;
 }
 
-void CTransform::Fix_AngleY(_float fAngleY, eDirect eDir)
+_vec3 CTransform::Stalk_TargetDir(CTransform * pTransform, const _double & fTime, const _float fSpeed)
 {
-	m_eCurDir = eDir;
+	_vec3 vLookDir = pTransform->m_vInfo[INFO_POS] - m_vInfo[INFO_POS];
+	return *D3DXVec3Normalize(&vLookDir, &vLookDir) * fSpeed * fTime;
+}
 
-	if (m_eCurDir == m_ePreDir)
-		return;
+_float CTransform::Get_TargetDistance(CTransform * pTarget)
+{
+	_vec3 vNewDir = pTarget->m_vInfo[INFO_POS] - m_vInfo[INFO_POS];
+	_float fDistance = D3DXVec3Length(&vNewDir);
 
-	m_fFixAngleY = fAngleY;
+	return fDistance;
+}
+
+_vec3 CTransform::Get_TargetReverseDir(CTransform * pTarget)
+{
+	_vec3 vRevDir = m_vInfo[INFO_POS] - pTarget->m_vInfo[INFO_POS];
 	
-	//m_fFixAngleY = m_vAngle.y - fAngleY;
+	return *D3DXVec3Normalize(&vRevDir, &vRevDir);
+}
 
-	//if (m_fFixAngleY < 0.f)
-	//	m_fFixAngleY += 360.f;
-	//else if (m_fFixAngleY > 360.f)
-	//	m_fFixAngleY -= 360.f;
+_bool CTransform::Get_Dead(_bool bDead)
+{
+	if (bDead)
+		m_bDead = TRUE;
 
-	//m_vAngle.y = m_fFixAngleY;
+	return m_bDead;
+}
 
-	m_ePreDir = m_eCurDir;
-	bRotate = TRUE;
-	m_RotTime = 0.0;
+_bool CTransform::Check_TargetFront()
+{
+	if (m_vAngle.y > m_fRotate - 4.f && m_vAngle.y < m_fRotate + 4.f)
+		m_bFront = TRUE;
+	else
+		m_bFront = FALSE;
+
+	return m_bFront;
 }
 
 void CTransform::Rotation_AngleY(const _double & TimeDelta)
 {
-	m_vAngle.y += m_fFixAngleY * TimeDelta;
-
-	if (m_RotTime > 1.0)
-	{
-		bRotate = FALSE;
-		m_RotTime = 0.0;
-	}
+	
 }
 
 CTransform * CTransform::Create(_vec3& vLook)

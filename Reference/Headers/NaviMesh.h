@@ -28,6 +28,7 @@ private:
 	HRESULT LoadforLineDat(wstring strPath, wstring strName);
 	HRESULT Link_Cell();
 	_float Compute_OnTerrain(const _vec3* pPos, _ulong * pCellIndex);
+	_vec3	 SlideVector();
 	
 	
 private:

@@ -1,30 +1,36 @@
 #include "stdafx.h"
-#include "Snowman.h"
+#include "Troll.h"
 
 #include "Export_Function.h"
 
-#define _SPEED 3.f
+#define _SPEED 2.f
 #define _ANGLE 60.f
-#define  _RADIUS 125.f
+#define  _RADIUS 140.f
 
-CSnowman::CSnowman(LPDIRECT3DDEVICE9 pDevice)
+CTroll::CTroll(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice),
 	m_pMesh(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr), m_pNaviMesh(nullptr)
 {
-	bAttack = FALSE;
-	iCurAniSet = 0;
+	m_bAttack = FALSE;
+	m_bSleep = TRUE;
+	m_bDead = FALSE;
+
+	m_iCurAniSet = 0;
+	m_iPreAniSet = 0;
 }
 
-CSnowman::~CSnowman()
+CTroll::~CTroll()
 {
 
 }
 
-HRESULT CSnowman::Ready_Object(_vec3 vPos)
+HRESULT CTroll::Ready_Object(_vec3 vPos)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
-	m_pMesh->Set_AnimationSet(6);
+	//m_pMesh->Set_AnimationSet(5);
+	//m_iCurAniSet = 5;
+	Animate_FSM(14);
 
 	m_pNaviMesh->Set_CurrentIdx(3);
 	m_pTransform->m_vAngle.y = 0.f;
@@ -33,7 +39,7 @@ HRESULT CSnowman::Ready_Object(_vec3 vPos)
 	return S_OK;
 }
 
-HRESULT CSnowman::Late_Init()
+HRESULT CTroll::Late_Init()
 {
 	//m_pTransform->m_vAngle.y = 180.f;
 	m_pTransform->m_vScale = { 0.01f, 0.01f, 0.01f };
@@ -53,35 +59,67 @@ HRESULT CSnowman::Late_Init()
 	return S_OK;
 }
 
-_int CSnowman::Update_Object(const _double& TimeDelta)
+_int CTroll::Update_Object(const _double& TimeDelta)
 {
+	m_TimeDelta = TimeDelta;
 	ENGINE::CGameObject::Late_Init();
 	ENGINE::CGameObject::Update_Object(TimeDelta);
 
-	//if (bAttack = m_pMesh->Is_AnimationSetEnd())
-	//m_pMesh->Set_AnimationSet(6);
-
-	if (iCurAniSet != 8)
-		Chase_Target(TimeDelta);
-	else if (iCurAniSet == 8)
-		Attack_Target();
-
 	if (m_pSphereColl->Get_iHp() <= 0)
+	{
+		m_bDead = TRUE;
+		m_pTransform->Get_Dead(TRUE);
+	}
+
+	if (m_bDead && m_iCurAniSet == 21 && m_pMesh->Is_AnimationSetEnd())
 		return END_EVENT;
 
-	m_pMesh->Play_AnimationSet(TimeDelta);
 	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_NONALPHA, this);
 	return NO_EVENT;
 }
 
-void CSnowman::Late_Update_Object()
+void CTroll::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
+	m_fDist = m_pTransform->Get_TargetDistance(m_pTargetTransform);
 }
 
-void CSnowman::Render_Object()
+void CTroll::Render_Object()
 {
 	//Render_Set();
+
+	if (m_bSleep && !m_bDead)
+	{
+		if (m_fDist < 10.f && m_iCurAniSet == 14)	//WakeUp
+			Animate_FSM(15);
+		else if (m_iCurAniSet == 15 && m_pMesh->Is_AnimationSetEnd())	//WakeUpEnd
+		{
+			m_pTransform->Fix_TargetLook(m_pTargetTransform, 20.f);
+			Animate_FSM(5);
+		}
+		else if (m_iCurAniSet == 5 && m_pMesh->Is_AnimationSetEnd())
+			m_bSleep = FALSE;
+	}
+	else if(!m_bDead)
+	{
+		if (m_iCurAniSet != 8 && m_fDist < 10.f && !m_bAttack)
+			Chase_Target(m_TimeDelta);
+		else if (m_bAttack && m_fDist < 10.f)
+			Attack_Target();
+		else
+		{
+			Animate_FSM(0);
+		}
+	}
+
+	if (m_bDead)
+			Animate_FSM(21);
+
+	if(m_iCurAniSet == 2)
+		m_pMesh->Play_AnimationSet(m_TimeDelta * 1.5);
+	else
+		m_pMesh->Play_AnimationSet(m_TimeDelta);
+	/////////////////////
 
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 
@@ -94,13 +132,14 @@ void CSnowman::Render_Object()
 	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix, _vec3(0.f, 0.f, 0.f));
 
 	_tchar szStr[MAX_PATH] = L"";
-	swprintf_s(szStr, L"Distnace : %3.2f", fDist);
+	swprintf_s(szStr, L"AngleY : %3.2f", m_pTransform->m_vAngle.y);
+	//swprintf_s(szStr, L"Monster HP: %d", m_pSphereColl->Get_iHp(0));
 	ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 10.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 
 	//Render_ReSet();
 }
 
-void CSnowman::Render_Set()
+void CTroll::Render_Set()
 {
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
 	//Alpha Test Begin
@@ -115,7 +154,7 @@ void CSnowman::Render_Set()
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 }
 
-void CSnowman::Render_ReSet()
+void CTroll::Render_ReSet()
 {
 	//Alpha Test End
 	m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
@@ -125,64 +164,112 @@ void CSnowman::Render_ReSet()
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
-void CSnowman::Find_BoneMatrix()
+void CTroll::Find_BoneMatrix()
 {
 	//if(nullptr == m_pBoneMatrix)
-	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName("L_IRON2");
+	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName("L_IRON1");
 	m_pBoneMatrix = pFrame->combinedTransformMatrix * m_pTransform->m_matWorld;
 }
 
-void CSnowman::Chase_Target(const _double& TimeDelta)
+void CTroll::Chase_Target(const _double& TimeDelta)
 {
 
 	_bool bColl = m_pSphereColl->Check_ComponentColl(m_pTargetSphereColl);
-	fDist = m_pTransform->Fix_TargetLookAngleY(m_pTargetTransform, 10.f);	//거리 반환, 반환값 안받아도상관없음
+	m_pTransform->Fix_TargetLook(m_pTargetTransform, 10.f);	//거리 반환, 반환값 안받아도상관없음
+	//m_bFront = m_pTransform->Check_TargetFront();
 
-	if (!bAttack && fDist < 3.f || bColl)	//공격
+	if (!m_bAttack && m_fDist < 4.f /*&& m_bFront */&& bColl)	//공격
 	{
-		iCurAniSet = 8;
-		m_pMesh->Set_AnimationSet(8);
-		bAttack = TRUE;
+		Animate_FSM(8);
+
+		m_bAttack = TRUE;
 	}
-	else	if (fDist < 10.f && !bColl)
+	else	if (m_fDist < 10.f && !bColl)	//추적
 	{
-		m_pTransform->Stalk_Target(m_pTargetTransform, TimeDelta, _SPEED);
-		m_pMesh->Set_AnimationSet(7);
+		_vec3 vRevDir = {};
+			
+		if (Check_EnemyColl(&vRevDir))
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRevDir * _SPEED * TimeDelta;
+		else
+			m_pTransform->Stalk_Target(m_pTargetTransform, TimeDelta, _SPEED);
+
+		Animate_FSM(2);
 	}
-	else
-		m_pMesh->Set_AnimationSet(6);
-	
-	m_pMesh->Is_AnimationSetEnd();
+
 }
 
-void CSnowman::Attack_Target()
+void CTroll::Attack_Target()
 {
-	
 	_bool bColl = m_pCollider->Check_ComponentColl(m_pTargetSphereColl);
 
-	if (bColl && bAttack)
+	if (m_iCurAniSet == 8 && bColl && m_bAttack)
 	{
 		m_pTargetSphereColl->Get_iHp(2);
-		bAttack = FALSE;
+		m_pTargetSphereColl->m_bHit = TRUE;
+		Animate_FSM(9);
+		//m_bAttack = FALSE;
 	}
 
-	if (m_pMesh->Is_AnimationSetEnd())
+	if (m_iCurAniSet == 8 && m_pMesh->Is_AnimationSetEnd())
+		Animate_FSM(9);
+	else if (m_iCurAniSet == 9 && m_pMesh->Is_AnimationSetEnd())
+		m_bAttack = FALSE;
+
+	
+}
+
+_bool CTroll::Check_EnemyColl(_vec3 * vRevDir)
+{
+	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
+
+	for (auto pList : pLayer->Get_MapObject(L"Troll"))
 	{
-		m_pMesh->Set_AnimationSet(9);
-		iCurAniSet = 9;
+		if (pList == this)
+			continue;
+
+		ENGINE::CSphereColl* pSphere = dynamic_cast<ENGINE::CSphereColl*>
+			(pList->Get_Component(L"Com_SphereColl", ENGINE::COMP_STATIC));
+
+		ENGINE::CTransform* pTrans = dynamic_cast<ENGINE::CTransform*>
+			(pList->Get_Component(L"Com_Transform", ENGINE::COMP_DYNAMIC));
+
+		if (pSphere == nullptr)
+			return FALSE;
+
+		*vRevDir = m_pTransform->Get_TargetReverseDir(pTrans) * 0.01f;
+
+		if (m_pSphereColl->Check_ComponentColl(pSphere))
+		{
+			_vec3 vTargetRevDir = pTrans->Get_TargetReverseDir(m_pTransform)  * 0.01f;
+			pTrans->m_vInfo[ENGINE::INFO_POS] += vTargetRevDir;
+			return TRUE;
+		}
+		else
+			continue;
 	}
 
-	m_pMesh->Is_AnimationSetEnd();
+	return FALSE;
+}
+
+VOID CTroll::Animate_FSM(_uint iAniState)
+{
+	m_iCurAniSet = iAniState;
+
+	if (/*!m_bAnimate && */m_iCurAniSet != m_iPreAniSet)
+	{
+		m_pMesh->Set_AnimationSet(m_iCurAniSet);
+		m_iPreAniSet = m_iCurAniSet;
+	}
 }
 
 
-HRESULT CSnowman::Add_Component()
+HRESULT CTroll::Add_Component()
 {
 
 	ENGINE::CComponent* pComponent = nullptr;
 	/////////INSERT COMPONENT/////////
 	pComponent = m_pMesh = dynamic_cast<ENGINE::CDynamicMesh*>
-		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Mesh_Snowman"));
+		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Mesh_Troll"));
 	NULL_CHECK_RETURN(m_pMesh, E_FAIL);
 	m_MapComponent[ENGINE::COMP_DYNAMIC].emplace(L"Com_Mesh", pComponent);
 
@@ -218,9 +305,9 @@ HRESULT CSnowman::Add_Component()
 	return S_OK;
 }
 
-CSnowman * CSnowman::Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos)
+CTroll * CTroll::Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos)
 {
-	CSnowman* pInstance = new CSnowman(pGraphicDev);
+	CTroll* pInstance = new CTroll(pGraphicDev);
 
 	if (FAILED(pInstance->Ready_Object(vPos)))
 		ENGINE::Safe_Release(pInstance);
@@ -228,7 +315,7 @@ CSnowman * CSnowman::Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos)
 	return pInstance;
 }
 
-void CSnowman::Free()
+void CTroll::Free()
 {
 	ENGINE::CGameObject::Free();
 }

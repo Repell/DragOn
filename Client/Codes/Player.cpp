@@ -89,7 +89,7 @@ void CPlayer::Late_Update_Object()
 		ENGINE::Get_Management()->Add_GameObject(ENGINE::CLayer::OBJECT, L"kaboom", pObject);
 		m_pMesh->Set_AnimationSet(90);
 
-		m_pSword->Set_bAttack(TRUE);
+		m_pSword->Set_AttackState(TRUE, m_iCurAniState);
 	}
 
 }
@@ -300,7 +300,7 @@ _bool CPlayer::Check_EnemyColl()
 
 	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
 
-	for (auto pList : pLayer->Get_MapObject(L"Snowman"))
+	for (auto pList : pLayer->Get_MapObject(L"Troll"))
 	{
 		ENGINE::CSphereColl* pSphere = dynamic_cast<ENGINE::CSphereColl*>
 			(pList->Get_Component(L"Com_SphereColl", ENGINE::COMP_STATIC));

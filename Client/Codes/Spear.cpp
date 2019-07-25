@@ -15,7 +15,7 @@ CSpear::~CSpear()
 
 }
 
-void CSpear::Set_bAttack(_bool bState)
+void CSpear::Set_AttackState(_bool bState)
 {
 	bAttack = bState;
 }
@@ -58,7 +58,7 @@ void CSpear::Late_Update_Object()
 	ENGINE::CGameObject::Late_Update_Object();
 
 	if(bAttack)
-		Check_EnemyColl(L"Snowman", L"Com_SphereColl");
+		Check_EnemyColl(L"Troll", L"Com_SphereColl");
 	
 }
 
@@ -101,7 +101,7 @@ void CSpear::Check_EnemyColl(const _tchar* pObjTag, const _tchar* pCompTag)
 
 	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
 
-	for (auto pList : pLayer->Get_MapObject(L"Snowman"))
+	for (auto pList : pLayer->Get_MapObject(L"Troll"))
 	{
 		
 		if (pLayer == nullptr)

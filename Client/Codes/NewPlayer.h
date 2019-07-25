@@ -42,6 +42,10 @@ private:
 private:
 	//Key Check Func
 	_bool Key_Check_Func(const _double& TimeDelta);
+
+private:
+	//Collision Check
+	_bool Check_DirectionCollision(_vec3* vRevDir);
 private:
 	//Animate Func
 	VOID Animate_FSM(_uint iAniState);
@@ -54,6 +58,11 @@ private:
 	void Dash_Func(const _double& TimeDelta);
 	//Attack Func
 	void Attack_Func(const _double& TimeDelta);
+	//Rigd Func
+	void Rigd_Func(const _double& TimeDelta);
+
+	//Reset State
+	void Reset_State();
 		
 private:
 	ENGINE::CTransform*	m_pTransform;
@@ -85,6 +94,9 @@ private:
 	_bool m_bAttack[6];
 	_uint m_iAniSet[6]; // 90 - 88 - 84 - 78 - 80 - 67
 	_double m_AttackTime;
+	//Hit State
+	_bool m_bHit;
+	_double m_RigdTime;
 
 public:
 	static CNewPlayer* Create(LPDIRECT3DDEVICE9 pGraphicDev);

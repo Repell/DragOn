@@ -39,11 +39,11 @@ _uint CLoading::Loading_ForLogo()
 
 	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
 		RESOURCE_LOGO,
-		L"Mesh_Snowman",
+		L"Mesh_Troll",
 		ENGINE::MESH_DYNAMIC,
-		L"../Bin/Resources/Mesh/DynamicMesh/Snowman/",
-		L"Snowman.X"),
-		E_FAIL);
+		L"../Bin/Resources/Mesh/DynamicMesh/Troll/",
+		L"Troll.X"),
+		E_FAIL);		//Troll
 
 	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
 	//	RESOURCE_LOGO,

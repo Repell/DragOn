@@ -8,6 +8,9 @@ CSword::CSword(LPDIRECT3DDEVICE9 pDevice)
 	m_pMesh(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr),
 	m_pParentBoneMatrix(nullptr), m_pParentWorldMatrix(nullptr)
 {
+	iDamage = 2;
+	m_iCurAni = 0;
+	m_iOldAni = 0;
 }
 
 CSword::~CSword()
@@ -15,9 +18,11 @@ CSword::~CSword()
 
 }
 
-void CSword::Set_bAttack(_bool bState)
+void CSword::Set_AttackState(_bool bState, _uint iCurAni, _uint iPower)
 {
 	bAttack = bState;
+	iDamage = iPower;
+	m_iCurAni = iCurAni;
 }
 
 HRESULT CSword::Ready_Object(const _uint& iFlag)
@@ -50,15 +55,15 @@ _int CSword::Update_Object(const _double& TimeDelta)
 	m_pTransform->Set_ParentMatrix(&(*m_pParentBoneMatrix * *m_pParentWorldMatrix));	//공전 * 부모
 	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_NONALPHA, this);
 
+	if (bAttack)
+		Check_EnemyColl(L"Troll", L"Com_SphereColl");
+	
 	return NO_EVENT;
 }
 
 void CSword::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
-
-	if(bAttack)
-		Check_EnemyColl(L"Snowman", L"Com_SphereColl");
 	
 }
 
@@ -66,7 +71,6 @@ void CSword::Render_Object()
 {
 	//Render_Set();
 
-	//m_pTransform->m_matWorld._42 *= -1.f;
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 
 	m_pMesh->Render_Meshes();
@@ -103,25 +107,34 @@ void CSword::Check_EnemyColl(const _tchar* pObjTag, const _tchar* pCompTag)
 
 	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
 
-	for (auto pList : pLayer->Get_MapObject(L"Snowman"))
+	for (auto pList : pLayer->Get_MapObject(L"Troll"))
 	{
-		
 		if (pLayer == nullptr)
 			return;
 
-		ENGINE::CSphereColl* pSphere = dynamic_cast<ENGINE::CSphereColl*>
-			(pList->Get_Component(L"Com_SphereColl", ENGINE::COMP_STATIC));
+		ENGINE::CTransform* pTrans = dynamic_cast<ENGINE::CTransform*>
+			(pList->Get_Component(L"Com_Transform", ENGINE::COMP_DYNAMIC));
 
-		if (pSphere == nullptr)
+		if (pTrans->Get_Dead())
 			continue;
 
-		_bool bColl = m_pCollider->Check_ComponentColl(pSphere);
+		ENGINE::CSphereColl* pTarget = dynamic_cast<ENGINE::CSphereColl*>
+			(pList->Get_Component(L"Com_SphereColl", ENGINE::COMP_STATIC));
 
-		if (bColl)
-			pSphere->Get_iHp(2);
+		if (pTarget == nullptr)
+			continue;
+		
+		_bool bColl = m_pCollider->Check_ComponentColl(pTarget);
+
+		if (bColl && m_iOldAni != m_iCurAni && pTarget->Get_iHitStack() == 1)
+		{
+			pTarget->Get_iHp(iDamage);
+			pTarget->Get_iHitStack(TRUE);
+			m_iOldAni = m_iCurAni;
+		}
+
 	}
-
-	bAttack = FALSE;
+	
 }
 
 void CSword::Get_ParentMatrix()

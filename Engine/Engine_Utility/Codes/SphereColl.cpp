@@ -3,7 +3,8 @@
 USING(ENGINE)
 
 CSphereColl::CSphereColl(LPDIRECT3DDEVICE9 pDevice)
-	: m_pGraphicDev(pDevice), m_fScale(0.01f), m_bInvisible(FALSE)
+	: m_pGraphicDev(pDevice), m_fScale(0.01f),
+	m_bInvisible(FALSE), m_bHit(FALSE)
 {
 	m_pGraphicDev->AddRef();
 }
@@ -29,15 +30,36 @@ void CSphereColl::Set_Scale(_float fScale)
 
 _int CSphereColl::Get_iHp(_int iDamage)
 {
-	if(iDamage > 0 && !m_bInvisible)
+	if (iDamage > 0 && !m_bInvisible)
 		m_iHp -= iDamage;
 
 	return m_iHp;
 }
 
+_uint CSphereColl::Get_iHitStack(_bool bState)
+{
+	if (!bState)
+		++m_iHitStack;
+	else
+		m_iHitStack = 0;
+
+	return m_iHitStack;
+}
+
 void CSphereColl::Set_Invisible(_bool bState)
 {
 	m_bInvisible = bState;
+}
+
+_bool CSphereColl::Get_HitState()
+{
+	return m_bHit;
+}
+
+void CSphereColl::Late_Update_Component()
+{
+	//if(m_bHit)
+	//	m_bHit = FALSE;
 }
 
 HRESULT CSphereColl::Ready_SphereColl(_float fRadius, _int iHp)
@@ -54,7 +76,7 @@ HRESULT CSphereColl::Ready_SphereColl(_float fRadius, _int iHp)
 void CSphereColl::Render_SphereColl(const _matrix * pCollMatrix)
 {
 	_matrix pMatrix = *pCollMatrix;
-	pMatrix._42 += 1.f;
+	pMatrix._42 += 0.75f;
 	memcpy(m_vCollPos, &pMatrix.m[3][0], sizeof(_vec3));
 
 	_ulong iNumVertice = m_pMesh->GetNumVertices();
