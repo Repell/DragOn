@@ -92,6 +92,9 @@
     <Filter Include="01.Clinet\02.Scene\09.TestStage\04.Monster\00.Troll">
       <UniqueIdentifier>{fba9259c-275c-4007-9296-607ab71f1921}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.SubApp\01.Class\01.StaticCamera">
+      <UniqueIdentifier>{8964b5a7-6497-4f5a-96b2-9967d5a9e079}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clinet.h">
@@ -181,6 +184,9 @@
     <ClInclude Include="..\Codes\Troll.h">
       <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\00.Troll</Filter>
     </ClInclude>
+    <ClInclude Include="..\Codes\StaticCamera.h">
+      <Filter>02.SubApp\01.Class\01.StaticCamera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -248,6 +254,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Troll.cpp">
       <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\00.Troll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\StaticCamera.cpp">
+      <Filter>02.SubApp\01.Class\01.StaticCamera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

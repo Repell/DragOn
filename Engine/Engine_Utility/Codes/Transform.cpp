@@ -103,7 +103,7 @@ _int CTransform::Update_Component(const _double& TimeDelta)
 	for (_ulong i = 0; i < INFO_END; ++i)
 		memcpy(&m_matWorld.m[i][0], &m_vInfo[i], sizeof(_vec3));
 
-	D3DXVec3TransformNormal(&m_vDir, &m_vLook, &m_matWorld);
+	D3DXVec3TransformNormal(&m_vDir, &m_vInfo[INFO_LOOK], &m_matWorld);
 	D3DXVec3Normalize(&m_vDir, &m_vDir);
 
 	return 0;

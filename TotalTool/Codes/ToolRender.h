@@ -15,7 +15,7 @@
 
 #include "TestObj.h"
 
-namespace Engine
+namespace ENGINE
 {
 	class CGameObject;
 }

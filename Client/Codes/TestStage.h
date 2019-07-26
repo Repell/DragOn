@@ -21,6 +21,7 @@
 #include "Shade.h"
 
 #include "DynamicCamera.h"
+#include "StaticCamera.h"
 
 class CTestStage : public ENGINE::CScene
 {

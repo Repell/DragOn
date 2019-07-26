@@ -120,6 +120,12 @@ namespace ENGINE
 		}
 	};
 
+	template <typename T>
+	T LimitNumber(T& Value, T Min, T Max)
+	{
+		return(Value < Min) ? (Value = Min) : ((Value > Max) ? (Value = Max) : Value);
+	}
+
 }
 
 

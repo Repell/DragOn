@@ -5,8 +5,14 @@ USING(ENGINE)
 CCamera::CCamera(LPDIRECT3DDEVICE9 pDev)
 	:CGameObject(pDev)
 {
-	ZeroMemory(&m_vEye, sizeof(D3DXVECTOR3));
-	ZeroMemory(&m_vAt, sizeof(D3DXVECTOR3));
+	ZeroMemory(&m_vEye, sizeof(_vec3));
+	ZeroMemory(&m_vAt, sizeof(_vec3));
+	m_vUp = { 0.f, 1.f, 0.f };
+
+	m_fFovY = 60.f;
+	m_fAspect = 0.f;
+	m_fNear = 0.f;
+	m_fFovY = 0.f;
 
 	D3DXMatrixIdentity(&m_matView);
 	D3DXMatrixIdentity(&m_matProj);
@@ -16,8 +22,10 @@ CCamera::~CCamera()
 {
 }
 
-int CCamera::Update_Object()
+int CCamera::Update_Object(const _double& TimeDelta)
 {
+	Make_ViewMatrix(&m_vEye, &m_vAt, &m_vUp);
+
 	return 0;
 }
 

@@ -53,7 +53,8 @@ _vec3 CNaviMesh::MoveOn_NaviMesh(const _vec3 * pTargetPos, const _vec3 * pTarget
 	else if (CCell::COMPARE_STOP == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx, &vNormal))
 	{
 		//벽일 경우 현재위치 리턴 -> 슬라이딩 벡터로 변환
-		return *pTargetPos;	
+		_vec3 SlidVector = *pTargetDir - D3DXVec3Dot(pTargetDir, &vNormal) * vNormal;
+		return *pTargetPos + SlidVector;
 	}
 
 	return _vec3(0.f, 0.f, 0.f);

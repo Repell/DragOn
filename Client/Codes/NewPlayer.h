@@ -16,6 +16,22 @@ namespace ENGINE
 
 class CNewPlayer : public ENGINE::CGameObject
 {
+public:
+	enum PLAYERDIR
+	{
+		LEFT, RIGHT, DOWN, UP, 
+		LEFTUP, LEFTDOWN,
+		RIGHTUP, RIGHTDOWN,
+		DIR_END
+	};
+
+	PLAYERDIR m_eCurDir;
+
+	void Key_Check_New(const _double& TimeDelta);
+	void Update_PlayerDir(const _double& TimeDelta);
+	void Move_Func(const _double& TimeDelta);
+
+
 private:
 	explicit CNewPlayer(LPDIRECT3DDEVICE9 pDevice);
 	virtual ~CNewPlayer();

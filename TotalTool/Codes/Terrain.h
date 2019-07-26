@@ -3,7 +3,7 @@
 
 #include "GameObject.h"
 
-namespace Engine
+namespace ENGINE
 {
 	class CTerrainTex;
 	class CGameObject;

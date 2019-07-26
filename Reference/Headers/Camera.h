@@ -19,7 +19,7 @@ public:
 	_vec3& Get_vEye() { return m_vEye; }
 
 public:
-	virtual _int Update_Object();
+	virtual _int Update_Object(const _double& TimeDelta) override;
 
 protected:
 	void Make_ViewMatrix(
@@ -36,8 +36,15 @@ protected:
 protected:
 	D3DXMATRIX	 m_matView;
 	D3DXMATRIX	 m_matProj;
+
 	D3DXVECTOR3	m_vEye;
 	D3DXVECTOR3	m_vAt;
+	D3DXVECTOR3	m_vUp;
+
+	_float	m_fFovY;
+	_float	m_fAspect;
+	_float	m_fNear;
+	_float	m_fFar;
 
 };
 
