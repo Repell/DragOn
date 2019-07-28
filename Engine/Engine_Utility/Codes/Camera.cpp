@@ -26,7 +26,7 @@ int CCamera::Update_Object(const _double& TimeDelta)
 {
 	Make_ViewMatrix(&m_vEye, &m_vAt, &m_vUp);
 
-	return 0;
+	return NO_EVENT;
 }
 
 

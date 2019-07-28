@@ -16,6 +16,7 @@ CTerrain::~CTerrain()
 HRESULT CTerrain::Ready_Object()
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
+	Setup_Material();
 	
 	return S_OK;
 }
@@ -40,7 +41,6 @@ _int CTerrain::Update_Object(const _double& TimeDelta)
 void CTerrain::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
-	Setup_Material();
 }
 
 void CTerrain::Render_Object()

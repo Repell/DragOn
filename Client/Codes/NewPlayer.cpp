@@ -4,7 +4,7 @@
 #include "Export_Function.h"
 
 #define _SPEED 3.f
-#define _ANGLE 45.f
+#define _ANGLE 180.f
 #define  _RADIUS 75.f
 //#define _GRAVITY 4.8f
 //#define _JUMPPOWER 1.25f
@@ -21,14 +21,19 @@ CNewPlayer::CNewPlayer(LPDIRECT3DDEVICE9 pDevice)
 	m_bHit(FALSE), m_RigdTime(0.0),
 	m_AttackTime(0.0)
 {
-	m_iAniSet[0] = 90;	// 89 / Attack 1 
-	m_iAniSet[1] = 88;	// 83/ Attack 4
-	m_iAniSet[2] = 86;	// 83/ Attack 4
-	m_iAniSet[3] = 84;	// 77 / Attack 7
-	m_iAniSet[4] = 82;	// 79 / Attack 6
-	m_iAniSet[5] = 80;	// 66 / Attack 12
+	m_iComboCnt = 0;
+	m_iComboIdx[0] = 37;	// 89 / Attack 1 
+	m_iComboIdx[1] = 88;	// 83/ Attack 4
+	m_iComboIdx[2] = 86;	// 83/ Attack 4
+	m_iComboIdx[3] = 84;	// 77 / Attack 7
+	m_iComboIdx[4] = 82;	// 79 / Attack 6
+	m_iComboIdx[5] = 80;	// 66 / Attack 12
+	m_iComboIdx[6] = 78;	// 66 / Attack 12
+	m_iComboIdx[7] = 76;	// 66 / Attack 12
+	m_iComboIdx[8] = 74;	// 66 / Attack 12
+	m_iComboIdx[9] = 110;	// 66 / Attack 12
 
-	for (int i = 0; i < 6; ++i)
+	for (int i = 0; i < 10; ++i)
 		m_bAttack[i] = FALSE;
 
 
@@ -45,9 +50,10 @@ HRESULT CNewPlayer::Ready_Object()
 
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = { 50.f, 0.1f, 2.f };
 	m_pTransform->m_vScale = { 0.01f, 0.01f, 0.01f };
-	m_pTransform->m_vLook = { 0.f, 0.f, -1.f };
+	//m_pTransform->m_vLook = { 0.f, 0.f, -1.f };
 	m_pSphereColl->Set_Scale(0.01f);
 	m_pSphereColl->Get_CollPos() = { 50.f, 0.1f, 2.f };
+	m_pTransform->Update_Component(0.f);
 	Animate_FSM(110);
 
 	return S_OK;
@@ -101,55 +107,177 @@ HRESULT CNewPlayer::Late_Init()
 }
 
 
-void CNewPlayer::Key_Check_New(const _double & TimeDelta)
+void CNewPlayer::Key_ChecknMoveState(const _double & TimeDelta)
 {
 	if (ENGINE::Key_Combined(ENGINE::dwKEY_W, ENGINE::dwKEY_A))
 	{
 		m_eCurDir = LEFTUP;
+		if(m_ePlayerState != FIGHT)
+			Animate_FSM(107);
 	}
 	else if (ENGINE::Key_Combined(ENGINE::dwKEY_W, ENGINE::dwKEY_D))
 	{
 		m_eCurDir = RIGHTUP;
+		if (m_ePlayerState != FIGHT)
+			Animate_FSM(107);
+
 	}
 	else if (ENGINE::Key_Combined(ENGINE::dwKEY_S, ENGINE::dwKEY_A))
 	{
 		m_eCurDir = LEFTDOWN;
+		if (m_ePlayerState != FIGHT)
+			Animate_FSM(107);
+
 	}
 	else if (ENGINE::Key_Combined(ENGINE::dwKEY_S, ENGINE::dwKEY_D))
 	{
 		m_eCurDir = RIGHTDOWN;
+		if (m_ePlayerState != FIGHT)
+			Animate_FSM(107);
+
 	}
 	else if (ENGINE::Key_Press(ENGINE::dwKEY_W))
 	{
 		m_eCurDir = UP;
+		if (m_ePlayerState != FIGHT)
+			Animate_FSM(107);
+
 	}
 	else if (ENGINE::Key_Press(ENGINE::dwKEY_S))
 	{
 		m_eCurDir = DOWN;
+		if (m_ePlayerState != FIGHT)
+			Animate_FSM(107);
+
 	}
 
 	else if (ENGINE::Key_Press(ENGINE::dwKEY_A))
 	{
 		m_eCurDir = LEFT;
+		if (m_ePlayerState != FIGHT)
+			Animate_FSM(107);
+
 	}
 
 	else if (ENGINE::Key_Press(ENGINE::dwKEY_D))
 	{
 		m_eCurDir = RIGHT;
+		if (m_ePlayerState != FIGHT)
+			Animate_FSM(107);
+
 	}
+
+	if (m_eCurDir != DIR_END && m_ePlayerState != FIGHT)
+		m_ePlayerState = MOVE;
+	else if (m_ePlayerState == FIGHT)
+		m_ePlayerState = FIGHT_MOVE;
+	else
+		m_ePlayerState = NONE;
+}
+
+void CNewPlayer::Key_ChecknFightState(const _double & TimeDelta)
+{
+		
+	if (ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON))
+	{
+		if(m_iComboCnt == 0)
+			++m_iComboCnt;
+		else if(m_iCurAniState == m_iComboIdx[m_iComboCnt] -1 && !m_pMesh->Is_AnimationSetEnd())
+			++m_iComboCnt;
+		else if (m_iCurAniState == m_iComboIdx[m_iComboCnt] -1 && m_pMesh->Is_AnimationSetEnd())
+			m_iComboCnt = 10;
+		
+		switch (m_iComboCnt)
+		{
+		case CNewPlayer::COMBO1:
+			m_eFightState = COMBO1;
+			Animate_FSM(m_iComboIdx[m_iComboCnt]);
+			break;
+		case CNewPlayer::COMBO2:
+			m_eFightState = COMBO2;
+			Animate_FSM(m_iComboIdx[m_iComboCnt]);
+			break;
+		case CNewPlayer::COMBO3:
+			m_eFightState = COMBO3;
+			Animate_FSM(m_iComboIdx[m_iComboCnt]);
+			break;
+		case CNewPlayer::COMBO4:
+			m_eFightState = COMBO4;
+			Animate_FSM(m_iComboIdx[m_iComboCnt]);
+			break;
+		case CNewPlayer::COMBO5:
+			m_eFightState = COMBO5;
+			Animate_FSM(m_iComboIdx[m_iComboCnt]);
+			break;
+		case CNewPlayer::COMBO6:
+			m_eFightState = COMBO6;
+			Animate_FSM(m_iComboIdx[m_iComboCnt]);
+			break;
+		case CNewPlayer::COMBO7:
+			m_eFightState = COMBO7;
+			Animate_FSM(m_iComboIdx[m_iComboCnt]);
+			break;
+		case CNewPlayer::COMBO8:
+			m_eFightState = COMBO8;
+			Animate_FSM(m_iComboIdx[m_iComboCnt]);
+			break;
+		//case CNewPlayer::COMBO9:
+		//	m_eFightState = COMBO9;
+		//	Animate_FSM(m_iComboIdx[m_iComboCnt]);
+		//	break;
+		case CNewPlayer::COMBO_END:
+			m_iComboCnt = 0;
+			m_eFightState = COMBO_START;
+			m_ePlayerState = NONE;
+			return;
+		default:
+			m_iComboCnt = 0;
+			m_eFightState = COMBO_START;
+			m_ePlayerState = NONE;
+			return;
+		}
+
+		m_ePlayerState = FIGHT;
+		return;
+	}
+
+	if (m_iComboCnt > 0)
+		m_ePlayerState = FIGHT;
+}
+
+void CNewPlayer::Fight_Func(const _double & TimeDelta)
+{
+	//m_ePlayerState = FIGHT;
+	if (m_ePlayerState == NONE)
+		return;
+
+	if (m_iCurAniState == m_iComboIdx[m_iComboCnt] && !m_pMesh->Is_AnimationSetEnd())
+		m_ePlayerState = FIGHT;
+	else if (m_iCurAniState == m_iComboIdx[m_iComboCnt] && m_pMesh->Is_AnimationSetEnd())
+	{
+		m_ePlayerState = FIGHT;
+		Animate_FSM(m_iComboIdx[m_iComboCnt] -1);
+	}
+	else if (m_iCurAniState == m_iComboIdx[m_iComboCnt] - 1 && m_pMesh->Is_AnimationSetEnd())
+	{
+		m_iComboCnt = 0;
+		m_eFightState = COMBO_START;
+		m_ePlayerState = NONE;
+	}
+
 }
 
 void CNewPlayer::Move_Func(const _double & TimeDelta)
 {
 	Update_PlayerDir(TimeDelta);
 
-	if (m_eCurDir != DIR_END)
+	if (m_ePlayerState == MOVE && m_ePlayerState != FIGHT_MOVE)
 	{
 		_vec3	vPos, vDir;
 		vPos = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
 		vDir = m_pTransform->Get_vInfoPos(ENGINE::INFO_LOOK);
 		D3DXVec3Normalize(&vDir, &vDir);
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vDir * TimeDelta * _SPEED));
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vDir * TimeDelta * -_SPEED));
 		m_eCurDir = DIR_END;
 	}
 }
@@ -170,6 +298,7 @@ void CNewPlayer::Update_PlayerDir(const _double & TimeDelta)
 	memcpy(&vLook, &matView.m[2][0], sizeof(_vec3));
 	memcpy(&vCamPos, &matView.m[3][0], sizeof(_vec3));
 
+	_matrix matTemp = m_pTransform->m_matWorld;
 	vDir = m_pTransform->m_vInfo[ENGINE::INFO_LOOK];
 	vRight.y = m_pTransform->m_vInfo[ENGINE::INFO_POS].y;
 	vLook.y = m_pTransform->m_vInfo[ENGINE::INFO_POS].y;
@@ -183,7 +312,7 @@ void CNewPlayer::Update_PlayerDir(const _double & TimeDelta)
 
 	switch (m_eCurDir)
 	{
-	case CNewPlayer::LEFT:
+	case CNewPlayer::RIGHT:
 		D3DXVec3Cross(&vCross, &vDir, &-vRight);
 		fAngle = D3DXVec3Dot(&vDir, &-vRight);
 
@@ -199,7 +328,7 @@ void CNewPlayer::Update_PlayerDir(const _double & TimeDelta)
 		//vPos = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
 		//m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vDir * TimeDelta * _SPEED));
 		break;
-	case CNewPlayer::RIGHT:
+	case CNewPlayer::LEFT:
 		D3DXVec3Cross(&vCross, &vDir, &vRight);
 		fAngle = D3DXVec3Dot(&vDir, &vRight);
 
@@ -216,9 +345,9 @@ void CNewPlayer::Update_PlayerDir(const _double & TimeDelta)
 		//m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vDir * TimeDelta * _SPEED));
 		break;
 
-	case CNewPlayer::DOWN:
+	case CNewPlayer::UP:
 		D3DXVec3Cross(&vCross, &vDir, &vPlayerLook);
-		fAngle = D3DXVec3Dot(&vDir, &-vLook);
+		fAngle = D3DXVec3Dot(&-vLook, &vDir);
 
 		if (fAngle > (1.f - AAA))
 			break;
@@ -232,9 +361,9 @@ void CNewPlayer::Update_PlayerDir(const _double & TimeDelta)
 		//vPos = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
 		//m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vDir * TimeDelta * _SPEED));
 		break;
-	case CNewPlayer::UP:
+	case CNewPlayer::DOWN:
 		D3DXVec3Cross(&vCross, &vDir, &vPlayerLook);
-		fAngle = D3DXVec3Dot(&vDir, &vLook);
+		fAngle = D3DXVec3Dot(&vLook, &vDir);
 
 		if (fAngle > (1.f - AAA))
 			break;
@@ -324,105 +453,22 @@ _int CNewPlayer::Update_Object(const _double & TimeDelta)
 {
 	CGameObject::Late_Init();
 	////////////////////////		▼최우선 함수
-	Key_Check_New(TimeDelta);
+	
+	Key_ChecknMoveState(TimeDelta);	//조작없음 == FALSE 일때 _IDLE로 변환
 	Move_Func(TimeDelta);
+
+	Key_ChecknFightState(TimeDelta);	
+	Fight_Func(TimeDelta);
 
 	CGameObject::Update_Object(TimeDelta);
 	////////////////////////		▼조건 함수
 	
-	m_bHit = m_pSphereColl->m_bHit;
-
-	if (m_bDash && m_bHit)	//기절 회피
-	{
-		m_pSphereColl->m_bHit = FALSE;
-		m_bHit = FALSE;
-	}
-
-	if (m_bHit)
-	{
-		m_TimeAccel = 1.0;
-		m_RigdTime += TimeDelta;
-
-		//if (m_bJump)
-		//	Animate_FSM(25);
-		//else if (m_iCurAniState != 25)
-		Animate_FSM(43);
-
-		if (m_RigdTime > 1.f && m_pMesh->Is_AnimationSetEnd())
-		{
-			m_pSphereColl->m_bHit = FALSE;
-			m_RigdTime = 0.0;
-
-			Animate_FSM(_IDLE);
-
-			Reset_State();
-		}
-		//Rigd_Func(TimeDelta);
-
-	}
-	else
-	{
-		switch (m_iCurAniState)
-		{
-		default:
-			m_Delay = 0.0;
-			break;
-		}
-
-		//MouseFunc();
-		//if (!m_bDash && m_pTransform->bCamTarget)
-		//	m_bAnimate = Key_Check_Func(TimeDelta);
 
 
-		//if (!m_bAttack[0] && ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON))
-		//{
-		//	Animate_FSM(m_iAniSet[0]);
-		//	m_bAttack[0] = TRUE;
-		//	m_pSword->Set_AttackState(TRUE, m_iCurAniState, 2);
-		//}
 
-		if (!m_bAnimate && !m_bDash && !m_bAttack[0] && !m_bJump)
-		{
-			Animate_FSM(_IDLE);
-		}
 
-		if (m_bDash && m_iCurAniState >= 37 && m_iCurAniState <= 41)
-		{
-
-			if (m_iCurAniState == 37 && m_pMesh->Is_AnimationSetEnd())
-			{
-				//m_fGravity = 4.8f;
-				m_TimeAccel = 1;
-				m_bDash = FALSE;
-			}
-			else if (m_iCurAniState != 37 && m_pMesh->Is_AnimationSetEnd())
-			{
-				m_bAnimate = FALSE;
-				//m_bDash = FALSE;
-				if (!m_bJump)
-					Animate_FSM(37);
-				m_DashTime = 0.0;
-				m_vDashDir = { 0.f, 0.f, 0.f };
-				m_pSphereColl->Set_Invisible(FALSE);
-			}
-
-			if (m_bJump && m_iCurAniState >= 37 && m_iCurAniState <= 41)
-			{
-				m_pSphereColl->Set_Invisible(FALSE);
-				m_TimeAccel = 1;
-				m_bDash = FALSE;
-			}
-		}
-
-		if (m_bDash && m_iCurAniState != 37)
-			Dash_Func(TimeDelta);
-
-		if (m_bAttack[0])
-			Attack_Func(TimeDelta);
-	}
-
-	if (m_bJump)
-		Jump_Func(TimeDelta);
+	if (m_ePlayerState == NONE)
+		Animate_FSM(_IDLE);
 
 	//////////////////////// ▼상시 함수
 	//m_TimeAccel = 0.25;
@@ -452,8 +498,8 @@ void CNewPlayer::Render_Object()
 
 	_tchar szStr[MAX_PATH] = L"";
 	//swprintf_s(szStr, L"Player HP: %d", m_pSphereColl->Get_iHp(0));
-	//swprintf_s(szStr, L"AngleY : %3.2f", m_pTransform->m_vAngle.y);
-	swprintf_s(szStr, L"Current Animaition: %d", m_iCurAniState);
+	swprintf_s(szStr, L"AngleY : %3.2f", m_pTransform->m_vAngle.y);
+	//swprintf_s(szStr, L"Current Animaition: %d", m_iCurAniState);
 	ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 40.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 
 }
@@ -537,13 +583,7 @@ _bool CNewPlayer::Key_Check_Func(const _double & TimeDelta)
 			return TRUE;
 		}
 		else
-		{
-			Update_PlayerDir(TimeDelta);
-
-
-
-		}
-		//	m_pTransform->m_vAngle.y -= _ANGLE * TimeDelta;
+			m_pTransform->m_vAngle.y -= _ANGLE * TimeDelta;
 	}
 
 	if (ENGINE::Key_Press(ENGINE::dwKEY_D))
@@ -563,8 +603,8 @@ _bool CNewPlayer::Key_Check_Func(const _double & TimeDelta)
 
 			return TRUE;
 		}
-		//else
-		//	m_pTransform->m_vAngle.y += _ANGLE * TimeDelta;
+		else
+			m_pTransform->m_vAngle.y += _ANGLE * TimeDelta;
 	}
 
 	if (!m_bAttack[0] && ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON))
@@ -572,7 +612,7 @@ _bool CNewPlayer::Key_Check_Func(const _double & TimeDelta)
 		//CGameObject* pObject = CEffect_Tex::Create(m_pGraphicDev, m_pTransform->m_vInfo[ENGINE::INFO_POS], 1.f, 0.5f);
 		//ENGINE::Get_Management()->Add_GameObject(ENGINE::CLayer::OBJECT, L"kaboom", pObject);
 		//m_pMesh->Set_AnimationSet(90);
-		Animate_FSM(m_iAniSet[0]);
+		Animate_FSM(m_iComboIdx[0]);
 		m_bAttack[0] = TRUE;
 		m_pSword->Set_AttackState(TRUE, m_iCurAniState, 2);
 	}
@@ -748,7 +788,7 @@ void CNewPlayer::Attack_Func(const _double & TimeDelta)
 	_uint iMax = 6;
 	if (m_bAttack[0] && !m_bAttack[1])
 	{
-		if (m_iCurAniState == _uint(m_iAniSet[0] - 1) && m_pMesh->Is_AnimationSetEnd())
+		if (m_iCurAniState == _uint(m_iComboIdx[0] - 1) && m_pMesh->Is_AnimationSetEnd())
 		{
 			for (int i = 0; i < iMax; ++i)
 				m_bAttack[i] = FALSE;
@@ -757,11 +797,11 @@ void CNewPlayer::Attack_Func(const _double & TimeDelta)
 		else if (m_pMesh->Is_AnimationSetEnd())
 		{
 			m_pSword->Set_AttackState(FALSE, 0);
-			Animate_FSM(_uint(m_iAniSet[0] - 1));
+			Animate_FSM(_uint(m_iComboIdx[0] - 1));
 		}
 		else if (m_bAttack[0] && ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON))
 		{
-			Animate_FSM(m_iAniSet[1]);
+			Animate_FSM(m_iComboIdx[1]);
 			m_TimeAccel = 0.75;
 			m_bAttack[1] = TRUE;
 			m_pSword->Set_AttackState(TRUE, m_iCurAniState, 2);
@@ -772,7 +812,7 @@ void CNewPlayer::Attack_Func(const _double & TimeDelta)
 
 	if (m_bAttack[0] && m_bAttack[1] && !m_bAttack[2])
 	{
-		if (m_iCurAniState == _uint(m_iAniSet[1] - 1) && m_pMesh->Is_AnimationSetEnd())
+		if (m_iCurAniState == _uint(m_iComboIdx[1] - 1) && m_pMesh->Is_AnimationSetEnd())
 		{
 			for (int i = 0; i < iMax; ++i)
 				m_bAttack[i] = FALSE;
@@ -781,12 +821,12 @@ void CNewPlayer::Attack_Func(const _double & TimeDelta)
 		else if (m_pMesh->Is_AnimationSetEnd())
 		{
 			m_pSword->Set_AttackState(FALSE, 0);
-			Animate_Quick(_uint(m_iAniSet[1] - 1));
+			Animate_Quick(_uint(m_iComboIdx[1] - 1));
 			m_TimeAccel = 1.0;
 		}
 		else if (m_bAttack[1] && ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON))
 		{
-			Animate_FSM(m_iAniSet[2]);
+			Animate_FSM(m_iComboIdx[2]);
 			m_bAttack[2] = TRUE;
 			m_pSword->Set_AttackState(TRUE, m_iCurAniState, 2);
 			m_TimeAccel = 1.0;
@@ -796,7 +836,7 @@ void CNewPlayer::Attack_Func(const _double & TimeDelta)
 
 	if (m_bAttack[0] && m_bAttack[1] && m_bAttack[2] && !m_bAttack[3])
 	{
-		if (m_iCurAniState == _uint(m_iAniSet[2] - 1) && m_pMesh->Is_AnimationSetEnd())
+		if (m_iCurAniState == _uint(m_iComboIdx[2] - 1) && m_pMesh->Is_AnimationSetEnd())
 		{
 			for (int i = 0; i < iMax; ++i)
 				m_bAttack[i] = FALSE;
@@ -805,11 +845,11 @@ void CNewPlayer::Attack_Func(const _double & TimeDelta)
 		else if (m_pMesh->Is_AnimationSetEnd())
 		{
 			m_pSword->Set_AttackState(FALSE, 0);
-			Animate_FSM(_uint(m_iAniSet[2] - 1));
+			Animate_FSM(_uint(m_iComboIdx[2] - 1));
 		}
 		else if (ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON) && m_bAttack[2])
 		{
-			Animate_FSM(m_iAniSet[3]);
+			Animate_FSM(m_iComboIdx[3]);
 			m_bAttack[3] = TRUE;
 			m_pSword->Set_AttackState(TRUE, m_iCurAniState, 2);
 		}
@@ -818,7 +858,7 @@ void CNewPlayer::Attack_Func(const _double & TimeDelta)
 
 	if (m_bAttack[0] && m_bAttack[1] && m_bAttack[2] && m_bAttack[3] && !m_bAttack[4])
 	{
-		if (m_iCurAniState == _uint(m_iAniSet[3] - 1) && m_pMesh->Is_AnimationSetEnd())
+		if (m_iCurAniState == _uint(m_iComboIdx[3] - 1) && m_pMesh->Is_AnimationSetEnd())
 		{
 			for (int i = 0; i < iMax; ++i)
 				m_bAttack[i] = FALSE;
@@ -826,12 +866,12 @@ void CNewPlayer::Attack_Func(const _double & TimeDelta)
 		}
 		else if (m_pMesh->Is_AnimationSetEnd())
 		{
-			Animate_FSM(_uint(m_iAniSet[3] - 1));
+			Animate_FSM(_uint(m_iComboIdx[3] - 1));
 			m_pSword->Set_AttackState(FALSE, 0);
 		}
 		else if (ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON) && m_bAttack[3])
 		{
-			Animate_FSM(m_iAniSet[4]);
+			Animate_FSM(m_iComboIdx[4]);
 			m_bAttack[4] = TRUE;
 			m_pSword->Set_AttackState(TRUE, m_iCurAniState, 2);
 		}
@@ -841,7 +881,7 @@ void CNewPlayer::Attack_Func(const _double & TimeDelta)
 
 	if (m_bAttack[0] && m_bAttack[1] && m_bAttack[2] && m_bAttack[3] && m_bAttack[4] && !m_bAttack[5])
 	{
-		if (m_iCurAniState == _uint(m_iAniSet[4] - 1) && m_pMesh->Is_AnimationSetEnd())
+		if (m_iCurAniState == _uint(m_iComboIdx[4] - 1) && m_pMesh->Is_AnimationSetEnd())
 		{
 			for (int i = 0; i < iMax; ++i)
 				m_bAttack[i] = FALSE;
@@ -849,12 +889,12 @@ void CNewPlayer::Attack_Func(const _double & TimeDelta)
 		}
 		else if (m_pMesh->Is_AnimationSetEnd())
 		{
-			Animate_FSM(_uint(m_iAniSet[4] - 1));
+			Animate_FSM(_uint(m_iComboIdx[4] - 1));
 			m_pSword->Set_AttackState(FALSE, 0);
 		}
 		else if (ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON) && m_bAttack[4])
 		{
-			Animate_FSM(m_iAniSet[5]);
+			Animate_FSM(m_iComboIdx[5]);
 			m_bAttack[5] = TRUE;
 			m_pSword->Set_AttackState(TRUE, m_iCurAniState, 2);
 		}
@@ -864,7 +904,7 @@ void CNewPlayer::Attack_Func(const _double & TimeDelta)
 
 	if (m_bAttack[5])
 	{
-		if (m_iCurAniState == _uint(m_iAniSet[5] - 1) && m_pMesh->Is_AnimationSetEnd())
+		if (m_iCurAniState == _uint(m_iComboIdx[5] - 1) && m_pMesh->Is_AnimationSetEnd())
 		{
 			for (int i = 0; i < iMax; ++i)
 				m_bAttack[i] = FALSE;
@@ -877,7 +917,7 @@ void CNewPlayer::Attack_Func(const _double & TimeDelta)
 		if (m_pMesh->Is_AnimationSetEnd())
 		{
 
-			Animate_FSM(_uint(m_iAniSet[5] - 1));
+			Animate_FSM(_uint(m_iComboIdx[5] - 1));
 			m_pSword->Set_AttackState(FALSE, 0);
 		}
 		//Animate_FSM(_uint(m_iAniSet[5] - 2));
@@ -919,3 +959,116 @@ void CNewPlayer::Free()
 {
 	CGameObject::Free();
 }
+//
+//_int CNewPlayer::Update_Object(const _double & TimeDelta)
+//{
+//	CGameObject::Late_Init();
+//	////////////////////////		▼최우선 함수
+//	Key_ChecknAniState(TimeDelta);
+//	Move_Func(TimeDelta);
+//
+//	CGameObject::Update_Object(TimeDelta);
+//	////////////////////////		▼조건 함수
+//
+//	m_bHit = m_pSphereColl->m_bHit;
+//
+//	if (m_bDash && m_bHit)	//기절 회피
+//	{
+//		m_pSphereColl->m_bHit = FALSE;
+//		m_bHit = FALSE;
+//	}
+//
+//	if (m_bHit)
+//	{
+//		m_TimeAccel = 1.0;
+//		m_RigdTime += TimeDelta;
+//
+//		//if (m_bJump)
+//		//	Animate_FSM(25);
+//		//else if (m_iCurAniState != 25)
+//		Animate_FSM(43);
+//
+//		if (m_RigdTime > 1.f && m_pMesh->Is_AnimationSetEnd())
+//		{
+//			m_pSphereColl->m_bHit = FALSE;
+//			m_RigdTime = 0.0;
+//
+//			Animate_FSM(_IDLE);
+//
+//			Reset_State();
+//		}
+//		//Rigd_Func(TimeDelta);
+//
+//	}
+//	else
+//	{
+//		switch (m_iCurAniState)
+//		{
+//		default:
+//			m_Delay = 0.0;
+//			break;
+//		}
+//
+//		//MouseFunc();
+//		//if (!m_bDash && m_pTransform->bCamTarget)
+//		//	m_bAnimate = Key_Check_Func(TimeDelta);
+//
+//
+//		//if (!m_bAttack[0] && ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON))
+//		//{
+//		//	Animate_FSM(m_iAniSet[0]);
+//		//	m_bAttack[0] = TRUE;
+//		//	m_pSword->Set_AttackState(TRUE, m_iCurAniState, 2);
+//		//}
+//
+//		if (!m_bAnimate && !m_bDash && !m_bAttack[0] && !m_bJump)
+//		{
+//			Animate_FSM(_IDLE);
+//		}
+//
+//		if (m_bDash && m_iCurAniState >= 37 && m_iCurAniState <= 41)
+//		{
+//
+//			if (m_iCurAniState == 37 && m_pMesh->Is_AnimationSetEnd())
+//			{
+//				//m_fGravity = 4.8f;
+//				m_TimeAccel = 1;
+//				m_bDash = FALSE;
+//			}
+//			else if (m_iCurAniState != 37 && m_pMesh->Is_AnimationSetEnd())
+//			{
+//				m_bAnimate = FALSE;
+//				//m_bDash = FALSE;
+//				if (!m_bJump)
+//					Animate_FSM(37);
+//				m_DashTime = 0.0;
+//				m_vDashDir = { 0.f, 0.f, 0.f };
+//				m_pSphereColl->Set_Invisible(FALSE);
+//			}
+//
+//			if (m_bJump && m_iCurAniState >= 37 && m_iCurAniState <= 41)
+//			{
+//				m_pSphereColl->Set_Invisible(FALSE);
+//				m_TimeAccel = 1;
+//				m_bDash = FALSE;
+//			}
+//		}
+//
+//		if (m_bDash && m_iCurAniState != 37)
+//			Dash_Func(TimeDelta);
+//
+//		if (m_bAttack[0])
+//			Attack_Func(TimeDelta);
+//	}
+//
+//	if (m_bJump)
+//		Jump_Func(TimeDelta);
+//
+//	//////////////////////// ▼상시 함수
+//	//m_TimeAccel = 0.25;
+//	m_pMesh->Play_AnimationSet(TimeDelta * m_TimeAccel);
+//
+//	//////////////////////// ▼최후미 함수
+//	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_NONALPHA, this);
+//	return NO_EVENT;
+//}

@@ -32,7 +32,7 @@ private:
 	_uint m_iOldAniIndex;
 	_uint m_iIndex;
 	
-	_float m_fAccTime;
+	_double m_AccTime;
 	_double m_dPeriod;
 
 public:

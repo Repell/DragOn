@@ -24,13 +24,21 @@ public:
 		RIGHTUP, RIGHTDOWN,
 		DIR_END
 	};
+	enum PLAYERSTATE
+	{
+		MOVE, FIGHT, FIGHT_MOVE, DASH, JUMP, NONE
 
-	PLAYERDIR m_eCurDir;
-
-	void Key_Check_New(const _double& TimeDelta);
-	void Update_PlayerDir(const _double& TimeDelta);
-	void Move_Func(const _double& TimeDelta);
-
+	};
+	enum PLAYERFIGHTSTATE
+	{
+		COMBO_START,
+		COMBO1 , COMBO2, COMBO3, COMBO4,
+		COMBO5, COMBO6, COMBO7, COMBO8, COMBO9,
+		COMBO_END
+	};
+	//기본 콤보 8동작
+	// 88 ~ 73
+	//스킬 동작 
 
 private:
 	explicit CNewPlayer(LPDIRECT3DDEVICE9 pDevice);
@@ -52,11 +60,22 @@ private:
 	void Render_Set();
 	void Render_ReSet();
 private:
+	// OLD FUNC
 	//Mouse Func
 	_vec3 MouseFunc();
-	//Key Check Func
 	_bool Key_Check_Func(const _double& TimeDelta);
+	
+	//Key Check Move Func 
+	void Key_ChecknMoveState(const _double& TimeDelta);
+	//Move Func
+	void Update_PlayerDir(const _double& TimeDelta);
+	void Move_Func(const _double& TimeDelta);
 
+	//Key Check Fight Func
+	void Key_ChecknFightState(const _double& TimeDelta);
+	//Fight Func
+	void Fight_Func(const _double& TimeDelta);
+	
 private:
 	//Collision Check
 	_bool Check_DirectionCollision(_vec3* vRevDir);
@@ -64,7 +83,6 @@ private:
 	//Animate Func
 	VOID Animate_FSM(_uint iAniState);
 	VOID Animate_Quick(_uint iAniState);
-	typedef VOID(CNewPlayer::*ANIFSM)();
 private:
 	//Jump Func
 	void Jump_Func(const _double& TimeDelta);
@@ -92,8 +110,20 @@ private:
 	_uint m_iCurAniState;
 	_uint m_iPreAniState;
 	
+
+	//State 
+	PLAYERSTATE m_ePlayerState;
+	//Move State
+	PLAYERDIR m_eCurDir;
+	//Fight State
+	_uint m_iComboCnt;
+	_uint m_iComboIdx[10];
+	PLAYERFIGHTSTATE m_eFightState;
+
+	//Time State
 	_double m_TimeAccel;
 	_double m_Delay;
+
 
 private:
 	//Jump
@@ -108,8 +138,8 @@ private:
 	_vec3 m_vDashDir;
 	_double m_DashTime;
 	//Attack
-	_bool m_bAttack[6];
-	_uint m_iAniSet[6]; // 90 - 88 - 84 - 78 - 80 - 67
+	_bool m_bAttack[9];
+	
 	_double m_AttackTime;
 	//Hit State
 	_bool m_bHit;

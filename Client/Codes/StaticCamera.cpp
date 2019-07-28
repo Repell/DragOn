@@ -19,10 +19,10 @@ HRESULT CStaticCamera::Ready_Object(ENGINE::CTransform * pTarget, const _float &
 	m_fFar = fFar;
 	m_fCamSpeed = 10.f;
 	m_fCamDist = 4.f;
-
-
+	
 	m_pTarget = pTarget;
-	m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pTarget->m_vInfo[ENGINE::INFO_POS] + _vec3(0.f, 1.f, 0.f);
+	m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pTarget->Get_vInfoPos(ENGINE::INFO_POS) + _vec3(0.f, 1.f, 0.f);
+	m_pTransform->m_vAngle = m_pTarget->m_vAngle;
 	m_pTransform->Update_Component(0.f);
 
 	m_vAt = m_pTransform->m_vInfo[ENGINE::INFO_POS];
@@ -51,19 +51,21 @@ _int CStaticCamera::Update_Object(const _double& TimeDelta)
 {
 	ENGINE::CGameObject::Late_Init();
 	// Key에 따른 Transform Update
-	m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pTarget->m_vInfo[ENGINE::INFO_POS] + _vec3(0.f, 1.f, 0.f);
+	m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pTarget->Get_vInfoPos(ENGINE::INFO_POS) + _vec3(0.f, 1.f, 0.f);
+	//m_pTransform->m_vAngle = m_pTarget->m_vAngle;
 	Check_InputDev(TimeDelta);
 	ENGINE::CGameObject::Update_Object(TimeDelta);
 
 	_vec3 vDir;
 	vDir = m_pTransform->Get_vInfoPos(ENGINE::INFO_LOOK);
+	//vDir = m_pTransform->m_vLook;
 	D3DXVec3Normalize(&vDir, &vDir);
 
 	m_vEye = m_pTransform->m_vInfo[ENGINE::INFO_POS] + (-vDir * m_fCamDist);
 	m_vEye.y += 2.5f;
 	m_vAt = m_pTransform->m_vInfo[ENGINE::INFO_POS];
 
-	// Update 최종 적용
+	// Update 최종 적용 (뷰 매트릭스 생성)
 	ENGINE::CCamera::Update_Object(TimeDelta);
 
 	return NO_EVENT;
@@ -82,11 +84,11 @@ HRESULT CStaticCamera::Add_Component()
 	return S_OK;
 }
 
-void CStaticCamera::Check_InputDev(const _float & fTimeDelta)
+void CStaticCamera::Check_InputDev(const _double & TimeDelta)
 {
 	if (ENGINE::Get_DIKeyState(DIK_LSHIFT) & 0x80)
 	{
-		Move_Mouse(fTimeDelta);
+		Move_Mouse(TimeDelta);
 		Fix_Mouse();
 	}
 
@@ -97,9 +99,12 @@ void CStaticCamera::Check_InputDev(const _float & fTimeDelta)
 		ENGINE::LimitNumber(m_fCamDist, 1.f, 10.f);
 	}
 
+	//if (ENGINE::Key_Press(ENGINE::dwKEY_Q))
+	//	m_pTransform->m_vAngle.y += 5.f * TimeDelta;
+
 }
 
-void CStaticCamera::Move_Mouse(const _float & fTimeDelta)
+void CStaticCamera::Move_Mouse(const _double & TimeDelta)
 {
 	_long	dwMouseMove = 0;
 

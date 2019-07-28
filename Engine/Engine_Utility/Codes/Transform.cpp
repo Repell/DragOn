@@ -62,6 +62,9 @@ HRESULT CTransform::Ready_Trasnform(_vec3 vLook)
 	for (_ulong i = 0; i < 4; ++i)
 		memcpy(&m_vInfo[i], &m_matWorld.m[i][0], sizeof(_vec3));
 
+	//memcpy(&m_matWorld.m[2][0], m_vLook, sizeof(_vec3));
+	//m_vInfo[ENGINE::INFO_LOOK] = m_vLook;
+
 	return S_OK;
 }
 
@@ -71,11 +74,11 @@ _int CTransform::Update_Component(const _double& TimeDelta)
 	//Rotation_AngleY(TimeDelta);
 
 	D3DXMatrixIdentity(&m_matWorld);
-
 	m_vInfo[INFO_POS].y += m_fJump;
 
 	for (_ulong i = 0; i < INFO_POS; ++i)
 		memcpy(&m_vInfo[i], &m_matWorld.m[i][0], sizeof(_vec3));
+	//m_vInfo[ENGINE::INFO_LOOK] = m_vLook;
 
 	// Scale 
 	for (_ulong i = 0; i < INFO_POS; ++i)

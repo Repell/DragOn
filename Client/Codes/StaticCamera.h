@@ -33,8 +33,8 @@ private:
 
 private:
 	HRESULT		Add_Component();
-	void		Check_InputDev(const _float& fTimeDelta);
-	void		Move_Mouse(const _float& fTimeDelta);
+	void		Check_InputDev(const _double & TimeDelta);
+	void		Move_Mouse(const _double & TimeDelta);
 	void		Fix_Mouse();
 
 public:
