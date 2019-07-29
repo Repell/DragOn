@@ -12,13 +12,16 @@ private:
 	virtual ~CSphereColl();
 
 public:
+	void Set_Scale(_float fScale);
+	void Set_Invisible(_bool bState);
+	_vec3 Set_KnockBackDist(_bool bCheck, _vec3 fDist = _vec3(0.f, 0.f, 0.f));
+
 	_vec3& Get_CollPos();
 	_float Get_Radius();
-	void Set_Scale(_float fScale);
+	_bool Get_HitState();
+	_bool Get_KnockBackState();
 	_int Get_iHp(_int iDamage = 0);
 	_uint Get_iHitStack(_bool bState = FALSE);
-	void Set_Invisible(_bool bState);
-	_bool Get_HitState();
 
 public:
 	virtual void Late_Update_Component() override;
@@ -51,6 +54,8 @@ public:
 	_bool m_bInvisible;
 	_bool m_bHit;
 	_uint m_iHitStack;
+	_bool m_bKnockBack;
+	_vec3 m_vKnockBackDir;
 
 public:
 	static CSphereColl* Create(LPDIRECT3DDEVICE9 pDevice, _float fRadius, _int iHp);

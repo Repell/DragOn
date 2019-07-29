@@ -11,6 +11,7 @@ CSword::CSword(LPDIRECT3DDEVICE9 pDevice)
 	iDamage = 2;
 	m_iCurAni = 0;
 	m_iOldAni = 0;
+	m_fAngle = 20.f;
 }
 
 CSword::~CSword()
@@ -34,6 +35,9 @@ HRESULT CSword::Ready_Object(const _uint& iFlag)
 	bAttack = FALSE;
 	m_pTransform->m_vScale = { 1.f, 1.f, 1.f };
 	m_pTransform->m_vAngle.x = 90.f;
+	m_pTransform->m_vAngle.y = 20.f;
+	m_pTransform->m_vAngle.z = 20.f;
+
 	m_pCollider->Set_Scale(0.01f);
 
 	return S_OK;
@@ -64,6 +68,13 @@ _int CSword::Update_Object(const _double& TimeDelta)
 void CSword::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
+
+	//if (ENGINE::Key_Press(ENGINE::dwKEY_F1))
+	//	m_fAngle += 1.f;
+	//if (ENGINE::Key_Press(ENGINE::dwKEY_F2))
+	//	m_fAngle -= 1.f;
+
+	//m_pTransform->m_vAngle.y = m_fAngle;
 	
 }
 
@@ -75,7 +86,8 @@ void CSword::Render_Object()
 
 	m_pMesh->Render_Meshes();
 
-	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pTransform->m_matWorld, _vec3(0.f, 0.f, -110.f));
+	if (bAttack)
+		m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pTransform->m_matWorld, _vec3(0.f, 0.f, -110.f));
 
 	//Render_ReSet();
 }

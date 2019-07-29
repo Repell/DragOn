@@ -262,6 +262,14 @@ _bool CTransform::Get_Dead(_bool bDead)
 	return m_bDead;
 }
 
+_vec3 CTransform::Get_NewPlayerPos(_float fDist)
+{
+	_vec3 vDir = *D3DXVec3Normalize(&vDir, &m_vInfo[ENGINE::INFO_LOOK]);
+	_vec3 vNewPos = m_vInfo[ENGINE::INFO_POS] + (vDir * fDist);
+
+	return vNewPos;
+}
+
 _bool CTransform::Check_TargetFront()
 {
 	if (m_vAngle.y > m_fRotate - 4.f && m_vAngle.y < m_fRotate + 4.f)

@@ -118,7 +118,7 @@ void CTroll::Render_Object()
 	if(m_iCurAniSet == 2)
 		m_pMesh->Play_AnimationSet(m_TimeDelta * 1.5);
 	else
-		m_pMesh->Play_AnimationSet(m_TimeDelta);
+		m_pMesh->Play_AnimationSet(m_TimeDelta * 1.25);
 	/////////////////////
 
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
@@ -128,13 +128,15 @@ void CTroll::Render_Object()
 	m_pMesh->Render_Meshes();
 
 	m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld);
-	Find_BoneMatrix();
-	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix, _vec3(0.f, 0.f, 0.f));
 
-	_tchar szStr[MAX_PATH] = L"";
-	swprintf_s(szStr, L"AngleY : %3.2f", m_pTransform->m_vAngle.y);
-	//swprintf_s(szStr, L"Monster HP: %d", m_pSphereColl->Get_iHp(0));
-	ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 10.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
+	if(m_bAttack)
+		Find_BoneMatrix();
+
+
+	//_tchar szStr[MAX_PATH] = L"";
+	//swprintf_s(szStr, L"AngleY : %3.2f", m_pTransform->m_vAngle.y);
+	////swprintf_s(szStr, L"Monster HP: %d", m_pSphereColl->Get_iHp(0));
+	//ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 10.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 
 	//Render_ReSet();
 }
@@ -169,6 +171,8 @@ void CTroll::Find_BoneMatrix()
 	//if(nullptr == m_pBoneMatrix)
 	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName("L_IRON1");
 	m_pBoneMatrix = pFrame->combinedTransformMatrix * m_pTransform->m_matWorld;
+
+	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix, _vec3(0.f, 0.f, 0.f));
 }
 
 void CTroll::Chase_Target(const _double& TimeDelta)
@@ -202,10 +206,30 @@ void CTroll::Attack_Target()
 {
 	_bool bColl = m_pCollider->Check_ComponentColl(m_pTargetSphereColl);
 
+	if (m_pTargetSphereColl->m_bInvisible)
+	{
+		m_bAttack = FALSE;
+		return;
+	}
+
 	if (m_iCurAniSet == 8 && bColl && m_bAttack)
 	{
-		m_pTargetSphereColl->Get_iHp(2);
-		m_pTargetSphereColl->m_bHit = TRUE;
+		
+
+		if (m_pTargetSphereColl->m_bHit)
+		{
+			m_pTargetSphereColl->m_bKnockBack = TRUE;
+			_vec3 vKnockDir = m_pTargetSphereColl->Get_CollPos() - m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
+			vKnockDir.y = 0.f;
+			D3DXVec3Normalize(&vKnockDir, &vKnockDir);
+			m_pTargetSphereColl->Set_KnockBackDist(TRUE, vKnockDir);
+		}
+		else
+			m_pTargetSphereColl->m_bHit = TRUE;
+
+		if(!m_pTargetSphereColl->m_bInvisible)
+			m_pTargetSphereColl->Get_iHp(2);
+
 		Animate_FSM(9);
 		//m_bAttack = FALSE;
 	}

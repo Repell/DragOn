@@ -127,6 +127,8 @@ bool CKeyMgr::Key_Combined(DWORD dwFirst, DWORD dwSecond)
 {
 	if (Key_Press(dwSecond) && Key_Down(dwFirst))
 		return true;
+	else if (Key_Press(dwFirst) && Key_Down(dwSecond))
+		return true;
 
 	return false;
 }

@@ -52,6 +52,7 @@ private:
 	const _matrix*		m_pParentBoneMatrix;
 	const _matrix*		m_pParentWorldMatrix;
 
+	_float m_fAngle;
 
 public:
 	static CSword* Create(LPDIRECT3DDEVICE9 pGraphicDev, const _uint& iFlag);

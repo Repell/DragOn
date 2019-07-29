@@ -130,6 +130,9 @@
     <Filter Include="02.SubClass\03.SphereCollision">
       <UniqueIdentifier>{03bd5cd7-2b4d-41f1-bf2b-c83139d6fd4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="00.Utility\02.SuperClass\02.Component\04.AdvanceCamera">
+      <UniqueIdentifier>{0157981b-cf37-4c3e-a5ad-7ba7c0c6633d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Codes\Management.h">
@@ -246,6 +249,9 @@
     <ClInclude Include="..\Codes\SphereColl.h">
       <Filter>02.SubClass\03.SphereCollision</Filter>
     </ClInclude>
+    <ClInclude Include="..\Codes\AdvanceCamera.h">
+      <Filter>00.Utility\02.SuperClass\02.Component\04.AdvanceCamera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Management.cpp">
@@ -346,6 +352,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\SphereColl.cpp">
       <Filter>02.SubClass\03.SphereCollision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\AdvanceCamera.cpp">
+      <Filter>00.Utility\02.SuperClass\02.Component\04.AdvanceCamera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -4,7 +4,7 @@ USING(ENGINE)
 
 CSphereColl::CSphereColl(LPDIRECT3DDEVICE9 pDevice)
 	: m_pGraphicDev(pDevice), m_fScale(0.01f),
-	m_bInvisible(FALSE), m_bHit(FALSE)
+	m_bInvisible(FALSE), m_bHit(FALSE), m_bKnockBack(FALSE)
 {
 	m_pGraphicDev->AddRef();
 }
@@ -51,9 +51,22 @@ void CSphereColl::Set_Invisible(_bool bState)
 	m_bInvisible = bState;
 }
 
+_vec3 CSphereColl::Set_KnockBackDist(_bool bCheck, _vec3 fDist)
+{
+	if(bCheck)
+		m_vKnockBackDir = fDist;
+
+	return m_vKnockBackDir;
+}
+
 _bool CSphereColl::Get_HitState()
 {
 	return m_bHit;
+}
+
+_bool CSphereColl::Get_KnockBackState()
+{
+	return m_bKnockBack;
 }
 
 void CSphereColl::Late_Update_Component()

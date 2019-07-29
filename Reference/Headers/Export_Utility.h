@@ -9,6 +9,7 @@
 #include "SphereColl.h"
 #include "Calculator.h"
 #include "ProtoTypeMgr.h"
+#include "AdvanceCamera.h"
 
 #include "ResourcesMgr.h"
 

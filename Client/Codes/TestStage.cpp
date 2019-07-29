@@ -19,7 +19,7 @@ HRESULT CTestStage::Ready_Scene()
 
 	FAILED_CHECK_RETURN(Add_Environment_Layer(), E_FAIL);
 	FAILED_CHECK_RETURN(Add_GameObject_Layer(), E_FAIL);
-	FAILED_CHECK_RETURN(Add_UI_Layer(), E_FAIL);
+	//FAILED_CHECK_RETURN(Add_UI_Layer(), E_FAIL);
 
 	return S_OK;
 }
@@ -131,10 +131,10 @@ HRESULT CTestStage::Add_UI_Layer()
 	//NULL_CHECK_RETURN(pObject, E_FAIL);
 	//pObject_Layer->Add_GameObject(L"DynamicCamera", pObject);
 
-	ENGINE::CTransform* pTransfom =(ENGINE::CTransform*)Get_Component(ENGINE::CLayer::OBJECT, L"Player", L"Com_Transform", ENGINE::COMP_DYNAMIC);
-	pObject = CStaticCamera::Create(m_pGraphicDev, pTransfom, D3DXToRadian(60.f), _float(WINCX) / _float(WINCY), 0.1f, 1000.f);
-	NULL_CHECK_RETURN(pObject, E_FAIL);
-	pObject_Layer->Add_GameObject(L"StaticCamera", pObject);
+	//ENGINE::CTransform* pTransfom =(ENGINE::CTransform*)Get_Component(ENGINE::CLayer::OBJECT, L"Player", L"Com_Transform", ENGINE::COMP_DYNAMIC);
+	//pObject = CStaticCamera::Create(m_pGraphicDev, pTransfom, D3DXToRadian(60.f), _float(WINCX) / _float(WINCY), 0.1f, 1000.f);
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"StaticCamera", pObject);
 
 	//////////////INSERT LAYER//////////////
 	m_MapLayer.emplace(ENGINE::CLayer::UI, pObject_Layer);

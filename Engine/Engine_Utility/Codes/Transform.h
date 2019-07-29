@@ -31,6 +31,7 @@ public:
 	_float Get_TargetDistance(CTransform* pTarget);
 	_vec3 Get_TargetReverseDir(CTransform* pTarget);
 	_bool Get_Dead(_bool bDead = FALSE);
+	_vec3 Get_NewPlayerPos(_float fDist);
 
 public:
 	HRESULT Ready_Trasnform(_vec3 vLook);

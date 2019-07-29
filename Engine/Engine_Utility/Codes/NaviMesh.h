@@ -19,6 +19,7 @@ public:
 public:
 	HRESULT Ready_NaviMesh(wstring strPath = L"", wstring strName = L"");
 	void Render_NaviMesh();
+	_bool Check_OnNaviMesh(const _vec3* pTargetPos, const _vec3* pTargetDir);
 	_vec3 MoveOn_NaviMesh(const _vec3* pTargetPos, const _vec3* pTargetDir);
 	_vec3 MoveOn_NaviMesh_Dir(const _vec3* pTargetPos, const _vec3* pTargetDir);
 	_float MoveOn_Terrain(const _vec3* pTargetPos, const _vec3* pTargetDir);

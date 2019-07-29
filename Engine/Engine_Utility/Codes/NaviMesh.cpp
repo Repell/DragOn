@@ -39,6 +39,25 @@ void CNaviMesh::Render_NaviMesh()
 		iter->Render_Cell();
 }
 
+_bool CNaviMesh::Check_OnNaviMesh(const _vec3 * pTargetPos, const _vec3 * pTargetDir)
+{
+	_vec3		vEndPos = *pTargetPos + *pTargetDir;
+	_vec3		vNormal = {};
+	if (CCell::COMPARE_MOVE == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx, &vNormal))
+	{
+		//벽이 아닐경우 네비매쉬의 높이값 추가
+		return TRUE;
+	}
+
+	else if (CCell::COMPARE_STOP == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx, &vNormal))
+	{
+		//벽일 경우 현재위치 리턴 -> 슬라이딩 벡터로 변환
+		return FALSE;
+	}
+
+	return FALSE;
+}
+
 _vec3 CNaviMesh::MoveOn_NaviMesh(const _vec3 * pTargetPos, const _vec3 * pTargetDir)
 {
 	_vec3		vEndPos = *pTargetPos + *pTargetDir;

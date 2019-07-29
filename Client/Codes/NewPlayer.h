@@ -12,6 +12,7 @@ namespace ENGINE
 	class CDynamicMesh;
 	class CSphereColl;
 	class CRenderer;
+	class CAdvanceCamera;
 }
 
 class CNewPlayer : public ENGINE::CGameObject
@@ -44,6 +45,9 @@ private:
 	explicit CNewPlayer(LPDIRECT3DDEVICE9 pDevice);
 	virtual ~CNewPlayer();
 
+public:
+	void Set_CurDir(PLAYERDIR eDir);
+
 public:	//OverRide Func
 	virtual HRESULT Ready_Object() override;
 	virtual HRESULT Late_Init();
@@ -61,20 +65,24 @@ private:
 	void Render_ReSet();
 private:
 	// OLD FUNC
-	//Mouse Func
+	//Mouse Func OLD
 	_vec3 MouseFunc();
 	_bool Key_Check_Func(const _double& TimeDelta);
-	
-	//Key Check Move Func 
+	//Key Check Move Func  OLD
 	void Key_ChecknMoveState(const _double& TimeDelta);
+	
+	////////////////////////////////
+	//Advance Key Check Func
+	void Key_Check_Advance(const _double& TimeDelta);
 	//Move Func
 	void Update_PlayerDir(const _double& TimeDelta);
 	void Move_Func(const _double& TimeDelta);
-
 	//Key Check Fight Func
 	void Key_ChecknFightState(const _double& TimeDelta);
 	//Fight Func
 	void Fight_Func(const _double& TimeDelta);
+	//Jump Func
+	void Jump_Func(const _double& TimeDelta);
 	
 private:
 	//Collision Check
@@ -84,8 +92,7 @@ private:
 	VOID Animate_FSM(_uint iAniState);
 	VOID Animate_Quick(_uint iAniState);
 private:
-	//Jump Func
-	void Jump_Func(const _double& TimeDelta);
+
 	//Dash Func
 	void Dash_Func(const _double& TimeDelta);
 	//Attack Func
@@ -95,6 +102,7 @@ private:
 
 	//Reset State
 	void Reset_State();
+	void Set_AniIndex();
 		
 private:
 	ENGINE::CTransform*	m_pTransform;
@@ -102,6 +110,7 @@ private:
 	ENGINE::CDynamicMesh* m_pMesh;
 	ENGINE::CSphereColl*	m_pSphereColl;
 	ENGINE::CRenderer* m_pRenderer;
+	ENGINE::CAdvanceCamera* m_pAdvance;
 	CSword*			m_pSword;
 	
 private:
@@ -124,14 +133,17 @@ private:
 	_double m_TimeAccel;
 	_double m_Delay;
 
+	//KnockBack
+	_uint m_iKnockIdx[6];
+	_uint m_iKnockCnt = 0;
 
 private:
 	//Jump
 	_bool m_bJump;
 	_float m_fPosY;
 	_double m_JumpTime;
-	_float m_fGravity = 1.8f;
-	_float m_fJumpPower = 0.5f;
+	_float m_fGravity;
+	_float m_fJumpPower;
 
 	//Dash
 	_bool m_bDash;
@@ -143,6 +155,7 @@ private:
 	_double m_AttackTime;
 	//Hit State
 	_bool m_bHit;
+	_bool m_bKnockback;
 	_double m_RigdTime;
 
 public:
