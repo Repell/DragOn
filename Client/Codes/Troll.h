@@ -13,6 +13,7 @@ namespace ENGINE
 	class CNaviMesh;
 	class CCollider;
 	class CSphereColl;
+	class CShader;
 }
 
 class CTroll : public ENGINE::CGameObject
@@ -31,13 +32,17 @@ public:
 private:
 	void Render_Set();
 	void Render_ReSet();
-	void Find_BoneMatrix();
+	void Render_BoneMatrix(const char* tBone);
 	void Chase_Target(const _double& TimeDelta);
 	void Attack_Target();
 	_bool Check_EnemyColl(_vec3* vRevDir);
 
 private:
 	VOID Animate_FSM(_uint iAniState);
+
+private:
+	//Shader
+	HRESULT SetUp_ConstantTable(LPD3DXEFFECT pEffect);
 
 private:
 	//Key Input, Camera, NaviMesh
@@ -65,6 +70,7 @@ private:
 	ENGINE::CCollider*			m_pCollider;
 	ENGINE::CSphereColl*	m_pSphereColl;
 	ENGINE::CSphereColl*	m_pTargetSphereColl;
+	ENGINE::CShader*			m_pShader;
 
 private:
 	_matrix m_pBoneMatrix;

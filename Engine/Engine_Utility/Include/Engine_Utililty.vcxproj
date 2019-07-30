@@ -102,7 +102,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>ENGINE_EXPORTS;WIN32;_DEBUG;_WINDOWS;_USRDLL;ENGINE_UTILILTY_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;../Codes/;../../Engine_Headers/;../../../Base/;../../../Reference/Headers/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../Codes/;../../Engine_Headers/;../../../Base/;../../../Shader/;../../../Reference/Headers/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -114,6 +114,12 @@
       <Command>cd /d $(solutionDir)
 call CopyUtility.bat</Command>
     </PostBuildEvent>
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>2.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -123,7 +129,7 @@ call CopyUtility.bat</Command>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>ENGINE_EXPORTS;_DEBUG;_WINDOWS;_USRDLL;ENGINE_UTILILTY_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;../Codes/;../../Engine_Headers/;../../../Base/;../../../Reference/Headers/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../Codes/;../../Engine_Headers/;../../../Base/;../../../Shader/;../../../Reference/Headers/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -135,6 +141,12 @@ call CopyUtility.bat</Command>
       <Command>cd /d $(solutionDir)
 call CopyUtility.bat</Command>
     </PostBuildEvent>
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>2.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -146,7 +158,7 @@ call CopyUtility.bat</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>ENGINE_EXPORTS;WIN32;NDEBUG;_WINDOWS;_USRDLL;ENGINE_UTILILTY_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;../Codes/;../../Engine_Headers/;../../../Base/;../../../Reference/Headers/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../Codes/;../../Engine_Headers/;../../../Base/;../../../Shader/;../../../Reference/Headers/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -160,6 +172,12 @@ call CopyUtility.bat</Command>
       <Command>cd /d $(solutionDir)
 call CopyUtility.bat</Command>
     </PostBuildEvent>
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>2.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -171,7 +189,7 @@ call CopyUtility.bat</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>ENGINE_EXPORTS;NDEBUG;_WINDOWS;_USRDLL;ENGINE_UTILILTY_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./;../Codes/;../../Engine_Headers/;../../../Base/;../../../Reference/Headers/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../Codes/;../../Engine_Headers/;../../../Base/;../../../Shader/;../../../Reference/Headers/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -185,6 +203,12 @@ call CopyUtility.bat</Command>
       <Command>cd /d $(solutionDir)
 call CopyUtility.bat</Command>
     </PostBuildEvent>
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>2.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Engine_Headers\Export_Utility.h" />
@@ -265,6 +289,9 @@ call CopyUtility.bat</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Engine_Headers\Export_Utility.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\..\Shader\Shader_Transform.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,7 +21,9 @@ public:
 	{		return m_pTarget;	}
 	_vec3 Get_INFO(ENGINE::INFO eInfo);
 	_vec3 Get_LookDir();
-	_matrix Get_ViewMatrix();
+	_vec3 Get_vNewPos(const _float fDist);
+	_matrix* Get_ViewMatrix();
+	_matrix* Get_ProjMatrix();
 	
 public:
 	HRESULT Ready_Component(ENGINE::CTransform * pTarget);

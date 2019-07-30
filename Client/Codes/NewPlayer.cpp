@@ -18,12 +18,13 @@ CNewPlayer::CNewPlayer(LPDIRECT3DDEVICE9 pDevice)
 	m_pSphereColl(nullptr), m_pRenderer(nullptr), m_pSword(nullptr),
 	m_bAnimate(FALSE), m_iCurAniState(0), m_iPreAniState(0), m_TimeAccel(1),
 	m_bJump(FALSE), m_fPosY(0.f), m_JumpTime(0.0),
+	m_bJumpAttack(FALSE), m_HoldTime(1.0),
 	m_bDash(FALSE), m_DashTime(0.0),
 	m_bHit(FALSE), m_RigdTime(0.0),
 	m_AttackTime(0.0)
 {
-	m_fGravity = 9.8f;
-	m_fJumpPower = 9.5f;
+	m_fGravity = 0.4f;
+	m_fJumpPower = 0.28f;
 
 
 }
@@ -50,8 +51,8 @@ HRESULT CNewPlayer::Ready_Object()
 	m_pNaviMesh->Set_CurrentIdx(0);
 	m_pTransform->m_vScale = { 0.006f, 0.006f, 0.006f };
 	//m_pTransform->m_vLook = { 0.f, 0.f, -1.f };
-	m_pSphereColl->Set_Scale(0.01f);
-	m_pSphereColl->Get_CollPos() = { 50.f, 0.1f, 2.f };
+	m_pSphereColl->Set_Scale(0.005f);
+	m_pSphereColl->Get_CollPos() = { 50.f, 0.0f, 2.f };
 	m_pTransform->Update_Component(0.f);
 	Animate_FSM(110);
 
@@ -95,6 +96,11 @@ HRESULT CNewPlayer::Add_Component()
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_AdvCam", pComponent);
 	//m_pAdvance->Get_Transform()->m_vScale = {0.01f, 0.01f, 0.01f};
+
+	//Shader 
+	pComponent = m_pShader = dynamic_cast<ENGINE::CShader*>(ENGINE::Clone(L"Shader_Transform"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	////////////////////////////
 	return S_OK;
@@ -192,57 +198,57 @@ void CNewPlayer::Key_Check_Advance(const _double & TimeDelta)
 		m_bJump = TRUE;
 	}
 
-	if (ENGINE::Key_Combined(ENGINE::dwKEY_W, ENGINE::dwKEY_A))
-	{
-		m_eCurDir = LEFTUP;
-		if (m_ePlayerState != FIGHT)
-		{
-			m_pAdvance->Get_Transform()->m_vAngle.y -= _ANGLE * TimeDelta;
-			m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] += m_pAdvance->Get_INFO(ENGINE::INFO_LOOK) * TimeDelta * _SPEED;
-			//m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vAdvPos, &(vAdvDir * TimeDelta * _SPEED));
-			if (!m_bJump)
-				Animate_FSM(107);
+	//if (ENGINE::Key_Combined(ENGINE::dwKEY_W, ENGINE::dwKEY_A))
+	//{
+	//	m_eCurDir = LEFTUP;
+	//	if (m_ePlayerState != FIGHT)
+	//	{
+	//		m_pAdvance->Get_Transform()->m_vAngle.y -= _ANGLE * TimeDelta;
+	//		m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] += m_pAdvance->Get_INFO(ENGINE::INFO_LOOK) * TimeDelta * _SPEED;
+	//		//m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vAdvPos, &(vAdvDir * TimeDelta * _SPEED));
+	//		if (!m_bJump)
+	//			Animate_FSM(107);
 
-		}
-	}
-	else if (ENGINE::Key_Combined(ENGINE::dwKEY_W, ENGINE::dwKEY_D))
-	{
-		m_eCurDir = RIGHTUP;
-		if (m_ePlayerState != FIGHT)
-		{
-			m_pAdvance->Get_Transform()->m_vAngle.y += _ANGLE * TimeDelta;
-			m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] += m_pAdvance->Get_INFO(ENGINE::INFO_LOOK) * TimeDelta * _SPEED;
-			if (!m_bJump)
-				Animate_FSM(107);
+	//	}
+	//}
+	//else if (ENGINE::Key_Combined(ENGINE::dwKEY_W, ENGINE::dwKEY_D))
+	//{
+	//	m_eCurDir = RIGHTUP;
+	//	if (m_ePlayerState != FIGHT)
+	//	{
+	//		m_pAdvance->Get_Transform()->m_vAngle.y += _ANGLE * TimeDelta;
+	//		m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] += m_pAdvance->Get_INFO(ENGINE::INFO_LOOK) * TimeDelta * _SPEED;
+	//		if (!m_bJump)
+	//			Animate_FSM(107);
 
-		}
-	}
-	else if (ENGINE::Key_Combined(ENGINE::dwKEY_S, ENGINE::dwKEY_A))
-	{
-		m_eCurDir = LEFTDOWN;
-		if (m_ePlayerState != FIGHT)
-		{
-			m_pAdvance->Get_Transform()->m_vAngle.y -= _ANGLE * TimeDelta;
-			m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] -= m_pAdvance->Get_INFO(ENGINE::INFO_LOOK) * TimeDelta * _SPEED;
-			if (!m_bJump)
-				Animate_FSM(107);
+	//	}
+	//}
+	//else if (ENGINE::Key_Combined(ENGINE::dwKEY_S, ENGINE::dwKEY_A))
+	//{
+	//	m_eCurDir = LEFTDOWN;
+	//	if (m_ePlayerState != FIGHT)
+	//	{
+	//		m_pAdvance->Get_Transform()->m_vAngle.y -= _ANGLE * TimeDelta;
+	//		m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] -= m_pAdvance->Get_INFO(ENGINE::INFO_LOOK) * TimeDelta * _SPEED;
+	//		if (!m_bJump)
+	//			Animate_FSM(107);
 
-		}
+	//	}
 
-	}
-	else if (ENGINE::Key_Combined(ENGINE::dwKEY_S, ENGINE::dwKEY_D))
-	{
-		m_eCurDir = RIGHTDOWN;
-		if (m_ePlayerState != FIGHT)
-		{
-			m_pAdvance->Get_Transform()->m_vAngle.y -= _ANGLE * TimeDelta;
-			m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] += m_pAdvance->Get_INFO(ENGINE::INFO_LOOK) * TimeDelta * _SPEED;
-			if (!m_bJump)
-				Animate_FSM(107);
+	//}
+	//else if (ENGINE::Key_Combined(ENGINE::dwKEY_S, ENGINE::dwKEY_D))
+	//{
+	//	m_eCurDir = RIGHTDOWN;
+	//	if (m_ePlayerState != FIGHT)
+	//	{
+	//		m_pAdvance->Get_Transform()->m_vAngle.y -= _ANGLE * TimeDelta;
+	//		m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] += m_pAdvance->Get_INFO(ENGINE::INFO_LOOK) * TimeDelta * _SPEED;
+	//		if (!m_bJump)
+	//			Animate_FSM(107);
 
-		}
-	}
-	else if (ENGINE::Key_Press(ENGINE::dwKEY_A))
+	//	}
+	//}
+	if (ENGINE::Key_Press(ENGINE::dwKEY_A))
 	{
 		m_eCurDir = LEFT;
 		if (m_ePlayerState != FIGHT)
@@ -261,7 +267,7 @@ void CNewPlayer::Key_Check_Advance(const _double & TimeDelta)
 		{
 			if (m_pNaviMesh->Check_OnNaviMesh(&vAdvPos, &(vAdvDir * _CAMDIST)))
 				m_pAdvance->Get_Transform()->m_vAngle.y += _ANGLE * TimeDelta;
-			if(!m_bJump)
+			if (!m_bJump)
 				Animate_FSM(107);
 		}
 	}
@@ -391,14 +397,104 @@ void CNewPlayer::Key_ChecknFightState(const _double & TimeDelta)
 		m_ePlayerState = FIGHT;
 }
 
+void CNewPlayer::Key_ChecknJumpFightState(const _double & TimeDelta)
+{
+	if (ENGINE::Key_Down(ENGINE::dwKEY_Shift) && !m_bDash && m_pTransform->Get_vInfoPos(ENGINE::INFO_POS).y > 0.75f)
+	{
+		m_bDash = TRUE;
+		Animate_FSM(41);
+	}
+
+	if (ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON))
+	{
+		if (m_iJumpComboCnt == 0)
+			++m_iJumpComboCnt;
+		else if (m_bJumpAttack && m_iJumpComboCnt < 4)
+			++m_iJumpComboCnt;
+
+		switch (m_iJumpComboCnt)
+		{
+		case CNewPlayer::COMBO1:
+			m_bJumpAttack = TRUE;
+			m_eFightState = COMBO1;
+			Animate_FSM(m_iComboJumpIdx[m_iJumpComboCnt]);
+			m_pSword->Set_AttackState(TRUE, m_iComboJumpIdx[m_iJumpComboCnt], 2);
+			m_HoldTime = 0.4;
+			break;
+		case CNewPlayer::COMBO2:
+			m_eFightState = COMBO2;
+			Animate_FSM(m_iComboJumpIdx[m_iJumpComboCnt]);
+			m_pSword->Set_AttackState(TRUE, m_iComboJumpIdx[m_iJumpComboCnt], 2);
+			m_HoldTime = 0.2;
+			break;
+		case CNewPlayer::COMBO3:
+			m_eFightState = COMBO3;
+			Animate_FSM(m_iComboJumpIdx[m_iJumpComboCnt]);
+			m_pSword->Set_AttackState(TRUE, m_iComboJumpIdx[m_iJumpComboCnt], 2);
+			m_HoldTime = 0.8;
+			break;
+			//default:
+			//	m_iComboCnt = 0;
+			//	m_eFightState = COMBO_START;
+			//	m_ePlayerState = NONE;
+			//	m_pSword->Set_AttackState(FALSE, _IDLE, 0);
+			//	Animate_FSM(m_iComboJumpIdx[4]);
+			return;
+		}
+
+		m_ePlayerState = FIGHT_JUMP;
+		return;
+	}
+
+	if (m_iJumpComboCnt > 0)
+		m_ePlayerState = FIGHT_JUMP;
+}
+
+void CNewPlayer::FightJump_Func(const _double & TimeDelta)
+{
+
+	if (m_iJumpComboCnt == 3 && m_bJumpAttack && m_pMesh->Is_AnimationSetEnd())
+	{
+		m_HoldTime = 1.0;
+		m_iJumpComboCnt = 5;
+		m_bJumpAttack = FALSE;
+		Animate_FSM(m_iComboJumpIdx[4]);
+		m_pSword->Set_AttackState(FALSE, m_iComboJumpIdx[4]);
+	}
+	else if (m_iCurAniState == m_iComboJumpIdx[m_iJumpComboCnt] && m_pMesh->Is_AnimationSetEnd())
+	{
+		Animate_FSM(m_iComboJumpIdx[4]);
+		if (m_HoldTime < 1.0)
+		{
+			m_HoldTime = 1.0;
+			m_pSword->Set_AttackState(FALSE, m_iComboJumpIdx[4]);
+		}
+	}
+
+}
+
 void CNewPlayer::Fight_Func(const _double & TimeDelta)
 {
 	//m_ePlayerState = FIGHT;
 	if (m_ePlayerState == NONE)
 		return;
 
+	_vec3	vPos, vDir;
+	//m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS].y += m_fPosY * 0.0125f;
+	vPos = m_pAdvance->Get_Transform()->Get_NewPlayerPos(_CAMDIST);
+
+
 	if (m_iCurAniState == m_iComboIdx[m_iComboCnt] && !m_pMesh->Is_AnimationSetEnd())
+	{
+		_vec3 vDir = m_pTransform->Get_vLookDir();
+		if (m_iComboCnt == 4)
+			vDir *= -1.f;
+		else if (m_iComboCnt == 7)
+			vDir = {0.f, 0.f, 0.f};
+		m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] -= vDir * TimeDelta;
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh_Jump(&vPos, &(vDir * TimeDelta * -_SPEED), &m_fPosY);
 		m_ePlayerState = FIGHT;
+	}
 	else if (m_iCurAniState == m_iComboIdx[m_iComboCnt] && m_pMesh->Is_AnimationSetEnd())
 	{
 		m_ePlayerState = FIGHT;
@@ -416,19 +512,16 @@ void CNewPlayer::Fight_Func(const _double & TimeDelta)
 void CNewPlayer::Move_Func(const _double & TimeDelta)
 {
 	Update_PlayerDir(TimeDelta);
-
 	if (m_ePlayerState == MOVE && m_ePlayerState != FIGHT_MOVE)
 	{
 		_vec3	vPos, vDir;
-		//m_pAdvance->Get_Transform()->m_fJump = m_fPosY * 0.01f;
-		m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS].y += m_fPosY * 0.0125f;
-		vPos = m_pAdvance->Get_Transform()->Get_NewPlayerPos(_CAMDIST);
-		vDir = m_pTransform->Get_vInfoPos(ENGINE::INFO_LOOK);
-		_vec3 vNewPos = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vDir * TimeDelta * -_SPEED));
-		vNewPos.y += m_fPosY;
-		D3DXVec3Normalize(&vDir, &vDir);
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] = vNewPos;
-		//m_pTransform->m_vInfo[ENGINE::INFO_POS] = vPos;
+		//m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS].y += m_fPosY;
+		m_pAdvance->Get_Transform()->m_fJump = m_fPosY;
+		//vPos = m_pAdvance->Get_Transform()->Get_NewPlayerPos(_CAMDIST);
+		vPos = m_pAdvance->Get_vNewPos(_CAMDIST);
+		//vDir = m_pTransform->Get_vLookDir();
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] = vPos;
+		//m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh_Jump(&vPos, &(vDir * TimeDelta * -_SPEED), &m_fPosY);
 		m_eCurDir = DIR_END;
 	}
 }
@@ -438,12 +531,10 @@ void CNewPlayer::Update_PlayerDir(const _double & TimeDelta)
 	_matrix matView;
 	_float fAngle = 0.f;
 
-	//m_pTransform->Update_Component(TimeDelta);
-	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+	matView = *m_pAdvance->Get_ViewMatrix();
 	D3DXMatrixInverse(&matView, NULL, &matView);	//카메라의 월드 행렬
 
 	_vec3	vLook, vRight, vDir, vCross, vCamPos, vPlayerLook;
-	_vec3	vLeftUp, vLeftDown, vRightUp, vRightDown;
 
 	memcpy(&vRight, &matView.m[0][0], sizeof(_vec3));
 	memcpy(&vLook, &matView.m[2][0], sizeof(_vec3));
@@ -475,8 +566,6 @@ void CNewPlayer::Update_PlayerDir(const _double & TimeDelta)
 			fAngle = -fAngle;
 
 		m_pTransform->m_vAngle.y += _float(fAngle * TimeDelta * _SPEED);
-		//vPos = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
-		//m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vDir * TimeDelta * _SPEED));
 		break;
 	case CNewPlayer::LEFT:
 		D3DXVec3Cross(&vCross, &vDir, &vRight);
@@ -491,10 +580,7 @@ void CNewPlayer::Update_PlayerDir(const _double & TimeDelta)
 			fAngle = -fAngle;
 
 		m_pTransform->m_vAngle.y += _float(fAngle * TimeDelta * _SPEED);
-		//vPos = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
-		//m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vDir * TimeDelta * _SPEED));
 		break;
-
 	case CNewPlayer::UP:
 		D3DXVec3Cross(&vCross, &vDir, &vPlayerLook);
 		fAngle = D3DXVec3Dot(&-vLook, &vDir);
@@ -508,8 +594,6 @@ void CNewPlayer::Update_PlayerDir(const _double & TimeDelta)
 			fAngle = -fAngle;
 
 		m_pTransform->m_vAngle.y += _float(fAngle * TimeDelta * _SPEED);
-		//vPos = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
-		//m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vDir * TimeDelta * _SPEED));
 		break;
 	case CNewPlayer::DOWN:
 		D3DXVec3Cross(&vCross, &vDir, &vPlayerLook);
@@ -524,79 +608,8 @@ void CNewPlayer::Update_PlayerDir(const _double & TimeDelta)
 			fAngle = -fAngle;
 
 		m_pTransform->m_vAngle.y += _float(fAngle * TimeDelta * _SPEED);
-		//vPos = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
-		//m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vDir * TimeDelta * _SPEED));
-		break;
-	case CNewPlayer::LEFTUP:
-		D3DXVec3Normalize(&vLeftUp, &(-vRight + vLook));
-		D3DXVec3Cross(&vCross, &vDir, &vLeftUp);
-		fAngle = D3DXVec3Dot(&vDir, &vLeftUp);
-
-		if (fAngle > (1.f - AAA))
-			break;
-
-		fAngle = D3DXToDegree(acosf(fAngle));
-
-		if (vCross.y < 0.f)
-			fAngle = -fAngle;
-
-		m_pTransform->m_vAngle.y += _float(fAngle * TimeDelta * _SPEED);
-		//vPos = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
-		//m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vDir * TimeDelta * _SPEED));
-		break;
-	case CNewPlayer::LEFTDOWN:
-		D3DXVec3Normalize(&vLeftDown, &(-vRight + -vLook));
-		D3DXVec3Cross(&vCross, &vDir, &vLeftDown);
-		fAngle = D3DXVec3Dot(&vDir, &vLeftDown);
-
-		if (fAngle > (1.f - AAA))
-			break;
-
-		fAngle = D3DXToDegree(acosf(fAngle));
-
-		if (vCross.y < 0.f)
-			fAngle = -fAngle;
-
-		m_pTransform->m_vAngle.y += _float(fAngle * TimeDelta * _SPEED);
-		//vPos = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
-		//m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vDir * TimeDelta * _SPEED));
-		break;
-	case CNewPlayer::RIGHTUP:
-		D3DXVec3Normalize(&vRightUp, &(vRight + vLook));
-		D3DXVec3Cross(&vCross, &vDir, &vRightUp);
-		fAngle = D3DXVec3Dot(&vDir, &vRightUp);
-
-		if (fAngle > (1.f - AAA))
-			break;
-
-		fAngle = D3DXToDegree(acosf(fAngle));
-
-		if (vCross.y < 0.f)
-			fAngle = -fAngle;
-
-		m_pTransform->m_vAngle.y += _float(fAngle * TimeDelta * _SPEED);
-		//vPos = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
-		//m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vDir * TimeDelta * _SPEED));
-		break;
-	case CNewPlayer::RIGHTDOWN:
-		D3DXVec3Normalize(&vRightDown, &(vRight + -vLook));
-		D3DXVec3Cross(&vCross, &vDir, &vRightDown);
-		fAngle = D3DXVec3Dot(&vDir, &vRightDown);
-
-		if (fAngle > (1.f - AAA))
-			break;
-
-		fAngle = D3DXToDegree(acosf(fAngle));
-
-		if (vCross.y < 0.f)
-			fAngle = -fAngle;
-
-		m_pTransform->m_vAngle.y += _float(fAngle * TimeDelta * _SPEED);
-		//vPos = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
-		//m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vDir * TimeDelta * _SPEED));
 		break;
 	}
-
 
 	m_eCurDir = DIR_END;
 }
@@ -611,25 +624,12 @@ _int CNewPlayer::Update_Object(const _double & TimeDelta)
 
 	////////////////////////		▼조건 함수
 
-	//if (m_pSphereColl->m_bInvisible)		//일시 무적 상태
-	//{
-	//	m_RigdTime += TimeDelta;
-
-	//	if (m_RigdTime > 1.f)
-	//	{
-	//		m_pSphereColl->Set_Invisible(FALSE);
-	//		m_RigdTime = 0.0;
-	//	}
-	//}
-
-
-	if (m_bHit && !m_bKnockback)
+	if (m_bHit && !m_bKnockback)	//공격 명중 시, 경직
 	{
-		//m_TimeAccel = 1.0;
 		m_RigdTime += TimeDelta;
 		Animate_FSM(43);
 
-		if (m_RigdTime > 1.f && m_pMesh->Is_AnimationSetEnd())
+		if (m_RigdTime > 1.f && m_pMesh->Is_AnimationSetEnd())	//1초 지나면 경직해제
 		{
 			m_pSphereColl->m_bHit = FALSE;
 			m_RigdTime = 0.0;
@@ -641,15 +641,14 @@ _int CNewPlayer::Update_Object(const _double & TimeDelta)
 			Animate_FSM(_IDLE);
 		}
 	}
-	else if (m_bHit && m_bKnockback)
+	else if (m_bHit && m_bKnockback)	//경직 중 공격 명중, 넉백
 	{
-		m_pSphereColl->Set_Invisible(TRUE);
-		Animate_FSM(m_iKnockIdx[m_iKnockCnt]);
+		m_pSphereColl->Set_Invisible(TRUE);		//일시 무적
+		Animate_FSM(m_iKnockIdx[m_iKnockCnt]);	//첫번째 애니 재생
 
-
-		if (m_iKnockCnt == 5 && !m_pMesh->Is_AnimationSetEnd())
+		if (m_iKnockCnt == 5 && !m_pMesh->Is_AnimationSetEnd())	//경직 후 기상 모션
 			Animate_FSM(m_iKnockIdx[m_iKnockCnt]);
-		else if (m_iKnockCnt == 5 && m_pMesh->Is_AnimationSetEnd())
+		else if (m_iKnockCnt == 5 && m_pMesh->Is_AnimationSetEnd())	//경직 종료
 		{
 			Animate_FSM(_IDLE);
 			m_pSphereColl->m_bHit = FALSE;
@@ -664,7 +663,7 @@ _int CNewPlayer::Update_Object(const _double & TimeDelta)
 			m_pSword->Set_AttackState(FALSE, _IDLE, 0);
 
 		}
-		else if (m_iKnockCnt >= 0 && m_iKnockCnt <= 2 && !m_pMesh->Is_AnimationSetEnd())
+		else if (m_iKnockCnt >= 0 && m_iKnockCnt <= 2 && !m_pMesh->Is_AnimationSetEnd())	//경직 중 날아감
 		{
 			m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] += m_pSphereColl->Set_KnockBackDist(FALSE) * TimeDelta * 5.f;
 			m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pSphereColl->Set_KnockBackDist(FALSE) * TimeDelta * 5.f;
@@ -672,34 +671,56 @@ _int CNewPlayer::Update_Object(const _double & TimeDelta)
 			//m_pTransform->Update_Component(TimeDelta);
 
 		}
-		else if (m_iCurAniState == m_iKnockIdx[m_iKnockCnt] && m_pMesh->Is_AnimationSetEnd())
+		else if (m_iCurAniState == m_iKnockIdx[m_iKnockCnt] && m_pMesh->Is_AnimationSetEnd())	//경직 카운트 증가
 		{
 			++m_iKnockCnt;
 			Animate_FSM(m_iKnockIdx[m_iKnockCnt]);
 		}
-		
+
 	}
 	else
 	{
-		Key_Check_Advance(TimeDelta);
+		if (!m_bDash)
+			Key_Check_Advance(TimeDelta);	//기본 키조작
 		if (m_bJump)
-			Jump_Func(TimeDelta);
-		Move_Func(TimeDelta);
+			Jump_Func(TimeDelta);	//점프 눌렀을 때
+		Move_Func(TimeDelta);		//키조작 + 점프 눌렀을때 캐릭터 이동
+
+		if (m_bJump)	//점프 시 공격 콤보
+		{
+			Key_ChecknJumpFightState(TimeDelta);
+			FightJump_Func(TimeDelta);
+		}
+		else		//점프 아닐때 공격 콩보
+		{
+			Key_ChecknFightState(TimeDelta);
+			Fight_Func(TimeDelta);
+		}
+
+		if (m_bDash)	//점프 중 대시 시전
+			Dash_Func(TimeDelta);
+
+		if (m_iJumpComboCnt > 0 && !m_bJump)	//점프 공격 후 지상 낙하
+		{
+			m_iComboCnt = 0;
+			m_iJumpComboCnt = 0;
+			m_eFightState = COMBO_START;
+			m_ePlayerState = NONE;
+			m_bJumpAttack = FALSE;
+			m_pSword->Set_AttackState(FALSE, _IDLE, 0);
+		}
 
 
-		Key_ChecknFightState(TimeDelta);
-		Fight_Func(TimeDelta);
-
-		
-		if (m_ePlayerState == NONE)
+		if (m_ePlayerState == NONE)	//아무것도 안할때
 		{
 			Animate_FSM(_IDLE);
 			m_pSword->Set_AttackState(FALSE, _IDLE, 0);
 		}
 	}
-	CGameObject::Update_Object(TimeDelta);
-	
+
 	//////////////////////// ▼상시 함수
+	CGameObject::Update_Object(TimeDelta);
+
 	m_TimeAccel = 1.33;
 	m_pMesh->Play_AnimationSet(TimeDelta * m_TimeAccel);
 
@@ -712,19 +733,43 @@ void CNewPlayer::Late_Update_Object()
 {
 	CGameObject::Late_Update_Object();
 	//////////////////////
-
+	Check_DirectionCollision(&_vec3(0.f, 0.f, 0.f));	//몬스터와 충돌 체크, 멤버 변수는 리버스 벡터 반환
 }
 
 void CNewPlayer::Render_Object()
 {
-	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
+
+	if (nullptr == m_pShader)
+		return;
+
+	LPD3DXEFFECT pEffect = m_pShader->Get_EffectHandle();
+
+	if (nullptr == pEffect)
+		return;
+
+	pEffect->AddRef();
+
+	if (FAILED(SetUp_ConstantTable(pEffect)))
+		return;
+
+	pEffect->Begin(nullptr, 0);
+	pEffect->BeginPass(0);
+	///////////////////////////////////
 
 	m_pNaviMesh->Render_NaviMesh();
-
 	m_pMesh->Render_Meshes();
+	
+	///////////////////////////////////
+	pEffect->EndPass();
+	pEffect->End();
 
+	ENGINE::Safe_Release(pEffect);
+
+	///////////////////////////////////
 	m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld);
 
+
+	///////////////////////////////////
 	_tchar szStr[MAX_PATH] = L"";
 	//swprintf_s(szStr, L"Player HP: %d", m_pSphereColl->Get_iHp(0));
 	//swprintf_s(szStr, L"AngleY : %3.2f", m_pTransform->m_vAngle.y);
@@ -951,10 +996,16 @@ _bool CNewPlayer::Check_DirectionCollision(_vec3* vRevDir)
 		if (pSphere == nullptr)
 			return FALSE;
 
-		*vRevDir = m_pTransform->Get_TargetReverseDir(pTrans) * 0.5f;
+		//나도 밀고 상대도 날 미는 리버스 벡터
+		//*vRevDir = m_pTransform->Get_TargetReverseDir(pTrans) * 0.1f;
 
 		if (m_pSphereColl->Check_ComponentColl(pSphere))
+		{
+			_vec3 vTargetRevDir = pTrans->Get_TargetReverseDir(m_pTransform)  * 0.01f;
+			vTargetRevDir.y = 0.f;
+			pTrans->m_vInfo[ENGINE::INFO_POS] += vTargetRevDir;
 			return TRUE;
+		}
 		else
 			continue;
 	}
@@ -984,47 +1035,83 @@ VOID CNewPlayer::Animate_Quick(_uint iAniState)
 	}
 }
 
+HRESULT CNewPlayer::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
+{
+	if (nullptr == pEffect)
+		return E_FAIL;
+
+	pEffect->AddRef();
+
+	pEffect->SetMatrix("g_matWorld", &m_pTransform->m_matWorld);
+
+	pEffect->SetMatrix("g_matView", m_pAdvance->Get_ViewMatrix());
+
+	pEffect->SetMatrix("g_matProj", m_pAdvance->Get_ProjMatrix());
+
+	ENGINE::Safe_Release(pEffect);
+
+	return S_OK;
+}
+
 void CNewPlayer::Jump_Func(const _double & TimeDelta)
 {
-	_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
+	//_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
 	//y=-a*x+b에서 (a: 중력가속도, b: 초기 점프속도)
 	//적분하여 y = (-a/2)*x*x + (b*x) 공식을 얻는다.(x: 점프시간, y: 오브젝트의 높이)
 	//변화된 높이 height를 기존 높이 _posY에 더한다.
-	
-	if (!m_bDash)
-		m_fPosY = (m_JumpTime * m_JumpTime * (-m_fGravity) / 2) + (m_JumpTime * m_fJumpPower);
+
+	m_fPosY = (m_JumpTime * m_JumpTime * (-m_fGravity) / 2) + (m_JumpTime * m_fJumpPower);
 	//_transform.position = new Vector3(_transform.position.x, _posY + height, _transform.position.z);
 	//m_pTransform->m_fJump = m_fPosY;
 
 	//점프시간을 증가시킨다.
-	if (!m_bDash)
-		m_JumpTime += TimeDelta;
+	m_JumpTime += TimeDelta * m_HoldTime;
 
-	if (m_iCurAniState == 101 && m_pMesh->Is_AnimationSetEnd())
+	if (m_iCurAniState == 101 && m_pMesh->Is_AnimationSetEnd() && !m_bDash)
 		Animate_FSM(98);
-	if (m_iCurAniState == 98 && m_pMesh->Is_AnimationSetEnd())
+	else if (m_iCurAniState == 98 && m_pMesh->Is_AnimationSetEnd() && !m_bDash)
 		Animate_FSM(97);
 
+
 	//처음의 높이 보다 더 내려 갔을때 => 점프전 상태로 복귀한다.
-	if (m_pAdvance->Get_INFO(ENGINE::INFO_POS).y < 0.f)
+	if (m_pAdvance->Get_INFO(ENGINE::INFO_POS).y < 0.f || m_pTransform->m_vInfo[ENGINE::INFO_POS].y < 0.f)
 	{
 		m_bJump = FALSE;
-		m_fPosY = 0.f;
-		m_JumpTime = 0.0;
-		m_pTransform->m_fJump = 0.f;
-		m_pTransform->m_vInfo[ENGINE::INFO_POS].y = 0.0f;
-		m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS].y = 0.0f;
-		//if (!m_bHit)
-		Animate_FSM(_IDLE);
+		Reset_JumpStat();
+		Animate_FSM(12);
 	}
+}
+
+void CNewPlayer::Reset_JumpStat()
+{
+	m_iComboCnt = 0;
+	m_iJumpComboCnt = 0;
+	m_eFightState = COMBO_START;
+	
+	m_fPosY = 0.f;
+	m_JumpTime = 0.0;
+	m_pTransform->m_fJump = 0.f;
+	m_pTransform->m_vInfo[ENGINE::INFO_POS].y = 0.0f;
+	m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS].y = 0.0f;
+	m_HoldTime = 1.0;
 }
 
 
 
 void CNewPlayer::Dash_Func(const _double & TimeDelta)
 {
+	m_HoldTime = 0.4;
 	m_DashTime += TimeDelta;
-	m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_vDashDir * 10.f * TimeDelta;
+	//m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_vDashDir * 10.f * TimeDelta;
+	m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] += m_pTransform->Get_vLookDir() * TimeDelta * -10.f;
+
+	if (m_DashTime > 0.5 || m_pTransform->Get_vInfoPos(ENGINE::INFO_POS).y < 0.75f)
+	{
+		m_HoldTime = 1.0;
+		m_DashTime = 0.0;
+		m_bDash = FALSE;
+		Animate_FSM(98);
+	}
 
 	m_pSword->Set_AttackState(FALSE, 0);
 }
@@ -1172,28 +1259,8 @@ void CNewPlayer::Attack_Func(const _double & TimeDelta)
 
 }
 
-void CNewPlayer::Rigd_Func(const _double & TimeDelta)
+HRESULT CNewPlayer::Set_AniIndex()
 {
-	m_bHit = FALSE;
-}
-
-void CNewPlayer::Reset_State()
-{
-	m_TimeAccel = 1.0;
-	m_bHit = FALSE;
-	m_bAnimate = FALSE;
-	m_bDash = FALSE;
-	//m_bJump = FALSE;
-	for (_uint i = 0; i < 6; ++i)
-		m_bAttack[i] = FALSE;
-
-	Animate_FSM(_IDLE);
-
-}
-
-void CNewPlayer::Set_AniIndex()
-{
-
 	////////// Fight Combo
 	m_iComboCnt = 0;
 	m_iComboIdx[0] = 37;	// 89 / Attack 1 
@@ -1206,6 +1273,12 @@ void CNewPlayer::Set_AniIndex()
 	m_iComboIdx[7] = 76;	// 66 / Attack 12
 	m_iComboIdx[8] = 74;	// 66 / Attack 12
 	m_iComboIdx[9] = 110;	// 66 / Attack 12
+
+	m_iComboJumpIdx[0] = 101;
+	m_iComboJumpIdx[1] = 20;
+	m_iComboJumpIdx[2] = 19;
+	m_iComboJumpIdx[3] = 18;
+	m_iComboJumpIdx[4] = 97;
 
 	for (int i = 0; i < 10; ++i)
 		m_bAttack[i] = FALSE;
@@ -1220,6 +1293,7 @@ void CNewPlayer::Set_AniIndex()
 	m_iKnockIdx[4] = 24;
 	m_iKnockIdx[5] = 23;	//Fast Fall Up
 
+	return S_OK;
 }
 
 CNewPlayer * CNewPlayer::Create(LPDIRECT3DDEVICE9 pGraphicDev)

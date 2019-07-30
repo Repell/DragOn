@@ -82,12 +82,33 @@ void CSword::Render_Object()
 {
 	//Render_Set();
 
-	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
+	//m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
+
+
+	LPD3DXEFFECT pEffect = m_pShader->Get_EffectHandle();
+	if (nullptr == pEffect)
+		return;
+
+	pEffect->AddRef();
+	if (FAILED(SetUp_ConstantTable(pEffect)))
+		return;
+
+	pEffect->Begin(nullptr, 0);
+	pEffect->BeginPass(0);
+	////////////////////////////////////////
 
 	m_pMesh->Render_Meshes();
 
+	////////////////////////////////////////
+	pEffect->EndPass();
+	pEffect->End();
+
+	ENGINE::Safe_Release(pEffect);
+
+	////////////////////////////////////////
 	if (bAttack)
 		m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pTransform->m_matWorld, _vec3(0.f, 0.f, -110.f));
+
 
 	//Render_ReSet();
 }
@@ -174,6 +195,27 @@ void CSword::Get_ParentMatrix()
 	}
 }
 
+HRESULT CSword::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
+{
+	if (nullptr == pEffect)
+		return E_FAIL;
+
+	pEffect->AddRef();
+	_matrix matView, matProj;
+	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
+
+	pEffect->SetMatrix("g_matWorld", &m_pTransform->m_matWorld);
+
+	pEffect->SetMatrix("g_matView", &matView);
+
+	pEffect->SetMatrix("g_matProj", &matProj);
+
+	ENGINE::Safe_Release(pEffect);
+
+	return S_OK;
+}
+
 
 HRESULT CSword::Add_Component()
 {
@@ -200,6 +242,11 @@ HRESULT CSword::Add_Component()
 	pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev, 40.f);
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider", pComponent);
+
+	//Shader 
+	pComponent = m_pShader = dynamic_cast<ENGINE::CShader*>(ENGINE::Clone(L"Shader_Transform"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	////////////////////////////
 	return S_OK;

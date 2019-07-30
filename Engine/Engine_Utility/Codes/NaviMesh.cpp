@@ -79,6 +79,28 @@ _vec3 CNaviMesh::MoveOn_NaviMesh(const _vec3 * pTargetPos, const _vec3 * pTarget
 	return _vec3(0.f, 0.f, 0.f);
 }
 
+_vec3 CNaviMesh::MoveOn_NaviMesh_Jump(const _vec3 * pTargetPos, const _vec3 * pTargetDir, const _float * fJump)
+{
+	_vec3		vEndPos = *pTargetPos + *pTargetDir;
+	_vec3 vNormal = {};
+	if (CCell::COMPARE_MOVE == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx, &vNormal))
+	{
+		//벽이 아닐경우 네비매쉬의 높이값 추가
+		vEndPos.y = Compute_OnTerrain(pTargetPos, &m_dwCurrentIdx);
+		vEndPos.y += *fJump;
+		return vEndPos;
+	}
+
+	else if (CCell::COMPARE_STOP == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx, &vNormal))
+	{
+		//벽일 경우 현재위치 리턴 -> 슬라이딩 벡터로 변환
+		_vec3 SlidVector = *pTargetDir - D3DXVec3Dot(pTargetDir, &vNormal) * vNormal;
+		return *pTargetPos + SlidVector;
+	}
+
+	return _vec3(0.f, 0.f, 0.f);
+}
+
 _vec3 CNaviMesh::MoveOn_NaviMesh_Dir(const _vec3 * pTargetPos, const _vec3 * pTargetDir)
 {
 	_vec3		vEndPos = *pTargetPos + *pTargetDir;

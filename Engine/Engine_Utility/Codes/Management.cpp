@@ -82,6 +82,10 @@ HRESULT CManagement::Ready_ShaderFile(LPDIRECT3DDEVICE9 pGraphicDev)
 	NULL_CHECK_RETURN(pShader, E_FAIL);
 	FAILED_CHECK_RETURN(CProtoMgr::Get_Instance()->Ready_ProtoMgr(L"Shader_Terrain", pShader), E_FAIL);
 
+	pShader = CShader::Create(pGraphicDev, L"../../Reference/Headers/Shader_Transform.fx");
+	NULL_CHECK_RETURN(pShader, E_FAIL);
+	FAILED_CHECK_RETURN(CProtoMgr::Get_Instance()->Ready_ProtoMgr(L"Shader_Transform", pShader), E_FAIL);
+
 	return S_OK;
 }
 

@@ -27,8 +27,8 @@ _vec3 CTransform::Get_vLookDir()
 {
 	_vec3 vLookPos = m_vInfo[ENGINE::INFO_LOOK];;
 	vLookPos.y = 0.f;
-
-	return vLookPos;
+	
+	return *D3DXVec3Normalize(&vLookPos, &vLookPos);
 }
 
 _vec3 CTransform::Get_vInfoPos(ENGINE::INFO eInfo)
@@ -230,6 +230,7 @@ _float CTransform::Fix_TargetLook(CTransform * pTarget, _float fSearchDist)
 void CTransform::Stalk_Target(CTransform * pTransform, const _double& fTime, const _float fSpeed)
 {
 	_vec3 vLookDir = pTransform->m_vInfo[INFO_POS] - m_vInfo[INFO_POS];
+	vLookDir.y = 0.f;
 	m_vInfo[INFO_POS] += *D3DXVec3Normalize(&vLookDir, &vLookDir) * fSpeed * fTime;
 }
 

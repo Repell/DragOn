@@ -42,10 +42,10 @@ HRESULT CTroll::Ready_Object(_vec3 vPos)
 HRESULT CTroll::Late_Init()
 {
 	//m_pTransform->m_vAngle.y = 180.f;
-	m_pTransform->m_vScale = { 0.01f, 0.01f, 0.01f };
+	m_pTransform->m_vScale = { 0.005f, 0.005f, 0.005f };
 	//m_pTransform->m_vInfo[ENGINE::INFO_POS] = { 40.f, 0.1f, 3.f };
-	m_pSphereColl->Set_Scale(0.01f);
-	m_pCollider->Set_Scale(0.01f);
+	m_pSphereColl->Set_Scale(0.006f);
+	m_pCollider->Set_Scale(0.006f);
 
 	m_pTargetTransform = dynamic_cast<ENGINE::CTransform*>
 		(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player", L"Com_Transform", ENGINE::COMP_DYNAMIC));
@@ -108,6 +108,8 @@ void CTroll::Render_Object()
 			Attack_Target();
 		else
 		{
+			m_bAttack = FALSE;
+			m_pTransform->m_bAttackState = m_bAttack;
 			Animate_FSM(0);
 		}
 	}
@@ -118,20 +120,37 @@ void CTroll::Render_Object()
 	if(m_iCurAniSet == 2)
 		m_pMesh->Play_AnimationSet(m_TimeDelta * 1.5);
 	else
-		m_pMesh->Play_AnimationSet(m_TimeDelta * 1.25);
-	/////////////////////
+		m_pMesh->Play_AnimationSet(m_TimeDelta * 1.1);
+	/////////////////////////////////////////////
+	//m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 
-	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
+	LPD3DXEFFECT pEffect = m_pShader->Get_EffectHandle();
+	if (nullptr == pEffect)
+		return;
+
+	pEffect->AddRef();
+	if (FAILED(SetUp_ConstantTable(pEffect)))
+		return;
+
+	pEffect->Begin(nullptr, 0);
+	pEffect->BeginPass(0);
+	////////////////////////////////////////
 
 	m_pNaviMesh->Render_NaviMesh();
 
 	m_pMesh->Render_Meshes();
 
-	m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld);
 
-	if(m_bAttack)
-		Find_BoneMatrix();
+	////////////////////////////////////////
+	pEffect->EndPass();
+	pEffect->End();
 
+	ENGINE::Safe_Release(pEffect);
+
+	if (m_bAttack)
+		Render_BoneMatrix("L_IRON1");
+	if(!m_bDead)
+		m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld);
 
 	//_tchar szStr[MAX_PATH] = L"";
 	//swprintf_s(szStr, L"AngleY : %3.2f", m_pTransform->m_vAngle.y);
@@ -166,10 +185,10 @@ void CTroll::Render_ReSet()
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
-void CTroll::Find_BoneMatrix()
+void CTroll::Render_BoneMatrix(const char* tBone)
 {
 	//if(nullptr == m_pBoneMatrix)
-	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName("L_IRON1");
+	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName(tBone);
 	m_pBoneMatrix = pFrame->combinedTransformMatrix * m_pTransform->m_matWorld;
 
 	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix, _vec3(0.f, 0.f, 0.f));
@@ -187,6 +206,7 @@ void CTroll::Chase_Target(const _double& TimeDelta)
 		Animate_FSM(8);
 
 		m_bAttack = TRUE;
+		m_pTransform->m_bAttackState = m_bAttack;
 	}
 	else	if (m_fDist < 10.f && !bColl)	//ÃßÀû
 	{
@@ -209,7 +229,16 @@ void CTroll::Attack_Target()
 	if (m_pTargetSphereColl->m_bInvisible)
 	{
 		m_bAttack = FALSE;
+		m_pTransform->m_bAttackState = m_bAttack;
 		return;
+	}
+
+	if (m_iCurAniSet == 8 && m_pMesh->Is_AnimationSetEnd())
+		Animate_FSM(9);
+	else if (m_iCurAniSet == 9 && m_pMesh->Is_AnimationSetEnd())
+	{
+		m_bAttack = FALSE;
+		m_pTransform->m_bAttackState = m_bAttack;
 	}
 
 	if (m_iCurAniSet == 8 && bColl && m_bAttack)
@@ -234,10 +263,7 @@ void CTroll::Attack_Target()
 		//m_bAttack = FALSE;
 	}
 
-	if (m_iCurAniSet == 8 && m_pMesh->Is_AnimationSetEnd())
-		Animate_FSM(9);
-	else if (m_iCurAniSet == 9 && m_pMesh->Is_AnimationSetEnd())
-		m_bAttack = FALSE;
+
 
 	
 }
@@ -260,12 +286,17 @@ _bool CTroll::Check_EnemyColl(_vec3 * vRevDir)
 		if (pSphere == nullptr)
 			return FALSE;
 
-		*vRevDir = m_pTransform->Get_TargetReverseDir(pTrans) * 0.01f;
+		*vRevDir = m_pTransform->Get_TargetReverseDir(pTrans) * 0.05f;
 
 		if (m_pSphereColl->Check_ComponentColl(pSphere))
 		{
-			_vec3 vTargetRevDir = pTrans->Get_TargetReverseDir(m_pTransform)  * 0.01f;
-			pTrans->m_vInfo[ENGINE::INFO_POS] += vTargetRevDir;
+
+			_vec3 vTargetRevDir = pTrans->Get_TargetReverseDir(m_pTransform)  * 0.05f;
+			vTargetRevDir.y = 0.f;
+
+			if(pTrans->m_bAttackState == FALSE)
+				pTrans->m_vInfo[ENGINE::INFO_POS] += vTargetRevDir;
+
 			return TRUE;
 		}
 		else
@@ -284,6 +315,27 @@ VOID CTroll::Animate_FSM(_uint iAniState)
 		m_pMesh->Set_AnimationSet(m_iCurAniSet);
 		m_iPreAniSet = m_iCurAniSet;
 	}
+}
+
+HRESULT CTroll::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
+{
+	if (nullptr == pEffect)
+		return E_FAIL;
+
+	pEffect->AddRef();
+	_matrix matView, matProj;
+	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
+
+	pEffect->SetMatrix("g_matWorld", &m_pTransform->m_matWorld);
+
+	pEffect->SetMatrix("g_matView", &matView);
+
+	pEffect->SetMatrix("g_matProj", &matProj);
+
+	ENGINE::Safe_Release(pEffect);
+
+	return S_OK;
 }
 
 
@@ -324,6 +376,10 @@ HRESULT CTroll::Add_Component()
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_SphereColl", pComponent);
 
+	//Shader 
+	pComponent = m_pShader = dynamic_cast<ENGINE::CShader*>(ENGINE::Clone(L"Shader_Transform"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	////////////////////////////
 	return S_OK;

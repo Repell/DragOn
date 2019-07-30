@@ -21,6 +21,7 @@ public:
 	void Render_NaviMesh();
 	_bool Check_OnNaviMesh(const _vec3* pTargetPos, const _vec3* pTargetDir);
 	_vec3 MoveOn_NaviMesh(const _vec3* pTargetPos, const _vec3* pTargetDir);
+	_vec3 MoveOn_NaviMesh_Jump(const _vec3* pTargetPos, const _vec3* pTargetDir, const _float* fJump);
 	_vec3 MoveOn_NaviMesh_Dir(const _vec3* pTargetPos, const _vec3* pTargetDir);
 	_float MoveOn_Terrain(const _vec3* pTargetPos, const _vec3* pTargetDir);
 

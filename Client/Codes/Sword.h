@@ -10,6 +10,7 @@ namespace ENGINE
 	class CTransform;
 	class CGameObject;
 	class CCollider;
+	class CShader;
 }
 
 class CSword : public ENGINE::CGameObject
@@ -35,6 +36,11 @@ private:
 	void Get_ParentMatrix();
 
 private:
+	//Shader
+	HRESULT SetUp_ConstantTable(LPD3DXEFFECT pEffect);
+
+
+private:
 	HRESULT Add_Component();
 
 private:
@@ -42,6 +48,7 @@ private:
 	ENGINE::CStaticMesh* m_pMesh;
 	ENGINE::CTransform*	m_pTransform;
 	ENGINE::CCollider*			m_pCollider;
+	ENGINE::CShader*			m_pShader;
 
 private:
 	_bool bAttack;

@@ -34,9 +34,19 @@ _vec3 CAdvanceCamera::Get_LookDir()
 	return m_pTransform->Get_vLookDir();
 }
 
-_matrix CAdvanceCamera::Get_ViewMatrix()
+_vec3 CAdvanceCamera::Get_vNewPos(const _float fDist)
 {
-	return m_matView;
+	return m_pTransform->Get_NewPlayerPos(fDist);
+}
+
+_matrix* CAdvanceCamera::Get_ViewMatrix()
+{
+	return &m_matView;
+}
+
+_matrix * CAdvanceCamera::Get_ProjMatrix()
+{
+	return &m_matProj;
 }
 
 HRESULT CAdvanceCamera::Ready_Component(ENGINE::CTransform * pTarget)
@@ -47,7 +57,7 @@ HRESULT CAdvanceCamera::Ready_Component(ENGINE::CTransform * pTarget)
 	m_pTransform = ENGINE::CTransform::Create(_vec3(0.f, 0.f, 1.f));
 	NULL_CHECK_RETURN(m_pTransform, E_FAIL);
 
-	m_pTransform->m_vScale = { 0.01f, 0.01f, 0.01f };
+	m_pTransform->m_vScale = {1.f, 1.f, 1.f };
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pTarget->Get_vInfoPos(ENGINE::INFO_POS) + _vec3(0.f, 1.f, 0.f);
 	m_pTransform->Update_Component(0.f);
 		

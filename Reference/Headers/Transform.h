@@ -60,6 +60,7 @@ public:
 	_vec3 m_vAngle;
 	_matrix	m_matWorld;
 	_bool bCamTarget;
+	_bool m_bAttackState;
 	_float m_fJump;
 
 	_bool m_bDead;
