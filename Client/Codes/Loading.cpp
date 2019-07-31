@@ -53,6 +53,13 @@ _uint CLoading::Loading_ForLogo()
 		L"Soldier_Sword_Binary.X"),
 		E_FAIL);		//Enemy_Swordman
 
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Enemy_Spearman",
+		ENGINE::MESH_DYNAMIC,
+		L"../Bin/Resources/Mesh/DynamicMesh/Soldier_Spear/",
+		L"Soldier_Spear_Binary.X"),
+		E_FAIL);		//Enemy_Swordman
 
 
 	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
@@ -87,6 +94,14 @@ _uint CLoading::Loading_ForLogo()
 		ENGINE::MESH_STATIC,
 		L"../Bin/Resources/Mesh/StaticMesh/Enemy_Sword/",
 		L"Enemy_Sword.X"),
+		E_FAIL);
+
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Enemy_Spear",
+		ENGINE::MESH_STATIC,
+		L"../Bin/Resources/Mesh/StaticMesh/Enemy_Spear/",
+		L"Enemy_Spear.X"),
 		E_FAIL);
 
 	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,

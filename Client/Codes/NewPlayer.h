@@ -168,7 +168,7 @@ private:
 	_double m_AttackTime;
 	//Hit State
 	_bool m_bHit;
-	_bool m_bKnockback;
+	_bool m_bKnockBack;
 	_double m_RigdTime;
 
 	//Weapon

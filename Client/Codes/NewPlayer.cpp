@@ -106,7 +106,7 @@ HRESULT CNewPlayer::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	ENGINE::UNITINFO tInfo = 
-	{ TRUE, _vec3(0.f, 0.f, -110.f), _vec3{0.01f, 1.f, 1.f }, _vec3(90.f, 20.f, 20.f), 75.f};
+	{ TRUE, _vec3(0.f, 0.f, -100.f), _vec3{0.01f, 1.f, 1.f }, _vec3(90.f, 20.f, 20.f), 50.f};
 	pComponent = m_pWeapon = ENGINE::CWeapon::Create(m_pGraphicDev, m_pTransform, tInfo, L"Mesh_Sword");
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Weapon", pComponent);
@@ -370,12 +370,12 @@ void CNewPlayer::Key_ChecknFightState(const _double & TimeDelta)
 			Animate_FSM(m_iComboIdx[m_iComboCnt]);
 			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], 2);
 			break;
-		case CNewPlayer::COMBO7:
+		case CNewPlayer::COMBO7:		//Airbone
 			m_eFightState = COMBO7;
 			Animate_FSM(m_iComboIdx[m_iComboCnt]);
 			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], 2);
 			break;
-		case CNewPlayer::COMBO8:
+		case CNewPlayer::COMBO8:	//Knockback
 			m_eFightState = COMBO8;
 			Animate_FSM(m_iComboIdx[m_iComboCnt]);
 			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], 2);
@@ -629,11 +629,11 @@ _int CNewPlayer::Update_Object(const _double & TimeDelta)
 	////////////////////////		▼최우선 함수
 
 	m_bHit = m_pSphereColl->Get_HitState();
-	m_bKnockback = m_pSphereColl->Get_KnockBackState();
+	m_bKnockBack = m_pSphereColl->Get_KnockBackState();
 
 	////////////////////////		▼조건 함수
 
-	if (m_bHit && !m_bKnockback)	//공격 명중 시, 경직
+	if (m_bHit && !m_bKnockBack)	//공격 명중 시, 경직
 	{
 		m_RigdTime += TimeDelta;
 		Animate_FSM(43);
@@ -653,7 +653,7 @@ _int CNewPlayer::Update_Object(const _double & TimeDelta)
 			Animate_FSM(_IDLE);
 		}
 	}
-	else if (m_bHit && m_bKnockback)	//경직 중 공격 명중, 넉백
+	else if (m_bHit && m_bKnockBack)	//경직 중 공격 명중, 넉백
 	{
 		m_pSphereColl->Set_Invisible(TRUE);		//일시 무적
 		Animate_FSM(m_iKnockIdx[m_iKnockCnt]);	//첫번째 애니 재생
@@ -1334,116 +1334,3 @@ void CNewPlayer::Free()
 {
 	CGameObject::Free();
 }
-//
-//_int CNewPlayer::Update_Object(const _double & TimeDelta)
-//{
-//	CGameObject::Late_Init();
-//	////////////////////////		▼최우선 함수
-//	Key_ChecknAniState(TimeDelta);
-//	Move_Func(TimeDelta);
-//
-//	CGameObject::Update_Object(TimeDelta);
-//	////////////////////////		▼조건 함수
-//
-//	m_bHit = m_pSphereColl->m_bHit;
-//
-//	if (m_bDash && m_bHit)	//기절 회피
-//	{
-//		m_pSphereColl->m_bHit = FALSE;
-//		m_bHit = FALSE;
-//	}
-//
-//	if (m_bHit)
-//	{
-//		m_TimeAccel = 1.0;
-//		m_RigdTime += TimeDelta;
-//
-//		//if (m_bJump)
-//		//	Animate_FSM(25);
-//		//else if (m_iCurAniState != 25)
-//		Animate_FSM(43);
-//
-//		if (m_RigdTime > 1.f && m_pMesh->Is_AnimationSetEnd())
-//		{
-//			m_pSphereColl->m_bHit = FALSE;
-//			m_RigdTime = 0.0;
-//
-//			Animate_FSM(_IDLE);
-//
-//			Reset_State();
-//		}
-//		//Rigd_Func(TimeDelta);
-//
-//	}
-//	else
-//	{
-//		switch (m_iCurAniState)
-//		{
-//		default:
-//			m_Delay = 0.0;
-//			break;
-//		}
-//
-//		//MouseFunc();
-//		//if (!m_bDash && m_pTransform->bCamTarget)
-//		//	m_bAnimate = Key_Check_Func(TimeDelta);
-//
-//
-//		//if (!m_bAttack[0] && ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON))
-//		//{
-//		//	Animate_FSM(m_iAniSet[0]);
-//		//	m_bAttack[0] = TRUE;
-//		//	m_pSword->Set_AttackState(TRUE, m_iCurAniState, 2);
-//		//}
-//
-//		if (!m_bAnimate && !m_bDash && !m_bAttack[0] && !m_bJump)
-//		{
-//			Animate_FSM(_IDLE);
-//		}
-//
-//		if (m_bDash && m_iCurAniState >= 37 && m_iCurAniState <= 41)
-//		{
-//
-//			if (m_iCurAniState == 37 && m_pMesh->Is_AnimationSetEnd())
-//			{
-//				//m_fGravity = 4.8f;
-//				m_TimeAccel = 1;
-//				m_bDash = FALSE;
-//			}
-//			else if (m_iCurAniState != 37 && m_pMesh->Is_AnimationSetEnd())
-//			{
-//				m_bAnimate = FALSE;
-//				//m_bDash = FALSE;
-//				if (!m_bJump)
-//					Animate_FSM(37);
-//				m_DashTime = 0.0;
-//				m_vDashDir = { 0.f, 0.f, 0.f };
-//				m_pSphereColl->Set_Invisible(FALSE);
-//			}
-//
-//			if (m_bJump && m_iCurAniState >= 37 && m_iCurAniState <= 41)
-//			{
-//				m_pSphereColl->Set_Invisible(FALSE);
-//				m_TimeAccel = 1;
-//				m_bDash = FALSE;
-//			}
-//		}
-//
-//		if (m_bDash && m_iCurAniState != 37)
-//			Dash_Func(TimeDelta);
-//
-//		if (m_bAttack[0])
-//			Attack_Func(TimeDelta);
-//	}
-//
-//	if (m_bJump)
-//		Jump_Func(TimeDelta);
-//
-//	//////////////////////// ▼상시 함수
-//	//m_TimeAccel = 0.25;
-//	m_pMesh->Play_AnimationSet(TimeDelta * m_TimeAccel);
-//
-//	//////////////////////// ▼최후미 함수
-//	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_NONALPHA, this);
-//	return NO_EVENT;
-//}

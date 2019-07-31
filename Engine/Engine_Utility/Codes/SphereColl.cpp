@@ -69,6 +69,11 @@ _bool CSphereColl::Get_KnockBackState()
 	return m_bKnockBack;
 }
 
+_bool CSphereColl::Get_AirboneState()
+{
+	return m_bAirbone;
+}
+
 void CSphereColl::Late_Update_Component()
 {
 	//if(m_bHit)

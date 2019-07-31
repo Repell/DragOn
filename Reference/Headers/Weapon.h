@@ -50,7 +50,8 @@ private:		//Transform
 
 private:
 	_bool m_bPlayer;
-	_bool bAttack;
+	_bool m_bAttack;
+
 	_uint iDamage;
 	_uint m_iCurAni;
 	_uint m_iOldAni;

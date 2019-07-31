@@ -20,6 +20,7 @@ public:
 	_float Get_Radius();
 	_bool Get_HitState();
 	_bool Get_KnockBackState();
+	_bool Get_AirboneState();
 	_int Get_iHp(_int iDamage = 0);
 	_uint Get_iHitStack(_bool bState = FALSE);
 
@@ -52,10 +53,14 @@ public:
 	//Life
 	_int m_iHp;
 	_bool m_bInvisible;
+	
 	_bool m_bHit;
 	_uint m_iHitStack;
+	
 	_bool m_bKnockBack;
 	_vec3 m_vKnockBackDir;
+
+	_bool m_bAirbone;
 
 public:
 	static CSphereColl* Create(LPDIRECT3DDEVICE9 pDevice, _float fRadius, _int iHp);

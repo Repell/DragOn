@@ -116,21 +116,29 @@ HRESULT CTestStage::Add_GameObject_Layer()
 	//NULL_CHECK_RETURN(pObject, E_FAIL);
 	//pObject_Layer->Add_GameObject(L"Troll", pObject);
 
-	pObject = CEnemy_Swordman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 3.f));
-	NULL_CHECK_RETURN(pObject, E_FAIL);
-	pObject_Layer->Add_GameObject(L"Enemy_Swordman", pObject);
+	//pObject = CEnemy_Swordman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 3.f));
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Enemy_Swordman", pObject);
 
-	pObject = CEnemy_Swordman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 5.f));
-	NULL_CHECK_RETURN(pObject, E_FAIL);
-	pObject_Layer->Add_GameObject(L"Enemy_Swordman", pObject);
+	//pObject = CEnemy_Spearman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 5.f));
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Enemy_Spearman", pObject);
 
-	pObject = CEnemy_Swordman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 7.f));
+	pObject = CEnemy_Spearman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 7.f));
 	NULL_CHECK_RETURN(pObject, E_FAIL);
-	pObject_Layer->Add_GameObject(L"Enemy_Swordman", pObject);
+	pObject_Layer->Add_GameObject(L"Enemy_Spearman", pObject);
 
-	pObject = CEnemy_Swordman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 9.f));
-	NULL_CHECK_RETURN(pObject, E_FAIL);
-	pObject_Layer->Add_GameObject(L"Enemy_Swordman", pObject);
+	//pObject = CEnemy_Swordman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 5.f));
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Enemy_Swordman", pObject);
+
+	//pObject = CEnemy_Swordman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 7.f));
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Enemy_Swordman", pObject);
+
+	//pObject = CEnemy_Swordman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 9.f));
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Enemy_Swordman", pObject);
 
 	
 	//////////////INSERT LAYER//////////////

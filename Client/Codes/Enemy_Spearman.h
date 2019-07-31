@@ -1,5 +1,5 @@
-#ifndef Enemy_Swordman_h__
-#define Enemy_Swordman_h__
+#ifndef Enemy_Spearman_h__
+#define Enemy_Spearman_h__
 
 #include "GameObject.h"
 #include "Effect_Tex.h"
@@ -11,17 +11,16 @@ namespace ENGINE
 	class CTransform;
 	class CGameObject;
 	class CNaviMesh;
-	class CCollider;
 	class CSphereColl;
 	class CShader;
 	class CWeapon;
 }
 
-class CEnemy_Swordman : public ENGINE::CGameObject
+class CEnemy_Spearman : public ENGINE::CGameObject
 {
 private:
-	explicit CEnemy_Swordman(LPDIRECT3DDEVICE9 pDevice);
-	virtual ~CEnemy_Swordman();
+	explicit CEnemy_Spearman(LPDIRECT3DDEVICE9 pDevice);
+	virtual ~CEnemy_Spearman();
 
 public:
 	virtual HRESULT Ready_Object(_vec3 vPos);
@@ -75,7 +74,6 @@ private:
 	ENGINE::CTransform*	m_pTransform;
 	ENGINE::CTransform*	m_pTargetTransform;
 	ENGINE::CNaviMesh*		m_pNaviMesh;
-	//ENGINE::CCollider*			m_pCollider;
 	ENGINE::CSphereColl*	m_pSphereColl;
 	ENGINE::CSphereColl*	m_pTargetSphereColl;
 	ENGINE::CShader*			m_pShader;
@@ -85,10 +83,10 @@ private:
 	_matrix m_pBoneMatrix;
 
 public:
-	static CEnemy_Swordman* Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos);
+	static CEnemy_Spearman* Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos);
 	virtual void Free() override;
 
 
 };
 
-#endif // Enemy_Swordman_h__
+#endif // Enemy_Spearman_h__

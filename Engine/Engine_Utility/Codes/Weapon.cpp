@@ -18,7 +18,7 @@ CWeapon::CWeapon(LPDIRECT3DDEVICE9 pDevice)
 
 void CWeapon::Set_AttackState(_bool bState, _uint iCurAni, _uint iPower)
 {
-	bAttack = bState;
+	m_bAttack = bState;
 	iDamage = iPower;
 	m_iCurAni = iCurAni;
 }
@@ -65,21 +65,18 @@ _int CWeapon::Update_Component(const _double & TimeDelta)
 {
 	m_pTransform->Update_Component(TimeDelta);
 
-	if (bAttack && m_bPlayer)
+	if (m_bAttack && m_bPlayer)
 	{
 		//객체 리스트별 따로 체크
 		Check_EnemyColl(L"Troll");
 		Check_EnemyColl(L"Enemy_Swordman");
+		Check_EnemyColl(L"Enemy_Spearman");
 		//Check_EnemyColl(L"Troll", L"Com_SphereColl");
 	}
-	else if (bAttack && !m_bPlayer)
+	else if (m_bAttack && !m_bPlayer)
 		Check_PlayerColl(L"Player");
 	
-	if (!bAttack && m_bPlayer)
-	{
-		Reset_EnemyColl(L"Troll");
-		Reset_EnemyColl(L"Enemy_Swordman");
-	}
+
 
 	return NO_EVENT;
 }
@@ -88,13 +85,12 @@ void CWeapon::Late_Update_Component()
 {
 	m_pTransform->Late_Update_Component();
 
-	//if (ENGINE::Key_Press(ENGINE::dwKEY_F1))
-	//	m_fAngle += 1.f;
-	//if (ENGINE::Key_Press(ENGINE::dwKEY_F2))
-	//	m_fAngle -= 1.f;
-
-	//m_pTransform->m_vAngle.y = m_fAngle;
-
+	if (!m_bAttack && m_bPlayer)
+	{
+		Reset_EnemyColl(L"Troll");
+		Reset_EnemyColl(L"Enemy_Swordman");
+		Reset_EnemyColl(L"Enemy_Spearman");
+	}
 }
 
 void CWeapon::Render_Weapon(const _matrix pParentMat)
@@ -123,7 +119,7 @@ void CWeapon::Render_Weapon(const _matrix pParentMat)
 
 	////////////////////////////////////////
 	m_pCollider->Set_Collider(&m_pTransform->m_matWorld);
-	if (bAttack)
+	if (m_bAttack)
 		m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pTransform->m_matWorld);
 
 }

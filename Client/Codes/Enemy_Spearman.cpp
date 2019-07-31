@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Enemy_Swordman.h"
+#include "Enemy_Spearman.h"
 
 #include "Export_Function.h"
 
@@ -7,7 +7,7 @@
 #define _ANGLE 60.f
 #define  _RADIUS 100.f
 
-CEnemy_Swordman::CEnemy_Swordman(LPDIRECT3DDEVICE9 pDevice)
+CEnemy_Spearman::CEnemy_Spearman(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice),
 	m_pMesh(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr), m_pNaviMesh(nullptr),
 	m_AttackTime(0.0)
@@ -21,12 +21,12 @@ CEnemy_Swordman::CEnemy_Swordman(LPDIRECT3DDEVICE9 pDevice)
 	m_iPreAniSet = 0;
 }
 
-CEnemy_Swordman::~CEnemy_Swordman()
+CEnemy_Spearman::~CEnemy_Spearman()
 {
 
 }
 
-HRESULT CEnemy_Swordman::Ready_Object(_vec3 vPos)
+HRESULT CEnemy_Spearman::Ready_Object(_vec3 vPos)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
@@ -42,7 +42,7 @@ HRESULT CEnemy_Swordman::Ready_Object(_vec3 vPos)
 	return S_OK;
 }
 
-HRESULT CEnemy_Swordman::Late_Init()
+HRESULT CEnemy_Spearman::Late_Init()
 {
 	//m_pTransform->m_vAngle.y = 180.f;
 	//m_pTransform->m_vInfo[ENGINE::INFO_POS] = { 40.f, 0.1f, 3.f };
@@ -59,7 +59,7 @@ HRESULT CEnemy_Swordman::Late_Init()
 	return S_OK;
 }
 
-_int CEnemy_Swordman::Update_Object(const _double& TimeDelta)
+_int CEnemy_Spearman::Update_Object(const _double& TimeDelta)
 {
 	m_TimeDelta = TimeDelta;
 	ENGINE::CGameObject::Late_Init();
@@ -71,38 +71,33 @@ _int CEnemy_Swordman::Update_Object(const _double& TimeDelta)
 		m_pTransform->Get_Dead(TRUE);
 	}
 
-	if (m_bDead && m_iCurAniSet == 30 && m_pMesh->Is_AnimationSetEnd())
+	if (m_bDead && m_iCurAniSet == 31 && m_pMesh->Is_AnimationSetEnd())
 		return END_EVENT;
 
 	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_NONALPHA, this);
 	return NO_EVENT;
 }
 
-void CEnemy_Swordman::Late_Update_Object()
+void CEnemy_Spearman::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
 	m_fDist = m_pTransform->Get_TargetDistance(m_pTargetTransform);
 }
 
-void CEnemy_Swordman::Render_Object()
+void CEnemy_Spearman::Render_Object()
 {
-	m_bHit = m_pSphereColl->Get_HitState();
-	m_bKnockBack = m_pSphereColl->Get_KnockBackState();
-	m_bAirbone = m_pSphereColl->Get_AirboneState();
-
-
 	if (m_bSleep && !m_bDead)	//생성 후 기본 대기 루프
 	{
 		if (m_fDist < 10.f && m_iCurAniSet == 0) //대기 상태에서 플레이어 발견
 		{
-			Animate_FSM(16);	//사기 진작
+			Animate_FSM(46);	//사기 진작
 			m_pTransform->Fix_TargetLook(m_pTargetTransform, 20.f);
 
 		}
-		else if (m_iCurAniSet == 16 && m_pMesh->Is_AnimationSetEnd())	//사기 진작 종료, 행동 시작
+		else if (m_iCurAniSet == 46 && m_pMesh->Is_AnimationSetEnd())	//사기 진작 종료, 행동 시작
 		{
 			m_bSleep = FALSE;
-			Animate_FSM(0);
+			Animate_FSM(17);
 		}
 
 	}
@@ -111,7 +106,7 @@ void CEnemy_Swordman::Render_Object()
 		m_bAttack = FALSE;
 		m_pTransform->m_bAttackState = m_bAttack;
 		m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
-		Animate_FSM(0);
+		Animate_FSM(17);
 	}
 	else if (!m_bAttack && !m_bDead && m_fDist < 10.f)	//플레이어 추적 시작
 	{
@@ -128,7 +123,7 @@ void CEnemy_Swordman::Render_Object()
 		m_bAttack = FALSE;
 		m_pTransform->m_bAttackState = m_bAttack;
 		m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
-		Animate_FSM(30);
+		Animate_FSM(31);
 
 		if(m_AttackTime > 1.0 && m_AttackTime < 5.8 )
 			m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pTransform->Get_vLookDir() * m_TimeDelta * 0.25;
@@ -177,7 +172,7 @@ void CEnemy_Swordman::Render_Object()
 	//Render_ReSet();
 }
 
-void CEnemy_Swordman::Render_Set()
+void CEnemy_Spearman::Render_Set()
 {
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
 	//Alpha Test Begin
@@ -192,7 +187,7 @@ void CEnemy_Swordman::Render_Set()
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 }
 
-void CEnemy_Swordman::Render_ReSet()
+void CEnemy_Spearman::Render_ReSet()
 {
 	//Alpha Test End
 	m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
@@ -202,7 +197,7 @@ void CEnemy_Swordman::Render_ReSet()
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
-void CEnemy_Swordman::Render_BoneMatrix(const char* tBone)
+void CEnemy_Spearman::Render_BoneMatrix(const char* tBone)
 {
 	//if(nullptr == m_pBoneMatrix)
 	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName(tBone);
@@ -211,7 +206,7 @@ void CEnemy_Swordman::Render_BoneMatrix(const char* tBone)
 	//m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix);
 }
 
-void CEnemy_Swordman::Chase_Target(const _double& TimeDelta)
+void CEnemy_Spearman::Chase_Target(const _double& TimeDelta)
 {
 
 	//플레이어가 거리 내에 있으면 무적권 시야 고정
@@ -222,7 +217,7 @@ void CEnemy_Swordman::Chase_Target(const _double& TimeDelta)
 		_vec3 vRevDir = {};	//주변에 걸리적 거리는 놈 있으면 밀어내는 거리
 		Animate_FSM(1);
 
-		if (Check_EnemyColl(&vRevDir, L"Enemy_Swordman"))	//객체 별 충돌 체크
+		if (Check_EnemyColl(&vRevDir, L"Enemy_Spearman"))	//객체 별 충돌 체크
 			m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRevDir * _SPEED * TimeDelta;
 
 		//if(Check_EnemyColl(&vRevDir, L"Troll"))
@@ -237,7 +232,7 @@ void CEnemy_Swordman::Chase_Target(const _double& TimeDelta)
 		_vec3 vRevDir = {};	//주변에 걸리적 거리는 놈 있으면 밀어내는 거리
 		Animate_FSM(2);
 
-		if (Check_EnemyColl(&vRevDir, L"Enemy_Swordman"))	//객체 별 충돌 체크
+		if (Check_EnemyColl(&vRevDir, L"Enemy_Spearman"))	//객체 별 충돌 체크
 			m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRevDir * _SPEED * TimeDelta;
 
 		if(m_fDist > 1.75f)
@@ -251,7 +246,7 @@ void CEnemy_Swordman::Chase_Target(const _double& TimeDelta)
 				m_bAttack = TRUE;	//공격 시작
 				m_pTransform->m_bAttackState = m_bAttack;
 				m_AttackTime = 0.0;
-				Animate_FSM(0);
+				Animate_FSM(17);
 			}
 		}
 
@@ -259,16 +254,16 @@ void CEnemy_Swordman::Chase_Target(const _double& TimeDelta)
 
 }
 
-void CEnemy_Swordman::Attack_Target(const _double& TimeDelta)
+void CEnemy_Spearman::Attack_Target(const _double& TimeDelta)
 {
 
 	m_pTransform->Fix_TargetLook(m_pTargetTransform, 10.f);
 	
-	if (m_fDist < 1.25f && m_iCurAniSet == 2 || m_iCurAniSet == 0) // 거리가 됐네 공격
+	if (m_fDist < 1.25f && m_iCurAniSet == 2 || m_iCurAniSet == 17) // 거리가 됐네 공격
 	{
-		Animate_FSM(6);
+		Animate_FSM(9);
 	}
-	else if (m_iCurAniSet == 6 && !m_pMesh->Is_AnimationSetEnd())
+	else if (m_iCurAniSet == 9 && !m_pMesh->Is_AnimationSetEnd())
 	{
 		m_AttackTime += TimeDelta;
 					
@@ -302,21 +297,21 @@ void CEnemy_Swordman::Attack_Target(const _double& TimeDelta)
 		}
 
 	}
-	else if (m_iCurAniSet == 6 && m_pMesh->Is_AnimationSetEnd())
+	else if (m_iCurAniSet == 9 && m_pMesh->Is_AnimationSetEnd())
 	{
 		m_pTransform->m_bAttackState = FALSE;
 		m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
 
-		Animate_FSM(7);
+		Animate_FSM(10);
 		m_AttackTime = 0.0;
 	}
-	else if (m_iCurAniSet == 7 && m_pMesh->Is_AnimationSetEnd())
+	else if (m_iCurAniSet == 10 && m_pMesh->Is_AnimationSetEnd())
 	{
 		m_bAttack = FALSE;
 		m_bTwice = FALSE;
 
 		m_AttackTime = 0.0;
-		Animate_FSM(0);
+		Animate_FSM(17);
 		return;
 	}
 
@@ -330,14 +325,14 @@ void CEnemy_Swordman::Attack_Target(const _double& TimeDelta)
 		Animate_FSM(2);
 		m_pTransform->Stalk_Target(m_pTargetTransform, TimeDelta, 0.75f);
 		
-		if (Check_EnemyColl(&vRevDir, L"Enemy_Swordman"))	//객체 별 충돌 체크
+		if (Check_EnemyColl(&vRevDir, L"Enemy_Spearman"))	//객체 별 충돌 체크
 			m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRevDir * _SPEED * TimeDelta;
 	}
 
 
 }
 
-_bool CEnemy_Swordman::Check_EnemyColl(_vec3 * vRevDir, const _tchar* szTag)
+_bool CEnemy_Spearman::Check_EnemyColl(_vec3 * vRevDir, const _tchar* szTag)
 {
 	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
 
@@ -378,7 +373,7 @@ _bool CEnemy_Swordman::Check_EnemyColl(_vec3 * vRevDir, const _tchar* szTag)
 	return FALSE;
 }
 
-VOID CEnemy_Swordman::Animate_FSM(_uint iAniState)
+VOID CEnemy_Spearman::Animate_FSM(_uint iAniState)
 {
 	m_iCurAniSet = iAniState;
 
@@ -389,7 +384,7 @@ VOID CEnemy_Swordman::Animate_FSM(_uint iAniState)
 	}
 }
 
-HRESULT CEnemy_Swordman::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
+HRESULT CEnemy_Spearman::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
 {
 	if (nullptr == pEffect)
 		return E_FAIL;
@@ -410,7 +405,7 @@ HRESULT CEnemy_Swordman::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
 	return S_OK;
 }
 
-void CEnemy_Swordman::Get_WeaponMatrix(const char* tBone)
+void CEnemy_Spearman::Get_WeaponMatrix(const char* tBone)
 {
 	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName(tBone);
 
@@ -418,13 +413,13 @@ void CEnemy_Swordman::Get_WeaponMatrix(const char* tBone)
 }
 
 
-HRESULT CEnemy_Swordman::Add_Component()
+HRESULT CEnemy_Spearman::Add_Component()
 {
 
 	ENGINE::CComponent* pComponent = nullptr;
 	/////////INSERT COMPONENT/////////
 	pComponent = m_pMesh = dynamic_cast<ENGINE::CDynamicMesh*>
-		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Mesh_Enemy_Swordman"));
+		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Mesh_Enemy_Spearman"));
 	NULL_CHECK_RETURN(m_pMesh, E_FAIL);
 	m_MapComponent[ENGINE::COMP_DYNAMIC].emplace(L"Com_Mesh", pComponent);
 
@@ -461,8 +456,8 @@ HRESULT CEnemy_Swordman::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	ENGINE::UNITINFO tInfo =
-	{ FALSE, _vec3(0.f, 0.f, -100.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(90.f, 0.f, 0.f), 50.f };
-	pComponent = m_pWeapon = ENGINE::CWeapon::Create(m_pGraphicDev, m_pTransform, tInfo, L"Mesh_Enemy_Sword");
+	{ FALSE, _vec3(0.f, 0.f, -110.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(90.f, 20.f, 0.f), 60.f };
+	pComponent = m_pWeapon = ENGINE::CWeapon::Create(m_pGraphicDev, m_pTransform, tInfo, L"Mesh_Enemy_Spear");
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Weapon", pComponent);
 
@@ -470,9 +465,9 @@ HRESULT CEnemy_Swordman::Add_Component()
 	return S_OK;
 }
 
-CEnemy_Swordman * CEnemy_Swordman::Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos)
+CEnemy_Spearman * CEnemy_Spearman::Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos)
 {
-	CEnemy_Swordman* pInstance = new CEnemy_Swordman(pGraphicDev);
+	CEnemy_Spearman* pInstance = new CEnemy_Spearman(pGraphicDev);
 
 	if (FAILED(pInstance->Ready_Object(vPos)))
 		ENGINE::Safe_Release(pInstance);
@@ -480,7 +475,7 @@ CEnemy_Swordman * CEnemy_Swordman::Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 v
 	return pInstance;
 }
 
-void CEnemy_Swordman::Free()
+void CEnemy_Spearman::Free()
 {
 	ENGINE::CGameObject::Free();
 }
