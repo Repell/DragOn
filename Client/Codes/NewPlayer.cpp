@@ -678,7 +678,7 @@ _int CNewPlayer::Update_Object(const _double & TimeDelta)
 		else if (m_iKnockCnt >= 0 && m_iKnockCnt <= 2 && !m_pMesh->Is_AnimationSetEnd())	//경직 중 날아감
 		{
 			m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] += m_pSphereColl->Set_KnockBackDist(FALSE) * TimeDelta * 5.f;
-			m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pSphereColl->Set_KnockBackDist(FALSE) * TimeDelta * 5.f;
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pAdvance->Get_Transform()->Get_NewPlayerPos(_CAMDIST);
 			//m_pAdvance->Update_Component(TimeDelta);
 			//m_pTransform->Update_Component(TimeDelta);
 
@@ -997,9 +997,9 @@ _bool CNewPlayer::Check_DirectionCollision(_vec3* vRevDir)
 {
 	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
 
-	for (auto pList : pLayer->Get_MapObject(L"Troll"))
+	for (auto pList : pLayer->Get_MapObject(L"Enemy_Sword"))
 	{
-
+		
 		ENGINE::CTransform* pTrans = dynamic_cast<ENGINE::CTransform*>
 			(pList->Get_Component(L"Com_Transform", ENGINE::COMP_DYNAMIC));
 

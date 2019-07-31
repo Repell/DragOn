@@ -35,8 +35,8 @@ private:
 	void Render_ReSet();
 	void Render_BoneMatrix(const char* tBone);
 	void Chase_Target(const _double& TimeDelta);
-	void Attack_Target();
-	_bool Check_EnemyColl(_vec3* vRevDir);
+	void Attack_Target(const _double& TimeDelta);
+	_bool Check_EnemyColl(_vec3* vRevDir, const _tchar* szTag);
 
 private:
 	VOID Animate_FSM(_uint iAniState);
@@ -49,6 +49,7 @@ private:
 private:
 	//Key Input, Camera, NaviMesh
 	_bool m_bAttack;
+	_double m_AttackTime;
 	_float m_fDist;
 	_uint m_iCurAniSet;
 	_uint m_iPreAniSet;
@@ -57,6 +58,7 @@ private:
 	_bool m_bSleep;
 	_bool m_bFront;
 	_bool m_bDead;
+	_bool m_bTwice;
 
 private:
 	_double m_TimeDelta;

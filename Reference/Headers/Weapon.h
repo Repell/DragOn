@@ -27,13 +27,16 @@ public:
 
 private:
 	HRESULT Ready_Component(CTransform * pTarget, UNITINFO vInfo, const _tchar* szWeapon);
-	HRESULT Add_Component(_vec3 vPos, const _tchar* szWeapon);
+	HRESULT Add_Component(_vec3 vPos, const _tchar* szWeapon, _float fRadius);
 
 private:
 	//Shader
 	HRESULT SetUp_ConstantTable(LPD3DXEFFECT pEffect);
 	//Collision
+	void Check_PlayerColl(const _tchar* pObjTag);
 	void Check_EnemyColl(const _tchar* pObjTag);
+	void Reset_EnemyColl(const _tchar* pObjTag);
+	
 
 private:
 	LPDIRECT3DDEVICE9 m_pGraphicDev;
