@@ -12,6 +12,7 @@
 #include "Michael.h"
 #include "Player_Rider.h"
 #include "Troll.h"
+#include "Enemy_Swordman.h"
 //Static
 #include "StaticObj.h"
 #include "Sword.h"

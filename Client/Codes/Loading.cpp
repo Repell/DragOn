@@ -45,6 +45,16 @@ _uint CLoading::Loading_ForLogo()
 		L"Troll.X"),
 		E_FAIL);		//Troll
 
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Enemy_Swordman",
+		ENGINE::MESH_DYNAMIC,
+		L"../Bin/Resources/Mesh/DynamicMesh/Soldier_Sword/",
+		L"Soldier_Sword_Binary.X"),
+		E_FAIL);		//Enemy_Swordman
+
+
+
 	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
 	//	RESOURCE_LOGO,
 	//	L"Mesh_Rider",
@@ -69,6 +79,14 @@ _uint CLoading::Loading_ForLogo()
 		ENGINE::MESH_STATIC,
 		L"../Bin/Resources/Mesh/StaticMesh/Sword/",
 		L"Sword.X"),	
+		E_FAIL);
+
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Enemy_Sword",
+		ENGINE::MESH_STATIC,
+		L"../Bin/Resources/Mesh/StaticMesh/Enemy_Sword/",
+		L"Enemy_Sword.X"),
 		E_FAIL);
 
 	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,

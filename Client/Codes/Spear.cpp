@@ -69,7 +69,7 @@ void CSpear::Render_Object()
 
 	m_pMesh->Render_Meshes();
 
-	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pTransform->m_matWorld, _vec3(0.f, 0.f, -125.f));
+	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pTransform->m_matWorld);
 
 	//Render_ReSet();
 }
@@ -170,7 +170,7 @@ HRESULT CSpear::Add_Component()
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Renderer", pComponent);
 	
-	pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev, 40.f);
+	pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev, 40.f, _vec3(0.f, 0.f, -125.f));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider", pComponent);
 

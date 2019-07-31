@@ -1,13 +1,13 @@
 #include "stdafx.h"
-#include "Troll.h"
+#include "Enemy_Swordman.h"
 
 #include "Export_Function.h"
 
-#define _SPEED 2.f
+#define _SPEED 1.5f
 #define _ANGLE 60.f
-#define  _RADIUS 140.f
+#define  _RADIUS 100.f
 
-CTroll::CTroll(LPDIRECT3DDEVICE9 pDevice)
+CEnemy_Swordman::CEnemy_Swordman(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice),
 	m_pMesh(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr), m_pNaviMesh(nullptr)
 {
@@ -19,33 +19,31 @@ CTroll::CTroll(LPDIRECT3DDEVICE9 pDevice)
 	m_iPreAniSet = 0;
 }
 
-CTroll::~CTroll()
+CEnemy_Swordman::~CEnemy_Swordman()
 {
 
 }
 
-HRESULT CTroll::Ready_Object(_vec3 vPos)
+HRESULT CEnemy_Swordman::Ready_Object(_vec3 vPos)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
 	//m_pMesh->Set_AnimationSet(5);
 	//m_iCurAniSet = 5;
-	Animate_FSM(14);
+	Animate_FSM(0);
 
-	m_pNaviMesh->Set_CurrentIdx(3);
-	m_pTransform->m_vAngle.y = 0.f;
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = vPos;
+	m_pTransform->m_vScale = { 0.006f, 0.006f, 0.006f };
+	m_pSphereColl->Set_Scale(0.005f);
+	//m_pCollider->Set_Scale(0.005f);
 
 	return S_OK;
 }
 
-HRESULT CTroll::Late_Init()
+HRESULT CEnemy_Swordman::Late_Init()
 {
 	//m_pTransform->m_vAngle.y = 180.f;
-	m_pTransform->m_vScale = { 0.008f, 0.008f, 0.008f };
 	//m_pTransform->m_vInfo[ENGINE::INFO_POS] = { 40.f, 0.1f, 3.f };
-	m_pSphereColl->Set_Scale(0.007f);
-	m_pCollider->Set_Scale(0.007f);
 
 	m_pTargetTransform = dynamic_cast<ENGINE::CTransform*>
 		(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player", L"Com_Transform", ENGINE::COMP_DYNAMIC));
@@ -59,7 +57,7 @@ HRESULT CTroll::Late_Init()
 	return S_OK;
 }
 
-_int CTroll::Update_Object(const _double& TimeDelta)
+_int CEnemy_Swordman::Update_Object(const _double& TimeDelta)
 {
 	m_TimeDelta = TimeDelta;
 	ENGINE::CGameObject::Late_Init();
@@ -71,60 +69,87 @@ _int CTroll::Update_Object(const _double& TimeDelta)
 		m_pTransform->Get_Dead(TRUE);
 	}
 
-	if (m_bDead && m_iCurAniSet == 21 && m_pMesh->Is_AnimationSetEnd())
+	if (m_bDead && m_iCurAniSet == 30 && m_pMesh->Is_AnimationSetEnd())
 		return END_EVENT;
 
 	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_NONALPHA, this);
 	return NO_EVENT;
 }
 
-void CTroll::Late_Update_Object()
+void CEnemy_Swordman::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
 	m_fDist = m_pTransform->Get_TargetDistance(m_pTargetTransform);
 }
 
-void CTroll::Render_Object()
+void CEnemy_Swordman::Render_Object()
 {
 	//Render_Set();
+	Get_WeaponMatrix("R_Hand");
 
-	if (m_bSleep && !m_bDead)
+	//if (m_bSleep && !m_bDead)
+	//{
+	//	if (m_fDist < 10.f && m_iCurAniSet == 0)	//WakeUp
+	//		Animate_FSM(0);
+	//	else if (m_iCurAniSet == 0 && m_pMesh->Is_AnimationSetEnd())	//WakeUpEnd
+	//	{
+	//		m_pTransform->Fix_TargetLook(m_pTargetTransform, 20.f);
+	//		Animate_FSM(16);
+	//	}
+	//	else if (m_iCurAniSet == 16 && m_pMesh->Is_AnimationSetEnd())
+	//		m_bSleep = FALSE;
+	//}
+	//else if (!m_bDead)
+	//{
+	//	if (m_iCurAniSet != 7 && m_fDist < 10.f && !m_bAttack)
+	//		Chase_Target(m_TimeDelta);
+	//	else if (m_bAttack && m_fDist < 5.f)
+	//		Attack_Target();
+	//	else
+	//	{
+	//		m_bAttack = FALSE;
+	//		m_pTransform->m_bAttackState = m_bAttack;
+	//		Animate_FSM(0);
+	//	}
+	//}
+
+	if (m_bSleep && !m_bDead)	//생성 후 기본 대기 루프
 	{
-		if (m_fDist < 10.f && m_iCurAniSet == 14)	//WakeUp
-			Animate_FSM(15);
-		else if (m_iCurAniSet == 15 && m_pMesh->Is_AnimationSetEnd())	//WakeUpEnd
+		if (m_fDist < 10.f && m_iCurAniSet == 0) //대기 상태에서 플레이어 발견
 		{
+			Animate_FSM(16);	//사기 진작
 			m_pTransform->Fix_TargetLook(m_pTargetTransform, 20.f);
-			Animate_FSM(5);
+			
 		}
-		else if (m_iCurAniSet == 5 && m_pMesh->Is_AnimationSetEnd())
-			m_bSleep = FALSE;
-	}
-	else if(!m_bDead)
-	{
-		if (m_iCurAniSet != 8 && m_fDist < 10.f && !m_bAttack)
-			Chase_Target(m_TimeDelta);
-		else if (m_bAttack && m_fDist < 10.f)
-			Attack_Target();
-		else
+		else if (m_iCurAniSet == 16 && m_pMesh->Is_AnimationSetEnd())	//사기 진작 종료, 행동 시작
 		{
-			m_bAttack = FALSE;
-			m_pTransform->m_bAttackState = m_bAttack;
+			m_bSleep = FALSE;
 			Animate_FSM(0);
 		}
+
 	}
+	else if (!m_bAttack && !m_bDead)	//플레이어 추적 시작
+	{
+		if (m_fDist < 10.f && !m_bAttack)
+		{
+			Chase_Target(m_TimeDelta);
+		}
+
+
+	}
+
+
+
+
 
 	if (m_bDead)
 	{
 		m_bAttack = FALSE;
 		m_pTransform->m_bAttackState = m_bAttack;
-		Animate_FSM(21);
+		Animate_FSM(30);
 	}
 
-	if(m_iCurAniSet == 2)
-		m_pMesh->Play_AnimationSet(m_TimeDelta * 1.5);
-	else
-		m_pMesh->Play_AnimationSet(m_TimeDelta * 1.1);
+	m_pMesh->Play_AnimationSet(m_TimeDelta * 0.8);
 	/////////////////////////////////////////////
 	//m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 
@@ -151,10 +176,14 @@ void CTroll::Render_Object()
 
 	ENGINE::Safe_Release(pEffect);
 
-	if (m_bAttack && !m_bDead)
-		Render_BoneMatrix("L_IRON1");
-	if(!m_bDead)
+	//if (m_bAttack && !m_bDead)
+	m_pWeapon->Render_Weapon(m_pBoneMatrix);
+
+	if (!m_bDead)
 		m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld);
+	//if(m_bAttack)
+	//	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix);
+
 
 	//_tchar szStr[MAX_PATH] = L"";
 	//swprintf_s(szStr, L"AngleY : %3.2f", m_pTransform->m_vAngle.y);
@@ -164,7 +193,7 @@ void CTroll::Render_Object()
 	//Render_ReSet();
 }
 
-void CTroll::Render_Set()
+void CEnemy_Swordman::Render_Set()
 {
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
 	//Alpha Test Begin
@@ -179,7 +208,7 @@ void CTroll::Render_Set()
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 }
 
-void CTroll::Render_ReSet()
+void CEnemy_Swordman::Render_ReSet()
 {
 	//Alpha Test End
 	m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
@@ -189,46 +218,60 @@ void CTroll::Render_ReSet()
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
-void CTroll::Render_BoneMatrix(const char* tBone)
+void CEnemy_Swordman::Render_BoneMatrix(const char* tBone)
 {
 	//if(nullptr == m_pBoneMatrix)
 	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName(tBone);
 	m_pBoneMatrix = pFrame->combinedTransformMatrix * m_pTransform->m_matWorld;
 
-	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix);
+	//m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix);
 }
 
-void CTroll::Chase_Target(const _double& TimeDelta)
+void CEnemy_Swordman::Chase_Target(const _double& TimeDelta)
 {
 
 	_bool bColl = m_pSphereColl->Check_ComponentColl(m_pTargetSphereColl);
 	m_pTransform->Fix_TargetLook(m_pTargetTransform, 10.f);	//거리 반환, 반환값 안받아도상관없음
 	//m_bFront = m_pTransform->Check_TargetFront();
 
-	if (!m_bAttack && m_fDist < 4.f /*&& m_bFront */&& bColl)	//공격
+	if (!m_bAttack && m_fDist < 2.5f /*&& m_bFront */&& bColl)	//공격
 	{
-		Animate_FSM(8);
+		Animate_FSM(6);
 
 		m_bAttack = TRUE;
 		m_pTransform->m_bAttackState = m_bAttack;
+		m_pWeapon->Set_AttackState(m_bAttack, m_iCurAniSet, 2);
 	}
-	else	if (m_fDist < 10.f && !bColl && !m_bDead)	//추적
+	else	if (m_fDist < 4.f && !bColl && !m_bDead)	//근거리 추적
 	{
 		_vec3 vRevDir = {};
-			
+
+		if (Check_EnemyColl(&vRevDir))
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRevDir * 0.75f * TimeDelta;
+		else
+			m_pTransform->Stalk_Target(m_pTargetTransform, TimeDelta, 0.75f);
+
+		Animate_FSM(2);
+	}
+	else	if (m_fDist < 10.f && !bColl && !m_bDead)	//먼거리 추적
+	{
+		_vec3 vRevDir = {};
+
 		if (Check_EnemyColl(&vRevDir))
 			m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRevDir * _SPEED * TimeDelta;
 		else
 			m_pTransform->Stalk_Target(m_pTargetTransform, TimeDelta, _SPEED);
 
-		Animate_FSM(2);
+		Animate_FSM(1);
 	}
+
 
 }
 
-void CTroll::Attack_Target()
+void CEnemy_Swordman::Attack_Target()
 {
-	_bool bColl = m_pCollider->Check_ComponentColl(m_pTargetSphereColl);
+	/*_bool bColl = m_pCollider->Check_ComponentColl(m_pTargetSphereColl);*/
+	_bool bColl = m_pWeapon->Check_ComponentColl(m_pTargetSphereColl);
 
 	if (m_pTargetSphereColl->m_bInvisible)
 	{
@@ -236,10 +279,10 @@ void CTroll::Attack_Target()
 		m_pTransform->m_bAttackState = m_bAttack;
 		return;
 	}
-	
-	if (m_iCurAniSet == 8 && bColl && m_bAttack)
+
+	if (m_iCurAniSet == 6 && bColl && m_bAttack)
 	{
-		
+
 		if (m_pTargetSphereColl->m_bHit)
 		{
 			m_pTargetSphereColl->m_bKnockBack = TRUE;
@@ -251,35 +294,37 @@ void CTroll::Attack_Target()
 		else
 			m_pTargetSphereColl->m_bHit = TRUE;
 
-		if(!m_pTargetSphereColl->m_bInvisible)
+		if (!m_pTargetSphereColl->m_bInvisible)
 			m_pTargetSphereColl->Get_iHp(2);
 
-		Animate_FSM(9);
+		Animate_FSM(7);
 		//m_bAttack = FALSE;
 	}
 
-	if (m_iCurAniSet == 8 && m_pMesh->Is_AnimationSetEnd())
+	if (m_iCurAniSet == 7 && m_pMesh->Is_AnimationSetEnd() && m_bAttack)
 	{
 		m_bAttack = FALSE;
 		m_pTransform->m_bAttackState = m_bAttack;
-		Animate_FSM(9);
-	}
-	else if (m_iCurAniSet == 9 && m_pMesh->Is_AnimationSetEnd())
-	{
-		m_bAttack = FALSE;
-		m_pTransform->m_bAttackState = m_bAttack;
+		m_pWeapon->Set_AttackState(m_bAttack, m_iCurAniSet);
 		Animate_FSM(0);
 		return;
 	}
+	//else if (m_iCurAniSet == 9 && m_pMesh->Is_AnimationSetEnd())
+	//{
+	//	m_bAttack = FALSE;
+	//	m_pTransform->m_bAttackState = m_bAttack;
+	//	Animate_FSM(0);
+	//	return;
+	//}
 
-	
+
 }
 
-_bool CTroll::Check_EnemyColl(_vec3 * vRevDir)
+_bool CEnemy_Swordman::Check_EnemyColl(_vec3 * vRevDir)
 {
 	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
 
-	for (auto pList : pLayer->Get_MapObject(L"Troll"))
+	for (auto pList : pLayer->Get_MapObject(L"Enemy_Swordman"))
 	{
 		if (pList == this)
 			continue;
@@ -292,7 +337,7 @@ _bool CTroll::Check_EnemyColl(_vec3 * vRevDir)
 
 		ENGINE::CSphereColl* pSphere = dynamic_cast<ENGINE::CSphereColl*>
 			(pList->Get_Component(L"Com_SphereColl", ENGINE::COMP_STATIC));
-		
+
 		if (pSphere == nullptr)
 			return FALSE;
 
@@ -304,7 +349,7 @@ _bool CTroll::Check_EnemyColl(_vec3 * vRevDir)
 			_vec3 vTargetRevDir = pTrans->Get_TargetReverseDir(m_pTransform)  * 0.05f;
 			vTargetRevDir.y = 0.f;
 
-			if(pTrans->m_bAttackState == FALSE)
+			if (pTrans->m_bAttackState == FALSE)
 				pTrans->m_vInfo[ENGINE::INFO_POS] += vTargetRevDir;
 
 			return TRUE;
@@ -316,7 +361,7 @@ _bool CTroll::Check_EnemyColl(_vec3 * vRevDir)
 	return FALSE;
 }
 
-VOID CTroll::Animate_FSM(_uint iAniState)
+VOID CEnemy_Swordman::Animate_FSM(_uint iAniState)
 {
 	m_iCurAniSet = iAniState;
 
@@ -327,7 +372,7 @@ VOID CTroll::Animate_FSM(_uint iAniState)
 	}
 }
 
-HRESULT CTroll::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
+HRESULT CEnemy_Swordman::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
 {
 	if (nullptr == pEffect)
 		return E_FAIL;
@@ -348,14 +393,21 @@ HRESULT CTroll::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
 	return S_OK;
 }
 
+void CEnemy_Swordman::Get_WeaponMatrix(const char* tBone)
+{
+	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName(tBone);
 
-HRESULT CTroll::Add_Component()
+	m_pBoneMatrix = pFrame->combinedTransformMatrix * m_pTransform->m_matWorld;
+}
+
+
+HRESULT CEnemy_Swordman::Add_Component()
 {
 
 	ENGINE::CComponent* pComponent = nullptr;
 	/////////INSERT COMPONENT/////////
 	pComponent = m_pMesh = dynamic_cast<ENGINE::CDynamicMesh*>
-		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Mesh_Troll"));
+		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Mesh_Enemy_Swordman"));
 	NULL_CHECK_RETURN(m_pMesh, E_FAIL);
 	m_MapComponent[ENGINE::COMP_DYNAMIC].emplace(L"Com_Mesh", pComponent);
 
@@ -377,9 +429,9 @@ HRESULT CTroll::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_NaviMesh", pComponent);
 
 	//Collider
-	pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev, 120.f, _vec3(0.f, 0.f, 0.f));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider", pComponent);
+	//pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev, 50.f, _vec3(0.f, 0.f, -100.f));
+	//NULL_CHECK_RETURN(pComponent, E_FAIL);
+	//m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider", pComponent);
 
 	//Sphere Collider
 	pComponent = m_pSphereColl = ENGINE::CSphereColl::Create(m_pGraphicDev, _RADIUS, 10);
@@ -391,13 +443,19 @@ HRESULT CTroll::Add_Component()
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
+	ENGINE::UNITINFO tInfo =
+	{ FALSE, _vec3(0.f, 0.f, -100.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(90.f, 0.f, 0.f), 100.f };
+	pComponent = m_pWeapon = ENGINE::CWeapon::Create(m_pGraphicDev, m_pTransform, tInfo, L"Mesh_Enemy_Sword");
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Weapon", pComponent);
+
 	////////////////////////////
 	return S_OK;
 }
 
-CTroll * CTroll::Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos)
+CEnemy_Swordman * CEnemy_Swordman::Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos)
 {
-	CTroll* pInstance = new CTroll(pGraphicDev);
+	CEnemy_Swordman* pInstance = new CEnemy_Swordman(pGraphicDev);
 
 	if (FAILED(pInstance->Ready_Object(vPos)))
 		ENGINE::Safe_Release(pInstance);
@@ -405,7 +463,7 @@ CTroll * CTroll::Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos)
 	return pInstance;
 }
 
-void CTroll::Free()
+void CEnemy_Swordman::Free()
 {
 	ENGINE::CGameObject::Free();
 }

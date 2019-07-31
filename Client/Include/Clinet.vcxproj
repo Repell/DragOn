@@ -171,6 +171,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Codes\Effect_Tex.h" />
+    <ClInclude Include="..\Codes\Enemy_Swordman.h" />
     <ClInclude Include="..\Codes\Michael.h" />
     <ClInclude Include="..\Codes\NewPlayer.h" />
     <ClInclude Include="..\Codes\Player.h" />
@@ -203,6 +204,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Effect_Tex.cpp" />
+    <ClCompile Include="..\Codes\Enemy_Swordman.cpp" />
     <ClCompile Include="..\Codes\Michael.cpp" />
     <ClCompile Include="..\Codes\NewPlayer.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />

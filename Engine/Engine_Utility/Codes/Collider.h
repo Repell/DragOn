@@ -18,17 +18,19 @@ public:
 	const _matrix*	Get_ColWorld(void) { return &m_matColWorld; }
 	_float Get_Radius();
 	void Set_Scale(_float fScale);
+	void Set_Collider(const _matrix* pCollMatrix);
 
 public:
 	HRESULT Ready_Collider(const _vec3* pPos, const _ulong& dwNumVtx, const _ulong& dwStride, _float fRadius);
-	HRESULT Ready_Collider_Sphere(_float fRadius);
-	void Render_Collider(COLLTYPE eType, const _matrix* pCollMatrix, _vec3 CollPos);
+	HRESULT Ready_Collider_Sphere(_float fRadius, _vec3 vCollPos);
+	void Render_Collider(COLLTYPE eType, const _matrix* pCollMatrix);
 
 	_bool Check_ComponentColl(CSphereColl* pSphere);
 
 private:
 	_vec3 m_vMin;
 	_vec3 m_vMax;
+	_vec3 m_vCollPos;
 	_matrix				m_matColWorld;
 	_float m_fRadius;
 	_float m_fScale;
@@ -43,7 +45,7 @@ private:
 	LPD3DXMESH m_pMesh;
 
 public:
-	static CCollider* Create(LPDIRECT3DDEVICE9 pDevice, _float fRadius);
+	static CCollider* Create(LPDIRECT3DDEVICE9 pDevice, _float fRadius, _vec3 vCollPos);
 	virtual void Free();
 
 };

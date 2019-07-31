@@ -77,7 +77,7 @@ void CMichael::Render_Object()
 
 	m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld);
 	Find_BoneMatrix();
-	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix, _vec3(0.f, 1.5f, 0.f));
+	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix);
 
 	//Render_ReSet();
 }
@@ -186,7 +186,7 @@ HRESULT CMichael::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_NaviMesh", pComponent);
 
 	//Collider
-	pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev, 80.f);
+	pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev, 80.f, _vec3(0.f, 1.5f, 0.f));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider", pComponent);
 

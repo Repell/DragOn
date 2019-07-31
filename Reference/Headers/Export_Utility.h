@@ -10,6 +10,7 @@
 #include "Calculator.h"
 #include "ProtoTypeMgr.h"
 #include "AdvanceCamera.h"
+#include "Weapon.h"
 
 #include "ResourcesMgr.h"
 

@@ -157,6 +157,18 @@ namespace ENGINE
 
 	}D3DXMESHCONTAINER_DERIVED;
 
+	typedef struct tagUnitInfo
+	{
+		_bool m_bPlayer;
+		_vec3 m_vPos;
+		_vec3 m_vScale;
+		_vec3 m_vAngle;
+		_float m_fRadius;
+
+	}UNITINFO;
+
 }
+
+
 
 #endif // Engine_Struct_h__

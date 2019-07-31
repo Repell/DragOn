@@ -14,6 +14,7 @@ namespace ENGINE
 	class CRenderer;
 	class CAdvanceCamera;
 	class CShader;
+	class CWeapon;
 }
 
 class CNewPlayer : public ENGINE::CGameObject
@@ -102,7 +103,7 @@ private:
 private:
 	//Shader
 	HRESULT SetUp_ConstantTable(LPD3DXEFFECT pEffect);
-
+	void Get_WeaponMatrix();
 
 	//Attack Func Old
 	void Attack_Func(const _double& TimeDelta);
@@ -117,14 +118,15 @@ private:
 	ENGINE::CRenderer* m_pRenderer;
 	ENGINE::CAdvanceCamera* m_pAdvance;
 	ENGINE::CShader*				m_pShader;
-	CSword*			m_pSword;
+	ENGINE::CWeapon*				m_pWeapon;
+	
+	//CSword*			m_pSword;
 	
 private:
 	//Animate State
 	_bool m_bAnimate;
 	_uint m_iCurAniState;
-	_uint m_iPreAniState;
-	
+	_uint m_iPreAniState;	
 
 	//State 
 	PLAYERSTATE m_ePlayerState;
@@ -168,6 +170,9 @@ private:
 	_bool m_bHit;
 	_bool m_bKnockback;
 	_double m_RigdTime;
+
+	//Weapon
+	_matrix m_WeaponMat;
 
 public:
 	static CNewPlayer* Create(LPDIRECT3DDEVICE9 pGraphicDev);

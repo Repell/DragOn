@@ -25,6 +25,15 @@ void CCollider::Set_Scale(_float fScale)
 	m_fScale = fScale;
 }
 
+void CCollider::Set_Collider(const _matrix * pCollMatrix)
+{
+	_matrix matRevolve;
+	D3DXMatrixIdentity(&matRevolve);
+	D3DXMatrixTranslation(&matRevolve, m_vCollPos.x, m_vCollPos.y, m_vCollPos.z);	// 로컬 상태의 공전매트릭스(줄어든 스케일만큼 값이 커야함)
+
+	m_matColWorld = matRevolve * *pCollMatrix;		//공전, 부모
+}
+
 HRESULT CCollider::Ready_Collider(const _vec3 * pPos, const _ulong & dwNumVtx, const _ulong & dwStride, _float fRadius)
 {
 	D3DXComputeBoundingBox(pPos, dwNumVtx, sizeof(_vec3), &m_vMin, &m_vMax);	
@@ -150,16 +159,16 @@ HRESULT CCollider::Ready_Collider(const _vec3 * pPos, const _ulong & dwNumVtx, c
 
 #endif
 
-	Ready_Collider_Sphere(fRadius);
+	Ready_Collider_Sphere(fRadius, m_vCollPos);
 
 	return S_OK;
 }
 
-void CCollider::Render_Collider(COLLTYPE eType, const _matrix * pCollMatrix, _vec3 CollPos)
+void CCollider::Render_Collider(COLLTYPE eType, const _matrix * pCollMatrix)
 {
 	_matrix matRevolve;	
 	D3DXMatrixIdentity(&matRevolve);
-	D3DXMatrixTranslation(&matRevolve, CollPos.x, CollPos.y, CollPos.z);	// 로컬 상태의 공전매트릭스(줄어든 스케일만큼 값이 커야함)
+	D3DXMatrixTranslation(&matRevolve, m_vCollPos.x, m_vCollPos.y, m_vCollPos.z);	// 로컬 상태의 공전매트릭스(줄어든 스케일만큼 값이 커야함)
 	
 	m_matColWorld = matRevolve * *pCollMatrix;		//공전, 부모
 	
@@ -201,7 +210,7 @@ _bool CCollider::Check_ComponentColl(CSphereColl * pSphere)
 	return FALSE;
 }
 
-HRESULT CCollider::Ready_Collider_Sphere(_float fRadius)
+HRESULT CCollider::Ready_Collider_Sphere(_float fRadius, _vec3 vCollPos)
 {
 	//D3DXComputeBoundingSphere(pPos, dwNumVtx, sizeof(_vec3), &m_vCenter, &m_fRadius);
 
@@ -215,15 +224,16 @@ HRESULT CCollider::Ready_Collider_Sphere(_float fRadius)
 	pMesh->CloneMeshFVF(D3DXMESH_SYSTEMMEM, ENGINE::VTXFVF_SPHERE, m_pGraphicDev, &m_pMesh);
 	pMesh->Release();
 		
+	m_vCollPos = vCollPos;
 
 	return S_OK;
 }
 
-CCollider * CCollider::Create(LPDIRECT3DDEVICE9 pDevice, _float fRadius)
+CCollider * CCollider::Create(LPDIRECT3DDEVICE9 pDevice, _float fRadius, _vec3 vCollPos)
 {
 	CCollider* pInstance = new CCollider(pDevice);
 
-	if (FAILED(pInstance->Ready_Collider_Sphere(fRadius)))
+	if (FAILED(pInstance->Ready_Collider_Sphere(fRadius, vCollPos)))
 		Safe_Release(pInstance);
 
 	return pInstance;

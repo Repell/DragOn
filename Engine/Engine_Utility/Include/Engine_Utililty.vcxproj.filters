@@ -40,15 +40,6 @@
     <Filter Include="00.Utility\02.SuperClass\02.Component\03.Calculator">
       <UniqueIdentifier>{20235ffd-e2f6-4ab9-9018-261819e42c57}</UniqueIdentifier>
     </Filter>
-    <Filter Include="00.Utility\03.Manager">
-      <UniqueIdentifier>{a232c7d9-1288-4cca-a305-2bcfc8d35c79}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00.Utility\03.Manager\00.LightMgr">
-      <UniqueIdentifier>{035ac916-e95e-4218-805d-b5a1f76cd691}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00.Utility\03.Manager\01.ProtoTypeMgr">
-      <UniqueIdentifier>{1e503639-ce13-4499-bd72-a3c4920d2e22}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Resources\00.Resources">
       <UniqueIdentifier>{f1ad9cce-6426-4675-afbd-87854fa8eea8}</UniqueIdentifier>
     </Filter>
@@ -135,6 +126,18 @@
     </Filter>
     <Filter Include="02.SubClass\01.Shader\01. fX">
       <UniqueIdentifier>{39a43a88-6a97-4856-bf83-0c2009e5812d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\02.SuperClass\02.Component\03.Manager">
+      <UniqueIdentifier>{a232c7d9-1288-4cca-a305-2bcfc8d35c79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\02.SuperClass\02.Component\03.Manager\00.LightMgr">
+      <UniqueIdentifier>{035ac916-e95e-4218-805d-b5a1f76cd691}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\02.SuperClass\02.Component\03.Manager\01.ProtoTypeMgr">
+      <UniqueIdentifier>{1e503639-ce13-4499-bd72-a3c4920d2e22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Utility\02.SuperClass\02.Component\05.Weapon">
+      <UniqueIdentifier>{92bdfd5d-e14c-4325-b398-e6a82d89bf68}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -255,6 +258,9 @@
     <ClInclude Include="..\Codes\AdvanceCamera.h">
       <Filter>00.Utility\02.SuperClass\02.Component\04.AdvanceCamera</Filter>
     </ClInclude>
+    <ClInclude Include="..\Codes\Weapon.h">
+      <Filter>00.Utility\02.SuperClass\02.Component\05.Weapon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Management.cpp">
@@ -358,6 +364,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\AdvanceCamera.cpp">
       <Filter>00.Utility\02.SuperClass\02.Component\04.AdvanceCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Weapon.cpp">
+      <Filter>00.Utility\02.SuperClass\02.Component\05.Weapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

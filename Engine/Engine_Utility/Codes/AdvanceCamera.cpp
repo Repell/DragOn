@@ -58,11 +58,13 @@ HRESULT CAdvanceCamera::Ready_Component(ENGINE::CTransform * pTarget)
 	NULL_CHECK_RETURN(m_pTransform, E_FAIL);
 
 	m_pTransform->m_vScale = {1.f, 1.f, 1.f };
-	m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pTarget->Get_vInfoPos(ENGINE::INFO_POS) + _vec3(0.f, 1.f, 0.f);
+	m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pTarget->Get_vInfoPos(ENGINE::INFO_POS);
 	m_pTransform->Update_Component(0.f);
 		
 	m_vAt = m_pTarget->m_vInfo[ENGINE::INFO_POS];
+	m_vAt.y += 1.f;
 	m_vEye = (m_vAt - m_pTransform->m_vInfo[ENGINE::INFO_LOOK] * m_fCamDist);
+	m_vEye.y += 2.f;
 	m_vUp = { 0.f, 1.f, 0.f };
 
 	Make_Camera();
