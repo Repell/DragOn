@@ -44,6 +44,7 @@ public:
 	_vec3 Stalk_TargetDir(CTransform* pTransform, const _double& fTime, const _float fSpeed);
 	_float Fix_TargetLookAngleY(CTransform* pTarget, _float fSearchDist);
 	_float Fix_TargetLook(CTransform* pTarget, _float fSearchDist);
+	_float Fix_TargetRevLook(CTransform* pTarget, _float fSearchDist);
 
 	_matrix* Compute_LockTarget(const _vec3* pTargetPos);
 	void Chase_Target(const _vec3* pTarget, const _float& fSpeed);

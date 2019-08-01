@@ -23,8 +23,8 @@ CNewPlayer::CNewPlayer(LPDIRECT3DDEVICE9 pDevice)
 	m_bHit(FALSE), m_RigdTime(0.0),
 	m_AttackTime(0.0)
 {
-	m_fGravity = 0.4f;
-	m_fJumpPower = 0.28f;
+	m_fGravity = 0.9f;
+	m_fJumpPower = 0.48f;
 	m_Delay = 0.0;
 
 }
@@ -106,7 +106,7 @@ HRESULT CNewPlayer::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	ENGINE::UNITINFO tInfo = 
-	{ TRUE, _vec3(0.f, 0.f, -90.f), _vec3{0.01f, 1.f, 1.f }, _vec3(90.f, 20.f, 20.f), 50.f};
+	{ TRUE, _vec3(0.f, 0.f, -90.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(90.f, 20.f, 20.f), _vec3(0.f, 0.f, 0.f), 50.f };
 	pComponent = m_pWeapon = ENGINE::CWeapon::Create(m_pGraphicDev, m_pTransform, tInfo, L"Mesh_Sword");
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Weapon", pComponent);
@@ -636,8 +636,7 @@ void CNewPlayer::Late_Update_Object()
 
 void CNewPlayer::Render_Object()
 {
-
-
+	
 	if (nullptr == m_pShader)
 		return;
 
@@ -667,7 +666,7 @@ void CNewPlayer::Render_Object()
 	///////////////////////////////////
 	Get_WeaponMatrix();
 	m_pWeapon->Render_Weapon(&m_WeaponMat);
-	m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld);
+	m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld, 0.75f);
 
 
 	///////////////////////////////////

@@ -8,20 +8,24 @@
 #define  _RADIUS 100.f
 
 //STATE DEFINE
-#define _IDLE								0
+#define _IDLE								42
 #define _CHASE_RUN					1
 #define _CHASE_WALK				2
-#define _ATTACK_START			6
-#define	_ATTACK_END				7
-#define _AWAKEN						16
-#define _HIT									18
-#define _AIRBORNE						20
-#define _KnockBack_A				26
-#define _KnockBack_B				27
-#define _KnockBack_C				28
-#define _KnockBack_D				29
-#define  _DEAD							30
-#define _RISEUP							35	//기상
+#define _ATTACK_START			5
+#define	_ATTACK_END				6
+#define _ATTACK2_START		8
+#define	_ATTACK2_END				9
+#define _AWAKEN						33
+#define _HIT									14
+#define _AIRBORNE						17
+#define _KnockBack_A				23
+#define _KnockBack_B				24
+#define _KnockBack_C				25
+#define _KnockBack_D				26
+#define  _DEAD							27
+#define _RISEUP							32	//기상
+//Unique State
+#define  _FALLBACK						34
 
 
 CEnemy_Bowman::CEnemy_Bowman(LPDIRECT3DDEVICE9 pDevice)
@@ -142,11 +146,11 @@ void CEnemy_Bowman::Render_Object()
 	ENGINE::Safe_Release(pEffect);
 
 	////////////////////////////////////////	Shader End
-	Get_WeaponMatrix("R_Hand");
+	Get_WeaponMatrix("L_Hand");
 	m_pWeapon->Render_Weapon(&m_pBoneMatrix);
 
 	if (!m_bDead)
-		m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld);
+		m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld, 0.75f);
 
 	////////////////////////////////////////
 
@@ -155,32 +159,6 @@ void CEnemy_Bowman::Render_Object()
 	////swprintf_s(szStr, L"Monster HP: %d", m_pSphereColl->Get_iHp(0));
 	//ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 10.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 }
-
-//void CEnemy_Swordman::Render_Set()
-//{
-//	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-//	//Alpha Test Begin
-//	m_pGraphicDev->SetRenderState(D3DRS_ALPHAREF, 0x000000ff);
-//	m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-//	m_pGraphicDev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
-//
-//	//Render State
-//	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-//
-//	//SetTransform
-//	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
-//}
-//
-//void CEnemy_Swordman::Render_ReSet()
-//{
-//	//Alpha Test End
-//	m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-//	//FillMode :: Default == D3DFILL_SOLID
-//	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-//
-//	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
-//}
-
 
 void CEnemy_Bowman::Check_EnemyGroup()
 {
@@ -298,8 +276,11 @@ VOID CEnemy_Bowman::Set_Behavior_Progress()
 		//State Airbone
 		else if (m_bAirborne && !m_bKnockBack)	//에어본 공격받음
 			AiState = &CEnemy_Bowman::State_Airborne;
+		//State Fallback
+		else if (!m_bAttack && !m_bHit && m_fDist < 5.0f)	//플레이어가 너무 가깝당!
+			AiState = &CEnemy_Bowman::State_Fallback;
 		//State Chase
-		else if (!m_bAttack && !m_bHit && m_fDist < 10.f)	//플레이어 추적 시작
+		else if (!m_bAttack && !m_bHit && m_fDist < 12.f)	//플레이어 추적 시작
 			AiState = &CEnemy_Bowman::State_Chase;
 		//State Attack
 		else if (m_bAttack && !m_bHit)		//플레이어 공격 쌉가능
@@ -353,7 +334,7 @@ HRESULT CEnemy_Bowman::Add_Component()
 	ENGINE::CComponent* pComponent = nullptr;
 	/////////INSERT COMPONENT/////////
 	pComponent = m_pMesh = dynamic_cast<ENGINE::CDynamicMesh*>
-		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Mesh_Enemy_Swordman"));
+		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Mesh_Enemy_Bowman"));
 	NULL_CHECK_RETURN(m_pMesh, E_FAIL);
 	m_MapComponent[ENGINE::COMP_DYNAMIC].emplace(L"Com_Mesh", pComponent);
 
@@ -390,8 +371,8 @@ HRESULT CEnemy_Bowman::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	ENGINE::UNITINFO tInfo =
-	{ FALSE, _vec3(0.f, 0.f, -100.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(90.f, 0.f, 0.f), 50.f };
-	pComponent = m_pWeapon = ENGINE::CWeapon::Create(m_pGraphicDev, m_pTransform, tInfo, L"Mesh_Enemy_Sword");
+	{ FALSE, _vec3(0.f, 0.f, 0.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(90.f, 0.f, 0.f), _vec3(0.f, 0.f, 0.f), 20.f};
+	pComponent = m_pWeapon = ENGINE::CWeapon::Create(m_pGraphicDev, m_pTransform, tInfo, L"Mesh_Enemy_Bow");
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Weapon", pComponent);
 
@@ -516,13 +497,25 @@ VOID CEnemy_Bowman::State_Idle()
 
 }
 
+VOID CEnemy_Bowman::State_Fallback()
+{
+	Animate_FSM(_CHASE_RUN);
+	_vec3 vPos = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
+	_vec3 vRevDir = m_pTransform->Get_TargetReverseDir(m_pTargetTransform);
+	
+	m_pTransform->Fix_TargetRevLook(m_pTargetTransform, 20.f);
+	
+	m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vRevDir * _SPEED * m_TimeDelta));
+	
+}
+
 VOID CEnemy_Bowman::State_Chase()
 {
 
 	//플레이어가 거리 내에 있으면 무적권 시야 고정
-	m_pTransform->Fix_TargetLook(m_pTargetTransform, 10.f);
+	m_pTransform->Fix_TargetLook(m_pTargetTransform, 12.f);
 
-	if (m_fDist > 3.f) //플레이어가 멀리 있음, 달려가 추적
+	if (m_fDist > 8.f) //플레이어가 멀리 있음, 달려가 추적
 	{
 		_vec3 vRevDir = { 0.f, 0.f, 0.f };	//주변에 걸리적 거리는 놈 있으면 밀어내는 거리
 		Animate_FSM(_CHASE_RUN);
@@ -533,16 +526,16 @@ VOID CEnemy_Bowman::State_Chase()
 
 		m_AttackTime = 0.0;
 	}
-	else if (m_fDist < 3.f)
+	else if (m_fDist < 8.f)
 	{
 		_vec3 vRevDir = { 0.f, 0.f, 0.f };	//주변에 걸리적 거리는 놈 있으면 밀어내는 거리
 		Animate_FSM(_CHASE_WALK);
 
 		Check_EnemyGroup();
 
-		if (m_fDist > 1.75f)
+		if (m_fDist > 6.f)
 			m_pTransform->Stalk_Target(m_pTargetTransform, m_TimeDelta, 0.75f);
-		else if (m_fDist < 1.75f)	//플레이어와 거리 유지
+		else if (m_fDist < 6.f)	//플레이어와 거리 유지
 		{
 			m_AttackTime += m_TimeDelta;	//공격 시도전 대기 시간
 
@@ -564,41 +557,34 @@ VOID CEnemy_Bowman::State_Attack()
 
 	m_pTransform->Fix_TargetLook(m_pTargetTransform, 10.f);
 
-	if (m_fDist < 1.25f && m_iCurAniSet == _CHASE_WALK || m_iCurAniSet == _IDLE) // 거리가 됐네 공격
+	if (m_fDist < 5.5f && m_iCurAniSet == _CHASE_WALK || m_iCurAniSet == _IDLE) // 거리가 됐네 공격
 	{
-		Animate_FSM(_ATTACK_START);
+		//if(m_pTargetTransform->Get_vInfoPos(ENGINE::INFO_POS).y > 2.f)
+		//	Animate_FSM(_ATTACK2_START);
+		//else
+			Animate_FSM(_ATTACK_START);
 	}
-	else if (m_iCurAniSet == _ATTACK_START && !m_pMesh->Is_AnimationSetEnd())
+	else if (!m_pMesh->Is_AnimationSetEnd() && m_iCurAniSet == _ATTACK_START)
 	{
+		//m_AccTime = 2.0;
 		m_AttackTime += m_TimeDelta;
 
-		if (m_pWeapon->Check_ComponentColl(m_pTargetSphereColl) && m_AttackTime > 0.5)
+		if (m_AttackTime > 2.8 && !m_bTwice)
 		{
 			m_pWeapon->Set_AttackState(m_bAttack, m_iCurAniSet, 2);
 
-			if (m_pTargetSphereColl->m_bHit && !m_bTwice)
-			{
-				m_pTargetSphereColl->m_bKnockBack = TRUE;
-				_vec3 vKnockDir = m_pTargetSphereColl->Get_CollPos() - m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
-				vKnockDir.y = 0.f;
-				D3DXVec3Normalize(&vKnockDir, &vKnockDir);
-				m_pTargetSphereColl->Set_KnockBackDist(TRUE, vKnockDir);
-				m_bTwice = TRUE;
-			}
-			if (!m_bTwice)
-			{
-				m_pTargetSphereColl->m_bHit = TRUE;
-				m_bTwice = TRUE;
-			}
-
-			if (!m_pTargetSphereColl->m_bInvisible)
-				m_pTargetSphereColl->Get_iHp(2);
-
+			ENGINE::UNITINFO tInfo =
+			{FALSE, m_pTransform->Get_vInfoPos(ENGINE::INFO_POS), _vec3(0.003f, 0.003f, 0.003f),m_pTransform->m_vAngle, m_pTransform->Get_vInfoPos(ENGINE::INFO_LOOK),  35.f};
+			CGameObject* pObject = CEnemy_Arrow::Create(m_pGraphicDev, tInfo);
+			ENGINE::Get_Management()->Add_GameObject(ENGINE::CLayer::OBJECT, L"Enemy_Arrow", pObject);
+			
+			m_bTwice = TRUE;
 		}
 
 	}
-	else if (m_iCurAniSet == _ATTACK_START && m_pMesh->Is_AnimationSetEnd())
+	else if (m_pMesh->Is_AnimationSetEnd() && m_iCurAniSet == _ATTACK_START)
 	{
+		m_AccTime = 1.0;
 		m_pTransform->m_bAttackState = FALSE;
 		m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
 
@@ -615,7 +601,7 @@ VOID CEnemy_Bowman::State_Attack()
 		return;
 	}
 
-	if (m_fDist > 1.25f && !m_bTwice)	//공격 준비됐는데 거리가 좀 머네
+	if (m_fDist > 5.5f && !m_bTwice)	//공격 준비됐는데 거리가 좀 머네
 	{
 		_vec3 vRevDir = { 0.f, 0.f, 0.f };
 

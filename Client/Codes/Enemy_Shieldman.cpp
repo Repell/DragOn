@@ -106,7 +106,7 @@ HRESULT CEnemy_Shieldman::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	ENGINE::UNITINFO tInfo =
-	{ FALSE, _vec3(0.f, 0.f, 50.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(0.f, -90.f, 180.f), 60.f };
+	{ FALSE, _vec3(0.f, 0.f, 50.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(0.f, -90.f, 180.f), _vec3(0.f, 0.f, 0.f), 60.f};
 	pComponent = m_pWeapon = ENGINE::CWeapon::Create(m_pGraphicDev, m_pTransform, tInfo, L"Mesh_Enemy_Shield");
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Weapon", pComponent);
@@ -190,7 +190,7 @@ void CEnemy_Shieldman::Render_Object()
 	m_pWeapon->Render_Weapon(&m_pBoneMatrix);
 
 	if (!m_bDead)
-		m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld);
+		m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld, 0.75f);
 
 	////////////////////////////////////////
 
