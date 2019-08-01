@@ -18,6 +18,7 @@ private:
 
 public:
 	void Set_AttackState(_bool bState, _uint iCurAni, _uint iCombo = 0, _uint iPower = 0);
+	void Set_ColliderScale(_float fScale);
 	_bool Check_ComponentColl(CSphereColl* pSphere);
 
 public:

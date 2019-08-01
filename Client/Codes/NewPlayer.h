@@ -67,14 +67,9 @@ private:
 	void Render_Set();
 	void Render_ReSet();
 private:
-	// OLD FUNC
 	//Mouse Func OLD
 	_vec3 MouseFunc();
-	_bool Key_Check_Func(const _double& TimeDelta);
-	//Key Check Move Func  OLD
-	void Key_ChecknMoveState(const _double& TimeDelta);
 	
-	////////////////////////////////
 	//Advance Key Check Func
 	void Key_Check_Advance(const _double& TimeDelta);
 	void Update_PlayerDir(const _double& TimeDelta);
@@ -100,6 +95,18 @@ private:
 	//Animate Func
 	VOID Animate_FSM(_uint iAniState);
 	VOID Animate_Quick(_uint iAniState);
+
+private: //Func Pointer
+		 //Set Behavior
+	VOID Set_Behavior_Progress(const _double & TimeDelta);
+
+	//typedef VOID(CNewPlayer::*BEHAVIOR)();
+	//BEHAVIOR m_State;
+
+	VOID State_Hit(const _double& TimeDelta);
+	VOID State_KnockBack(const _double& TimeDelta);
+
+
 private:
 	//Shader
 	HRESULT SetUp_ConstantTable(LPD3DXEFFECT pEffect);
@@ -108,8 +115,8 @@ private:
 	//Attack Func Old
 	void Attack_Func(const _double& TimeDelta);
 
-	
-		
+	_vec3 vSibal = {};
+			
 private:
 	ENGINE::CTransform*	m_pTransform;
 	ENGINE::CNaviMesh*		m_pNaviMesh;
@@ -119,8 +126,6 @@ private:
 	ENGINE::CAdvanceCamera* m_pAdvance;
 	ENGINE::CShader*				m_pShader;
 	ENGINE::CWeapon*				m_pWeapon;
-	
-	//CSword*			m_pSword;
 	
 private:
 	//Animate State
@@ -137,7 +142,6 @@ private:
 	_uint m_iComboIdx[10];
 	_uint m_iComboJumpIdx[5];
 	PLAYERFIGHTSTATE m_eFightState;
-
 
 	//Time State
 	_double m_TimeAccel;
