@@ -152,6 +152,8 @@ private:
 	_uint m_iKnockCnt = 0;
 
 private:
+	//Move
+	_vec3 m_vMoveDir;
 	//Jump
 	_bool m_bJump;
 	_float m_fPosY;
