@@ -290,8 +290,8 @@ void CTapTerrain::OnBnClicked_SetTerrain()
 
 	pTerrain->Create_Buffer();
 
-	list<ENGINE::CGameObject*>& pList2 = pView->m_pToolRender->Get_RenderList(L"NaviMaker");
-	CNaviMaker* pMouse = dynamic_cast<CNaviMaker*>(pList2.front());
+	list<ENGINE::CGameObject*>& pList2 = pView->m_pToolRender->Get_RenderList(L"MouseCtn");
+	CMouseCtn* pMouse = dynamic_cast<CMouseCtn*>(pList2.front());
 	pMouse->Make_TerrainVertex(m_uSizeX, m_uSizeZ);
 
 	UpdateData(FALSE);
@@ -306,12 +306,12 @@ void CTapTerrain::OnDeltapos_Spin_PosX(NMHDR *pNMHDR, LRESULT *pResult)
 
 	if (pNMUpDown->iDelta < 0)
 	{
-		m_fPosX += 0.1f;
+		++m_fPosX;
 		m_strPos_X.Format(_T("%5.2f"), m_fPosX);
 	}
 	else if (pNMUpDown->iDelta > 0)
 	{
-		m_fPosX -= 0.1f;
+		--m_fPosX;
 		m_strPos_X.Format(_T("%5.2f"), m_fPosX);
 	}
 
@@ -330,12 +330,12 @@ void CTapTerrain::OnDeltapos_Spin_PosY(NMHDR *pNMHDR, LRESULT *pResult)
 
 	if (pNMUpDown->iDelta < 0)
 	{
-		m_fPosY += 0.1f;
+		++m_fPosY;
 		m_strPos_Y.Format(_T("%5.2f"), m_fPosY);
 	}
 	else if (pNMUpDown->iDelta > 0)
 	{
-		m_fPosY -= 0.1f;
+		--m_fPosY;
 		m_strPos_Y.Format(_T("%5.2f"), m_fPosY);
 	}
 
@@ -354,12 +354,12 @@ void CTapTerrain::OnDeltapos_Spin_PosZ(NMHDR *pNMHDR, LRESULT *pResult)
 
 	if (pNMUpDown->iDelta < 0)
 	{
-		m_fPosZ += 0.1f;
+		++m_fPosZ;
 		m_strPos_Z.Format(_T("%5.2f"), m_fPosZ);
 	}
 	else if (pNMUpDown->iDelta > 0)
 	{
-		m_fPosZ -=0.1f;
+		--m_fPosZ;
 		m_strPos_Z.Format(_T("%5.2f"), m_fPosZ);
 	}
 

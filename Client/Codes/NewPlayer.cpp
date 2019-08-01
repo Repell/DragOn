@@ -132,23 +132,13 @@ void CNewPlayer::Key_Check_Advance(const _double & TimeDelta)
 {
 	_vec3 vAdvPos = m_pAdvance->Get_INFO(ENGINE::INFO_POS);
 	_vec3 vAdvDir = m_pAdvance->Get_LookDir();
-	_vec3 vPos = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
 	_vec3 vDir = m_pTransform->Get_vLookDir();
-
-	_vec3 vTest = vPos - vAdvPos;
-	_float fdist = D3DXVec3Length(&vTest);
 
 	if (ENGINE::Key_Down(ENGINE::dwKEY_SPACE) && !m_bJump)
 	{
 		Animate_FSM(101);
 		m_bJump = TRUE;
 		m_HoldTime = 1.0;
-	}
-
-	if (ENGINE::Key_Down(ENGINE::dwKEY_Shift) && !m_bDash)
-	{
-		Animate_FSM(41);
-		m_bDash = TRUE;
 	}
 
 	if (ENGINE::Key_Press(ENGINE::dwKEY_A))
@@ -526,104 +516,7 @@ _int CNewPlayer::Update_Object(const _double & TimeDelta)
 {
 	CGameObject::Late_Init();
 	////////////////////////		▼최우선 함수
-
-	m_bHit = m_pSphereColl->Get_HitState();
-	m_bKnockBack = m_pSphereColl->Get_KnockBackState();
-
-	////////////////////////		▼조건 함수
-
-	if (m_bHit && !m_bKnockBack)	//공격 명중 시, 경직
-	{
-		m_RigdTime += TimeDelta;
-		Animate_FSM(43);
-		
-		if(m_bJump)
-			Reset_JumpStat();
-
-		if (m_RigdTime > 1.f && m_pMesh->Is_AnimationSetEnd())	//1초 지나면 경직해제
-		{
-			m_pSphereColl->m_bHit = FALSE;
-			m_RigdTime = 0.0;
-
-			m_iComboCnt = 0;
-			m_eFightState = COMBO_START;
-			m_ePlayerState = NONE;
-			m_pWeapon->Set_AttackState(FALSE, _IDLE);
-			Animate_FSM(_IDLE);
-		}
-	}
-	else if (m_bHit && m_bKnockBack)	//경직 중 공격 명중, 넉백
-	{
-		m_pSphereColl->Set_Invisible(TRUE);		//일시 무적
-		Animate_FSM(m_iKnockIdx[m_iKnockCnt]);	//첫번째 애니 재생
-
-		if (m_iKnockCnt == 5 && !m_pMesh->Is_AnimationSetEnd())	//경직 후 기상 모션
-		{
-			Animate_FSM(m_iKnockIdx[m_iKnockCnt]);
-			m_pWeapon->Set_AttackState(TRUE, m_iKnockIdx[m_iKnockCnt], 8, 2);
-		}
-		else if (m_iKnockCnt == 5 && m_pMesh->Is_AnimationSetEnd())	//경직 종료
-		{
-			Animate_FSM(_IDLE);
-			m_pSphereColl->m_bHit = FALSE;
-			m_pSphereColl->m_bKnockBack = FALSE;
-			m_pSphereColl->Set_Invisible(FALSE);
-			m_RigdTime = 0.0;
-			m_iKnockCnt = 0;
-
-			m_iComboCnt = 0;
-			m_eFightState = COMBO_START;
-			m_ePlayerState = NONE;
-			m_pWeapon->Set_AttackState(FALSE, _IDLE);
-
-		}
-		else if (m_iKnockCnt >= 0 && m_iKnockCnt <= 2 && !m_pMesh->Is_AnimationSetEnd())	//경직 중 날아감
-		{
-			m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] += m_pSphereColl->Set_KnockBackDist(FALSE) * TimeDelta * 5.f;
-			m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pAdvance->Get_Transform()->Get_NewPlayerPos(_CAMDIST);
-			//m_pAdvance->Update_Component(TimeDelta);
-			//m_pTransform->Update_Component(TimeDelta);
-
-		}
-		else if (m_iCurAniState == m_iKnockIdx[m_iKnockCnt] && m_pMesh->Is_AnimationSetEnd())	//경직 카운트 증가
-		{
-			++m_iKnockCnt;
-			Animate_FSM(m_iKnockIdx[m_iKnockCnt]);
-		}
-
-	}
-	else
-	{
-		if (!m_bDash)
-			Key_Check_Advance(TimeDelta);	//기본 키조작
-		if (m_bJump)
-			Jump_Func(TimeDelta);	//점프 눌렀을 때
-		if(!m_bHit)
-			Move_Func(TimeDelta);		//키조작 + 점프 눌렀을때 캐릭터 이동
-
-		if (m_bJump)	//점프 시 공격 콤보
-		{
-			Key_ChecknJumpFightState(TimeDelta);
-			FightJump_Func(TimeDelta);
-		}
-		else		//점프 아닐때 공격 콩보
-		{
-			Key_ChecknFightState(TimeDelta);
-			Fight_Func(TimeDelta);
-		}
-
-		if (m_bDash)	//점프 중 대시 시전
-			Dash_Func(TimeDelta);
-
-		if (m_iJumpComboCnt > 0 && !m_bJump)	//점프 공격 후 지상 낙하
-		{
-			m_iComboCnt = 0;
-			m_iJumpComboCnt = 0;
-			m_eFightState = COMBO_START;
-			m_ePlayerState = NONE;
-			m_bJumpAttack = FALSE;
-			m_pWeapon->Set_AttackState(FALSE, _IDLE);
-		}
+	Set_Behavior_Progress(TimeDelta);
 
 	//////////////////////// ▼상시 함수
 	m_pAdvance->Set_PlayerTransform(m_pTransform);
@@ -641,6 +534,7 @@ void CNewPlayer::Late_Update_Object()
 {
 	CGameObject::Late_Update_Object();
 	//////////////////////
+	//Check_DirectionCollision(&_vec3(0.f, 0.f, 0.f));	//몬스터와 충돌 체크, 멤버 변수는 리버스 벡터 반환
 }
 
 void CNewPlayer::Render_Object()
@@ -683,8 +577,7 @@ void CNewPlayer::Render_Object()
 	//swprintf_s(szStr, L"Player HP: %d", m_pSphereColl->Get_iHp(0));
 	//swprintf_s(szStr, L"AngleY : %3.2f", m_pTransform->m_vAngle.y);
 	//swprintf_s(szStr, L"Current Animaition: %d", m_iCurAniState);
-	//swprintf_s(szStr, L"PlayerPos | X : %3.2f, Y : %3.2f,  Z : %3.2f ", m_pTransform->m_vInfo[ENGINE::INFO_POS].x, m_pTransform->m_vInfo[ENGINE::INFO_POS].y, m_pTransform->m_vInfo[ENGINE::INFO_POS].z);
-	swprintf_s(szStr, L"PlayerPos | X : %3.2f, Y : %3.2f,  Z : %3.2f ", vSibal.x, vSibal.y, vSibal.z);
+	swprintf_s(szStr, L"PlayerPos | X : %3.2f, Y : %3.2f,  Z : %3.2f ", m_pTransform->m_vInfo[ENGINE::INFO_POS].x, m_pTransform->m_vInfo[ENGINE::INFO_POS].y, m_pTransform->m_vInfo[ENGINE::INFO_POS].z);
 	ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 40.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 
 	swprintf_s(szStr, L"CamPos : X : %3.2f, Y : %3.2f,   Z : %3.2f ", m_pAdvance->Get_INFO(ENGINE::INFO_POS).x, m_pAdvance->Get_INFO(ENGINE::INFO_POS).y, m_pAdvance->Get_INFO(ENGINE::INFO_POS).z);
@@ -730,6 +623,42 @@ _vec3 CNewPlayer::MouseFunc()
 	return _vec3(_float(pt.x), _float(pt.y), 0.f);
 }
 
+//_bool CNewPlayer::Check_DirectionCollision(_vec3* vRevDir)
+//{
+//	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
+//
+//	for (auto pList : pLayer->Get_MapObject(L"Enemy_Sword"))
+//	{
+//		
+//		ENGINE::CTransform* pTrans = dynamic_cast<ENGINE::CTransform*>
+//			(pList->Get_Component(L"Com_Transform", ENGINE::COMP_DYNAMIC));
+//
+//		if (pTrans->Get_Dead())
+//			continue;
+//
+//		ENGINE::CSphereColl* pSphere = dynamic_cast<ENGINE::CSphereColl*>
+//			(pList->Get_Component(L"Com_SphereColl", ENGINE::COMP_STATIC));
+//
+//		if (pSphere == nullptr)
+//			return FALSE;
+//
+//		//나도 밀고 상대도 날 미는 리버스 벡터
+//		//*vRevDir = m_pTransform->Get_TargetReverseDir(pTrans) * 0.1f;
+//
+//		if (m_pSphereColl->Check_ComponentColl(pSphere))
+//		{
+//			_vec3 vTargetRevDir = pTrans->Get_TargetReverseDir(m_pTransform)  * 0.01f;
+//			vTargetRevDir.y = 0.f;
+//			pTrans->m_vInfo[ENGINE::INFO_POS] += vTargetRevDir;
+//			return TRUE;
+//		}
+//		else
+//			continue;
+//	}
+//
+//	return FALSE;
+//}
+
 void CNewPlayer::Check_DirectionCollision(const _tchar * szTag, _vec3 * vRevDir)
 {
 
@@ -739,7 +668,7 @@ VOID CNewPlayer::Animate_FSM(_uint iAniState)
 {
 	m_iCurAniState = iAniState;
 
-	if (m_iCurAniState != m_iPreAniState)
+	if (/*!m_bAnimate && */m_iCurAniState != m_iPreAniState)
 	{
 		m_pMesh->Set_AnimationSet(m_iCurAniState);
 		m_iPreAniState = m_iCurAniState;
@@ -750,124 +679,11 @@ VOID CNewPlayer::Animate_Quick(_uint iAniState)
 {
 	m_iCurAniState = iAniState;
 
-	if (m_iCurAniState != m_iPreAniState)
+	if (/*!m_bAnimate && */m_iCurAniState != m_iPreAniState)
 	{
 		m_pMesh->Set_QuickSet(m_iCurAniState);
 		m_iPreAniState = m_iCurAniState;
 	}
-}
-
-VOID CNewPlayer::Set_Behavior_Progress(const _double & TimeDelta)
-{
-	m_bHit = m_pSphereColl->Get_HitState();
-	m_bKnockBack = m_pSphereColl->Get_KnockBackState();
-
-	if (m_bHit && !m_bKnockBack)	//공격 명중 시, 경직
-		State_Hit(TimeDelta);
-	else if (m_bHit && m_bKnockBack)	//경직 중 공격 명중, 넉백
-		State_KnockBack(TimeDelta);
-	else
-	{
-		if (!m_bDash)
-			Key_Check_Advance(TimeDelta);	//기본 키조작
-		if (m_bJump)
-			Jump_Func(TimeDelta);	//점프 눌렀을 때
-		if (!m_bHit)
-			Move_Func(TimeDelta);		//키조작 + 점프 눌렀을때 캐릭터 이동
-
-		if (m_bJump)	//점프 시 공격 콤보
-		{
-			Key_ChecknJumpFightState(TimeDelta);
-			FightJump_Func(TimeDelta);
-		}
-		else		//점프 아닐때 공격 콩보
-		{
-			Key_ChecknFightState(TimeDelta);
-			Fight_Func(TimeDelta);
-		}
-
-		if (m_bDash)	//점프 중 대시 시전
-			Dash_Func(TimeDelta);
-
-		if (m_iJumpComboCnt > 0 && !m_bJump)	//점프 공격 후 지상 낙하
-		{
-			m_iComboCnt = 0;
-			m_iJumpComboCnt = 0;
-			m_eFightState = COMBO_START;
-			m_ePlayerState = NONE;
-			m_bJumpAttack = FALSE;
-			m_pWeapon->Set_AttackState(FALSE, _IDLE);
-		}
-
-		if (m_ePlayerState == NONE)	//아무것도 안할때
-		{
-			Animate_FSM(_IDLE);
-			m_pWeapon->Set_AttackState(FALSE, _IDLE);
-		}
-	}
-}
-
-VOID CNewPlayer::State_Hit(const _double& TimeDelta)
-{
-	m_RigdTime += TimeDelta;
-	Animate_FSM(43);
-
-	if (m_bJump)
-		Reset_JumpStat();
-
-	if (m_RigdTime > 0.75f && m_pMesh->Is_AnimationSetEnd())	//1초 지나면 경직해제
-	{
-		m_pSphereColl->m_bHit = FALSE;
-		m_RigdTime = 0.0;
-
-		m_iComboCnt = 0;
-		m_eFightState = COMBO_START;
-		m_ePlayerState = NONE;
-		m_pWeapon->Set_AttackState(FALSE, _IDLE);
-		Animate_FSM(_IDLE);
-	}
-
-}
-
-VOID CNewPlayer::State_KnockBack(const _double& TimeDelta)
-{
-	m_pSphereColl->Set_Invisible(TRUE);		//일시 무적
-	Animate_FSM(m_iKnockIdx[m_iKnockCnt]);	//첫번째 애니 재생
-
-	if (m_iKnockCnt == 5 && !m_pMesh->Is_AnimationSetEnd())	//경직 후 기상하며 주변 휩쓸기
-	{
-		Animate_FSM(m_iKnockIdx[m_iKnockCnt]);
-		m_pWeapon->Set_ColliderScale(0.02f);
-		m_pWeapon->Set_AttackState(TRUE, m_iKnockIdx[m_iKnockCnt], 8, 2);
-	}
-	else if (m_iKnockCnt == 5 && m_pMesh->Is_AnimationSetEnd())	//경직 종료
-	{
-		Animate_FSM(_IDLE);
-		m_pSphereColl->m_bHit = FALSE;
-		m_pSphereColl->m_bKnockBack = FALSE;
-		m_pSphereColl->Set_Invisible(FALSE);
-		m_RigdTime = 0.0;
-		m_iKnockCnt = 0;
-
-		m_iComboCnt = 0;
-		m_eFightState = COMBO_START;
-		m_ePlayerState = NONE;
-		m_pWeapon->Set_ColliderScale(0.01f);
-		m_pWeapon->Set_AttackState(FALSE, _IDLE);
-
-	}
-	else if (m_iKnockCnt >= 0 && m_iKnockCnt <= 2 && !m_pMesh->Is_AnimationSetEnd())	//경직 중 날아감
-	{
-		m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] += m_pSphereColl->Set_KnockBackDist(FALSE) * TimeDelta * 5.f;
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pAdvance->Get_Transform()->Get_NewPlayerPos(_CAMDIST);
-
-	}
-	else if (m_iCurAniState == m_iKnockIdx[m_iKnockCnt] && m_pMesh->Is_AnimationSetEnd())	//경직 카운트 증가
-	{
-		++m_iKnockCnt;
-		Animate_FSM(m_iKnockIdx[m_iKnockCnt]);
-	}
-
 }
 
 HRESULT CNewPlayer::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
@@ -952,25 +768,13 @@ void CNewPlayer::Dash_Func(const _double & TimeDelta)
 	m_DashTime += TimeDelta;
 	//m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_vDashDir * 10.f * TimeDelta;
 	m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] += m_pTransform->Get_vLookDir() * TimeDelta * -10.f;
-	//_vec3 vPos = m_pAdvance->Get_vNewPos(_CAMDIST);
-	//m_pTransform->m_vInfo[ENGINE::INFO_POS] = vPos;
 
-	if (m_DashTime > 0.5)
+	if (m_DashTime > 0.5 || m_pTransform->Get_vInfoPos(ENGINE::INFO_POS).y < 0.75f)
 	{
 		m_HoldTime = 1.0;
 		m_DashTime = 0.0;
 		m_bDash = FALSE;
 		Animate_FSM(98);
-
-	}
-
-	if (m_bJump && m_pTransform->Get_vInfoPos(ENGINE::INFO_POS).y < 0.75f)
-	{
-		m_HoldTime = 1.0;
-		m_DashTime = 0.0;
-		m_bDash = FALSE;
-		Animate_FSM(98);
-
 	}
 
 	m_pWeapon->Set_AttackState(FALSE, _IDLE);

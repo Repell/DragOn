@@ -55,7 +55,7 @@ HRESULT CEnemy_Arrow::Ready_Object(ENGINE::UNITINFO tInfo)
 {
 	m_tInfo = tInfo;
 	Add_Component();
-	m_pSphereColl->Set_Scale(0.004f);
+	m_pSphereColl->Set_Scale(0.006f);
 	m_pTransform->Fix_TargetLook(m_pTarget, 30.f);
 
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = tInfo.m_vPos;
@@ -112,6 +112,11 @@ void CEnemy_Arrow::Render_Object()
 	////////////////////////////////////////	Shader End
 
 	m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld);
+
+	//_tchar szStr[MAX_PATH] = L"";
+	//_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
+	//swprintf_s(szStr, L"X : %3.2f, Y : %3.2f, Z : %3.2f ", vPos.x, vPos.y, vPos.z);
+	//ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 100.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 }
 
 _bool CEnemy_Arrow::Fly_Arrow()
@@ -133,11 +138,10 @@ _bool CEnemy_Arrow::Fly_Arrow()
 		if (m_pSphereColl->Check_ComponentColl(pTarget))
 		{
 			pTarget->Get_iHp(2);
+			pTarget->m_bHit = TRUE;
 
 			if (pTarget->Get_HitState())
 				pTarget->m_bKnockBack = TRUE;
-			else
-				pTarget->m_bHit = TRUE;
 
 			return TRUE;
 		}
@@ -153,11 +157,9 @@ HRESULT CEnemy_Arrow::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
 
 	pEffect->AddRef();
 	_matrix matWorld, matView, matProj;
-	
 	D3DXMatrixIdentity(&matWorld);
 	D3DXMatrixTranslation(&matWorld, 0.f, 0.f, 80.f);
 	matWorld *= m_pTransform->m_matWorld;
-
 	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
 	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
 
