@@ -14,11 +14,11 @@ private:
 	virtual ~CAdvanceCamera() = default;
 
 public:
-	_vec3 Set_Transform_Pos(ENGINE::INFO eInfo);
+	void Set_Transform_Pos(ENGINE::INFO eInfo, const _vec3* vPos);
 	ENGINE::CTransform* Get_Transform() 
 	{		return m_pTransform;	}
-	ENGINE::CTransform* Get_PlayerTransform()
-	{		return m_pTarget;	}
+	void Set_PlayerTransform(ENGINE::CTransform* pTrans)
+	{		m_pTarget = pTrans;	}
 	_vec3 Get_INFO(ENGINE::INFO eInfo);
 	_vec3 Get_LookDir();
 	_vec3 Get_vNewPos(const _float fDist);

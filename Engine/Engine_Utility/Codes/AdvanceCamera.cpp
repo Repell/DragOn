@@ -18,9 +18,9 @@ CAdvanceCamera::CAdvanceCamera(LPDIRECT3DDEVICE9 pDevice)
 
 }
 
-_vec3 CAdvanceCamera::Set_Transform_Pos(ENGINE::INFO eInfo)
+void CAdvanceCamera::Set_Transform_Pos(ENGINE::INFO eInfo, const _vec3* vPos)
 {
-	return m_pTransform->m_vInfo[eInfo];
+	m_pTransform->m_vInfo[eInfo] = *vPos;
 }
 
 
@@ -84,16 +84,17 @@ _int CAdvanceCamera::Update_Component(const _double & TimeDelta)
 	m_vAt = m_pTarget->Get_vInfoPos(ENGINE::INFO_POS);
 	m_vAt.y += 1.f;
 	m_vEye = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
-	m_vEye.y += 2.f;	
+	m_vEye.y += 2.f;
 
 	Make_ViewMatrix(&m_vEye, &m_vAt, &m_vUp);
-
+	
 	return NO_EVENT;
 }
 
 void CAdvanceCamera::Late_Update_Component()
 {
 	m_pTransform->Late_Update_Component();
+
 
 }
 

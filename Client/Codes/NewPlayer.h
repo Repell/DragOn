@@ -67,14 +67,9 @@ private:
 	void Render_Set();
 	void Render_ReSet();
 private:
-	// OLD FUNC
 	//Mouse Func OLD
 	_vec3 MouseFunc();
-	_bool Key_Check_Func(const _double& TimeDelta);
-	//Key Check Move Func  OLD
-	void Key_ChecknMoveState(const _double& TimeDelta);
 	
-	////////////////////////////////
 	//Advance Key Check Func
 	void Key_Check_Advance(const _double& TimeDelta);
 	void Update_PlayerDir(const _double& TimeDelta);
@@ -148,6 +143,8 @@ private:
 	_uint m_iKnockCnt = 0;
 
 private:
+	//Move
+	_vec3 m_vMoveDir;
 	//Jump
 	_bool m_bJump;
 	_float m_fPosY;
