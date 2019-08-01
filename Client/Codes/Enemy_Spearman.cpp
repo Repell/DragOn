@@ -56,7 +56,7 @@ HRESULT CEnemy_Spearman::Ready_Object(_vec3 vPos)
 
 	//m_pMesh->Set_AnimationSet(5);
 	//m_iCurAniSet = 5;
-	Animate_FSM(_IDLE);
+	Animate_FSM(_DEFAULT);
 
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = vPos;
 	m_pTransform->m_vScale = { 0.006f, 0.006f, 0.006f };
@@ -246,7 +246,7 @@ VOID CEnemy_Spearman::Set_Behavior_Progress()
 
 VOID CEnemy_Spearman::State_Awaken()
 {
-	if (m_fDist < 10.f && m_iCurAniSet == _IDLE) //대기 상태에서 플레이어 발견
+	if (m_fDist < 10.f && m_iCurAniSet == _DEFAULT) //대기 상태에서 플레이어 발견
 	{
 		Animate_FSM(_AWAKEN);	//사기 진작
 		m_pTransform->Fix_TargetLook(m_pTargetTransform, 20.f);
