@@ -163,7 +163,6 @@ namespace ENGINE
 		_vec3 m_vPos;
 		_vec3 m_vScale;
 		_vec3 m_vAngle;
-		_vec3 m_vDir;
 		_float m_fRadius;
 
 	}UNITINFO;

@@ -107,9 +107,6 @@
     <Filter Include="01.Clinet\02.Scene\09.TestStage\04.Monster\04.Bowman">
       <UniqueIdentifier>{25391ef5-3244-41e8-bd60-697dce9622b5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Clinet\02.Scene\09.TestStage\04.Monster\04.Bowman\00.Arrow">
-      <UniqueIdentifier>{3baea349-bd4a-4d11-b77a-0499edf1b546}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clinet.h">
@@ -214,9 +211,6 @@
     <ClInclude Include="..\Codes\Enemy_Bowman.h">
       <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\04.Bowman</Filter>
     </ClInclude>
-    <ClInclude Include="..\Codes\Enemy_Arrow.h">
-      <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\04.Bowman\00.Arrow</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -299,9 +293,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Enemy_Bowman.cpp">
       <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\04.Bowman</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Enemy_Arrow.cpp">
-      <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\04.Bowman\00.Arrow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

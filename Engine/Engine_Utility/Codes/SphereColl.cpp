@@ -91,16 +91,16 @@ HRESULT CSphereColl::Ready_SphereColl(_float fRadius, _int iHp)
 	return S_OK;
 }
 
-void CSphereColl::Render_SphereColl(const _matrix * pCollMatrix, _float fY)
+void CSphereColl::Render_SphereColl(const _matrix * pCollMatrix)
 {
 	_matrix pMatrix = *pCollMatrix;
-	pMatrix._42 += fY;
+	pMatrix._42 += 0.75f;
 	memcpy(m_vCollPos, &pMatrix.m[3][0], sizeof(_vec3));
 
+	_ulong iNumVertice = m_pMesh->GetNumVertices();
+	_ulong iNumFaces = m_pMesh->GetNumFaces();
+
 //#ifdef _DEBUG
-//	_ulong iNumVertice = m_pMesh->GetNumVertices();
-//	_ulong iNumFaces = m_pMesh->GetNumFaces();
-//
 //	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 //	m_pGraphicDev->SetTransform(D3DTS_WORLD, &pMatrix);
 //	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);

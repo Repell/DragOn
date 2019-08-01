@@ -136,14 +136,6 @@ _uint CLoading::Loading_ForLogo()
 		L"Enemy_Bow.X"),
 		E_FAIL);
 
-	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
-		RESOURCE_LOGO,
-		L"Mesh_Enemy_Arrow",
-		ENGINE::MESH_STATIC,
-		L"../Bin/Resources/Mesh/StaticMesh/Enemy_Arrow/",
-		L"Enemy_Arrow.X"),
-		E_FAIL);
-
 	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
 	//	RESOURCE_LOGO,
 	//	L"Mesh_Spear",

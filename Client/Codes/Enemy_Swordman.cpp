@@ -146,7 +146,7 @@ void CEnemy_Swordman::Render_Object()
 	m_pWeapon->Render_Weapon(&m_pBoneMatrix);
 
 	if (!m_bDead)
-		m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld, 0.75f);
+		m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld);
 
 	////////////////////////////////////////
 
@@ -390,7 +390,7 @@ HRESULT CEnemy_Swordman::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	ENGINE::UNITINFO tInfo =
-	{ FALSE, _vec3(0.f, 0.f, -100.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(90.f, 0.f, 0.f), _vec3(0.f, 0.f, 0.f), 50.f};
+	{ FALSE, _vec3(0.f, 0.f, -100.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(90.f, 0.f, 0.f), 50.f };
 	pComponent = m_pWeapon = ENGINE::CWeapon::Create(m_pGraphicDev, m_pTransform, tInfo, L"Mesh_Enemy_Sword");
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Weapon", pComponent);
@@ -572,7 +572,7 @@ VOID CEnemy_Swordman::State_Attack()
 	{
 		m_AttackTime += m_TimeDelta;
 
-		if (m_pWeapon->Check_ComponentColl(m_pTargetSphereColl) && m_AttackTime > 0.75)
+		if (m_pWeapon->Check_ComponentColl(m_pTargetSphereColl) && m_AttackTime > 0.5)
 		{
 			m_pWeapon->Set_AttackState(m_bAttack, m_iCurAniSet, 2);
 

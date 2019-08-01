@@ -2,11 +2,10 @@
 #define Enemy_Bowman_h__
 
 #include "GameObject.h"
-#include "Enemy_Arrow.h"
+#include "Effect_Tex.h"
 
 namespace ENGINE
 {
-	class CManagement;
 	class CRenderer;
 	class CDynamicMesh;
 	class CTransform;
@@ -51,7 +50,6 @@ private: //Func Pointer
 	VOID State_KnockBack();
 	VOID State_Airborne();
 	VOID State_Idle();
-	VOID State_Fallback ();
 	VOID State_Chase();
 	VOID State_Attack();
 	VOID State_Dead();
@@ -103,6 +101,7 @@ private:
 	ENGINE::CTransform*	m_pTransform;
 	ENGINE::CTransform*	m_pTargetTransform;
 	ENGINE::CNaviMesh*		m_pNaviMesh;
+	//ENGINE::CCollider*			m_pCollider;
 	ENGINE::CSphereColl*	m_pSphereColl;
 	ENGINE::CSphereColl*	m_pTargetSphereColl;
 	ENGINE::CShader*			m_pShader;
