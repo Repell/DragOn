@@ -504,7 +504,6 @@ VOID CEnemy_Bowman::State_Fallback()
 	_vec3 vRevDir = m_pTransform->Get_TargetReverseDir(m_pTargetTransform);
 	
 	m_pTransform->Fix_TargetRevLook(m_pTargetTransform, 20.f);
-	
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vRevDir * _SPEED * m_TimeDelta));
 	
 }
