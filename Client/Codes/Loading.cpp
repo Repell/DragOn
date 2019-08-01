@@ -45,37 +45,37 @@ _uint CLoading::Loading_ForLogo()
 	//	L"Troll.X"),
 	//	E_FAIL);		//Troll
 
-	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
-	//	RESOURCE_LOGO,
-	//	L"Mesh_Enemy_Swordman",
-	//	ENGINE::MESH_DYNAMIC,
-	//	L"../Bin/Resources/Mesh/DynamicMesh/Soldier_Sword/",
-	//	L"Soldier_Sword_Binary.X"),
-	//	E_FAIL);		//Enemy_Swordman
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Enemy_Swordman",
+		ENGINE::MESH_DYNAMIC,
+		L"../Bin/Resources/Mesh/DynamicMesh/Soldier_Sword/",
+		L"Soldier_Sword_Binary.X"),
+		E_FAIL);		//Enemy_Swordman
 
-	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
-	//	RESOURCE_LOGO,
-	//	L"Mesh_Enemy_Spearman",
-	//	ENGINE::MESH_DYNAMIC,
-	//	L"../Bin/Resources/Mesh/DynamicMesh/Soldier_Spear/",
-	//	L"Soldier_Spear_Binary.X"),
-	//	E_FAIL);		//Enemy_Spearman
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Enemy_Spearman",
+		ENGINE::MESH_DYNAMIC,
+		L"../Bin/Resources/Mesh/DynamicMesh/Soldier_Spear/",
+		L"Soldier_Spear_Binary.X"),
+		E_FAIL);		//Enemy_Spearman
 
-	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
-	//	RESOURCE_LOGO,
-	//	L"Mesh_Enemy_Shieldman",
-	//	ENGINE::MESH_DYNAMIC,
-	//	L"../Bin/Resources/Mesh/DynamicMesh/Soldier_Shield/",
-	//	L"Soldier_Shield_Binary.X"),
-	//	E_FAIL);		//Enemy_Shieldman
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Enemy_Shieldman",
+		ENGINE::MESH_DYNAMIC,
+		L"../Bin/Resources/Mesh/DynamicMesh/Soldier_Shield/",
+		L"Soldier_Shield_Binary.X"),
+		E_FAIL);		//Enemy_Shieldman
 
-	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
-	//	RESOURCE_LOGO,
-	//	L"Mesh_Enemy_Bowman",
-	//	ENGINE::MESH_DYNAMIC,
-	//	L"../Bin/Resources/Mesh/DynamicMesh/Soldier_Bow/",
-	//	L"Soldier_Bow_Binary.X"),
-	//	E_FAIL);		//Enemy_Bowman
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Enemy_Bowman",
+		ENGINE::MESH_DYNAMIC,
+		L"../Bin/Resources/Mesh/DynamicMesh/Soldier_Bow/",
+		L"Soldier_Bow_Binary.X"),
+		E_FAIL);		//Enemy_Bowman
 
 
 	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
@@ -104,45 +104,45 @@ _uint CLoading::Loading_ForLogo()
 		L"Sword.X"),	
 		E_FAIL);
 
-	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
-	//	RESOURCE_LOGO,
-	//	L"Mesh_Enemy_Sword",
-	//	ENGINE::MESH_STATIC,
-	//	L"../Bin/Resources/Mesh/StaticMesh/Enemy_Sword/",
-	//	L"Enemy_Sword.X"),
-	//	E_FAIL);
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Enemy_Sword",
+		ENGINE::MESH_STATIC,
+		L"../Bin/Resources/Mesh/StaticMesh/Enemy_Sword/",
+		L"Enemy_Sword.X"),
+		E_FAIL);
 
-	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
-	//	RESOURCE_LOGO,
-	//	L"Mesh_Enemy_Spear",
-	//	ENGINE::MESH_STATIC,
-	//	L"../Bin/Resources/Mesh/StaticMesh/Enemy_Spear/",
-	//	L"Enemy_Spear.X"),
-	//	E_FAIL);
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Enemy_Spear",
+		ENGINE::MESH_STATIC,
+		L"../Bin/Resources/Mesh/StaticMesh/Enemy_Spear/",
+		L"Enemy_Spear.X"),
+		E_FAIL);
 
-	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
-	//	RESOURCE_LOGO,
-	//	L"Mesh_Enemy_Shield",
-	//	ENGINE::MESH_STATIC,
-	//	L"../Bin/Resources/Mesh/StaticMesh/Enemy_Shield/",
-	//	L"Enemy_Shield.X"),
-	//	E_FAIL);
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Enemy_Shield",
+		ENGINE::MESH_STATIC,
+		L"../Bin/Resources/Mesh/StaticMesh/Enemy_Shield/",
+		L"Enemy_Shield.X"),
+		E_FAIL);
 
-	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
-	//	RESOURCE_LOGO,
-	//	L"Mesh_Enemy_Bow",
-	//	ENGINE::MESH_STATIC,
-	//	L"../Bin/Resources/Mesh/StaticMesh/Enemy_Bow/",
-	//	L"Enemy_Bow.X"),
-	//	E_FAIL);
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Enemy_Bow",
+		ENGINE::MESH_STATIC,
+		L"../Bin/Resources/Mesh/StaticMesh/Enemy_Bow/",
+		L"Enemy_Bow.X"),
+		E_FAIL);
 
-	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
-	//	RESOURCE_LOGO,
-	//	L"Mesh_Enemy_Arrow",
-	//	ENGINE::MESH_STATIC,
-	//	L"../Bin/Resources/Mesh/StaticMesh/Enemy_Arrow/",
-	//	L"Enemy_Arrow.X"),
-	//	E_FAIL);
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Enemy_Arrow",
+		ENGINE::MESH_STATIC,
+		L"../Bin/Resources/Mesh/StaticMesh/Enemy_Arrow/",
+		L"Enemy_Arrow.X"),
+		E_FAIL);
 
 	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
 	//	RESOURCE_LOGO,
