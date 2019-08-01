@@ -16,10 +16,11 @@ CWeapon::CWeapon(LPDIRECT3DDEVICE9 pDevice)
 
 }
 
-void CWeapon::Set_AttackState(_bool bState, _uint iCurAni, _uint iPower)
+void CWeapon::Set_AttackState(_bool bState, _uint iCurAni, _uint iCombo, _uint iPower)
 {
 	m_bAttack = bState;
 	iDamage = iPower;
+	m_iComboCnt = iCombo;
 	m_iCurAni = iCurAni;
 }
 
@@ -93,9 +94,9 @@ void CWeapon::Late_Update_Component()
 	}
 }
 
-void CWeapon::Render_Weapon(const _matrix pParentMat)
+void CWeapon::Render_Weapon(const _matrix* pParentMat)
 {
-	m_pTransform->Set_ParentMatrix(&pParentMat);
+	m_pTransform->Set_ParentMatrix(pParentMat);
 
 	LPD3DXEFFECT pEffect = m_pShader->Get_EffectHandle();
 	if (nullptr == pEffect)
@@ -119,6 +120,7 @@ void CWeapon::Render_Weapon(const _matrix pParentMat)
 
 	////////////////////////////////////////
 	m_pCollider->Set_Collider(&m_pTransform->m_matWorld);
+	
 	if (m_bAttack)
 		m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pTransform->m_matWorld);
 
@@ -203,6 +205,7 @@ void CWeapon::Check_EnemyColl(const _tchar * pObjTag)
 			continue;
 
 		_bool bColl = m_pCollider->Check_ComponentColl(pTarget);
+		_vec3 vKnockDir = {0.f, 0.f, 0.f};
 
 		if (m_iCurAni != m_iOldAni)
 			pTarget->Get_iHitStack(TRUE);
@@ -211,6 +214,26 @@ void CWeapon::Check_EnemyColl(const _tchar * pObjTag)
 		{
 			pTarget->Get_iHp(iDamage);
 			m_iOldAni = m_iCurAni;
+
+			switch (m_iComboCnt)
+			{
+			case 6:
+				pTarget->m_bAirbone = TRUE;
+				break;
+			case 7:
+				pTarget->m_bAirbone = TRUE;
+				break;
+			case 8:
+				pTarget->m_bKnockBack = TRUE;
+				vKnockDir = pTarget->Get_CollPos() - m_pTarget->Get_vInfoPos(ENGINE::INFO_POS);
+				vKnockDir.y = 0.f;
+				D3DXVec3Normalize(&vKnockDir, &vKnockDir);
+				pTarget->Set_KnockBackDist(TRUE, vKnockDir);
+				break;
+			default:
+				pTarget->m_bHit = TRUE;
+				break;
+			}
 		}
 
 	}

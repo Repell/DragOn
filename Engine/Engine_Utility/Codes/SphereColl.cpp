@@ -100,23 +100,23 @@ void CSphereColl::Render_SphereColl(const _matrix * pCollMatrix)
 	_ulong iNumVertice = m_pMesh->GetNumVertices();
 	_ulong iNumFaces = m_pMesh->GetNumFaces();
 
-#ifdef _DEBUG
-	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	m_pGraphicDev->SetTransform(D3DTS_WORLD, &pMatrix);
-	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-
-	m_pGraphicDev->SetTexture(0, m_pTexture);
-
-	m_pGraphicDev->SetStreamSource(0, m_pVB, 0, sizeof(VTX_SPHERE));
-	m_pGraphicDev->SetFVF(VTXFVF_SPHERE);
-	m_pGraphicDev->SetIndices(m_pIB);
-	m_pGraphicDev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, iNumVertice, 0, iNumFaces);
-
-	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
-	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-#endif
+//#ifdef _DEBUG
+//	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+//	m_pGraphicDev->SetTransform(D3DTS_WORLD, &pMatrix);
+//	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+//	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
+//
+//	m_pGraphicDev->SetTexture(0, m_pTexture);
+//
+//	m_pGraphicDev->SetStreamSource(0, m_pVB, 0, sizeof(VTX_SPHERE));
+//	m_pGraphicDev->SetFVF(VTXFVF_SPHERE);
+//	m_pGraphicDev->SetIndices(m_pIB);
+//	m_pGraphicDev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, iNumVertice, 0, iNumFaces);
+//
+//	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
+//	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+//	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+//#endif
 }
 
 //_bool CSphereColl::Check_Collision(const _vec3 vTargetPos, _float fTargetRadius)

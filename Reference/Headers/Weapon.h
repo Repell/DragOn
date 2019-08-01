@@ -17,13 +17,13 @@ private:
 	virtual ~CWeapon() = default;
 
 public:
-	void Set_AttackState(_bool bState, _uint iCurAni, _uint iPower = 0);
+	void Set_AttackState(_bool bState, _uint iCurAni, _uint iCombo = 0, _uint iPower = 0);
 	_bool Check_ComponentColl(CSphereColl* pSphere);
 
 public:
 	virtual _int Update_Component(const _double& TimeDelta) override;
 	virtual void Late_Update_Component() override;
-	void Render_Weapon(const _matrix pParentMat);
+	void Render_Weapon(const _matrix* pParentMat);
 
 private:
 	HRESULT Ready_Component(CTransform * pTarget, UNITINFO vInfo, const _tchar* szWeapon);
@@ -51,6 +51,7 @@ private:		//Transform
 private:
 	_bool m_bPlayer;
 	_bool m_bAttack;
+	_uint m_iComboCnt;
 
 	_uint iDamage;
 	_uint m_iCurAni;

@@ -19,6 +19,13 @@ CEnemy_Spearman::CEnemy_Spearman(LPDIRECT3DDEVICE9 pDevice)
 
 	m_iCurAniSet = 0;
 	m_iPreAniSet = 0;
+
+	m_HitTime = 0.0;
+	m_AttackTime = 0.0;
+	m_AirTime = 0.0;
+	m_KnockTime = 0.0;
+	m_TimeDelta = 0.0;
+	m_AccTime = 1.0;
 }
 
 CEnemy_Spearman::~CEnemy_Spearman()
@@ -38,6 +45,8 @@ HRESULT CEnemy_Spearman::Ready_Object(_vec3 vPos)
 	m_pTransform->m_vScale = { 0.006f, 0.006f, 0.006f };
 	m_pSphereColl->Set_Scale(0.005f);
 	//m_pCollider->Set_Scale(0.005f);
+
+	Set_Animation();
 
 	return S_OK;
 }
@@ -101,6 +110,81 @@ void CEnemy_Spearman::Render_Object()
 		}
 
 	}
+	else if (m_bHit && !m_bKnockBack && !m_bAirbone && !m_bDead)	//공격 명중 시, 경직
+	{
+		m_HitTime += m_TimeDelta;
+		Animate_FSM(19);
+		m_AccTime = 3.0;
+
+		if (m_HitTime > 0.5f && m_pMesh->Is_AnimationSetEnd())	//1초 지나면 경직해제
+		{
+			m_pSphereColl->m_bHit = FALSE;
+			m_HitTime = 0.0;
+			m_AccTime = 1.0;
+
+			Animate_FSM(17);
+			m_bAttack = FALSE;
+			m_pTransform->m_bAttackState = m_bAttack;
+			m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
+		}
+	}
+	else if (m_bKnockBack && !m_bDead)
+	{
+		Animate_FSM(m_iKnockIdx[m_iKnockCnt]);	//첫번째 애니 재생
+
+		if (m_iKnockCnt == 4 && !m_pMesh->Is_AnimationSetEnd())	//경직 후 기상 모션
+			Animate_FSM(m_iKnockIdx[m_iKnockCnt]);
+		else if (m_iKnockCnt == 4 && m_pMesh->Is_AnimationSetEnd())	//경직 종료
+		{
+			m_pSphereColl->m_bHit = FALSE;
+			m_pSphereColl->m_bKnockBack = FALSE;
+			m_pSphereColl->m_bAirbone = FALSE;
+
+			m_iKnockCnt = 0;
+			m_AccTime = 1.0;
+			m_bAttack = FALSE;
+			m_pTransform->m_bAttackState = m_bAttack;
+			m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
+		}
+		else if (m_iKnockCnt >= 0 && m_iKnockCnt <= 2 && !m_pMesh->Is_AnimationSetEnd())	//경직 중 날아감
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pSphereColl->Set_KnockBackDist(FALSE) * m_TimeDelta * 2.f;
+		else if (m_iCurAniSet == m_iKnockIdx[m_iKnockCnt] && m_pMesh->Is_AnimationSetEnd())	//경직 카운트 증가
+		{
+			m_AccTime = 2.0;
+			++m_iKnockCnt;
+			Animate_FSM(m_iKnockIdx[m_iKnockCnt]);
+		}
+
+	}
+	else if (m_bAirbone && !m_bKnockBack && !m_bDead)
+	{
+
+		if (m_iCurAniSet == 36 && m_pMesh->Is_AnimationSetEnd())
+		{
+			m_pSphereColl->m_bAirbone = FALSE;
+			m_pSphereColl->m_bHit = FALSE;
+			m_pSphereColl->m_bKnockBack = FALSE;
+			m_AirTime = 0.0;
+			Animate_FSM(0);
+		}
+		else if (m_iCurAniSet != 36)
+		{
+			m_AirTime += m_TimeDelta;
+			Animate_FSM(21);
+			m_AccTime = 2.0;
+		}
+
+		if (m_AirTime > 1.5f && m_iCurAniSet == 21 && m_pMesh->Is_AnimationSetEnd())	//1초 지나면 경직해제
+		{
+			m_AccTime = 1.0;
+			Animate_FSM(36);
+			m_bAttack = FALSE;
+			m_pTransform->m_bAttackState = m_bAttack;
+			m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
+		}
+
+
+	}
 	else if (m_fDist > 10.f)
 	{
 		m_bAttack = FALSE;
@@ -129,7 +213,7 @@ void CEnemy_Spearman::Render_Object()
 			m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pTransform->Get_vLookDir() * m_TimeDelta * 0.25;
 	}
 
-	m_pMesh->Play_AnimationSet(m_TimeDelta * 1.1);
+	m_pMesh->Play_AnimationSet(m_TimeDelta * m_AccTime);
 	/////////////////////////////////////////////
 	//m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 
@@ -145,7 +229,7 @@ void CEnemy_Spearman::Render_Object()
 	pEffect->BeginPass(0);
 	////////////////////////////////////////
 
-	m_pNaviMesh->Render_NaviMesh();
+	//m_pNaviMesh->Render_NaviMesh();
 
 	m_pMesh->Render_Meshes();
 
@@ -169,7 +253,7 @@ void CEnemy_Spearman::Render_Object()
 	////swprintf_s(szStr, L"Monster HP: %d", m_pSphereColl->Get_iHp(0));
 	//ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 10.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 
-	//Render_ReSet();
+	//Render_ReSet(); 
 }
 
 void CEnemy_Spearman::Render_Set()
@@ -201,7 +285,7 @@ void CEnemy_Spearman::Render_BoneMatrix(const char* tBone)
 {
 	//if(nullptr == m_pBoneMatrix)
 	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName(tBone);
-	m_pBoneMatrix = pFrame->combinedTransformMatrix * m_pTransform->m_matWorld;
+	m_pBoneMatrix = &(pFrame->combinedTransformMatrix * m_pTransform->m_matWorld);
 
 	//m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix);
 }
@@ -384,6 +468,16 @@ VOID CEnemy_Spearman::Animate_FSM(_uint iAniState)
 	}
 }
 
+void CEnemy_Spearman::Set_Animation()
+{
+	m_iKnockCnt = 0;
+	m_iKnockIdx[0] = 27;
+	m_iKnockIdx[1] = 28;
+	m_iKnockIdx[2] = 29;
+	m_iKnockIdx[3] = 30;
+	m_iKnockIdx[4] = 36;	//Up 
+}
+
 HRESULT CEnemy_Spearman::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
 {
 	if (nullptr == pEffect)
@@ -409,7 +503,7 @@ void CEnemy_Spearman::Get_WeaponMatrix(const char* tBone)
 {
 	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName(tBone);
 
-	m_pBoneMatrix = pFrame->combinedTransformMatrix * m_pTransform->m_matWorld;
+	m_pBoneMatrix = &(pFrame->combinedTransformMatrix * m_pTransform->m_matWorld);
 }
 
 

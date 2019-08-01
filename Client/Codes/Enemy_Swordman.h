@@ -11,7 +11,6 @@ namespace ENGINE
 	class CTransform;
 	class CGameObject;
 	class CNaviMesh;
-	class CCollider;
 	class CSphereColl;
 	class CShader;
 	class CWeapon;
@@ -31,20 +30,36 @@ public:
 	virtual void Render_Object() override;
 
 private:
-	void Render_Set();
-	void Render_ReSet();
-	void Render_BoneMatrix(const char* tBone);
-	void Chase_Target(const _double& TimeDelta);
-	void Attack_Target(const _double& TimeDelta);
+	void Set_Animation();
+	void Get_WeaponMatrix(const char* tBone);
 	_bool Check_EnemyColl(_vec3* vRevDir, const _tchar* szTag);
+	//void Render_Set();
+	//void Render_ReSet();
 
 private:
 	VOID Animate_FSM(_uint iAniState);
 
+private: //Func Pointer
+	//Set Behavior
+	VOID Set_Behavior_Progress();
+
+	//Behavior to State Func
+	typedef VOID(CEnemy_Swordman::*BEHAVIOR)();
+	BEHAVIOR AiState;
+	VOID State_Awaken();
+	VOID State_Hit();
+	VOID State_KnockBack();
+	VOID State_Airborne();
+	VOID State_Idle();
+	VOID State_Chase();
+	VOID State_Attack();
+	VOID State_Dead();
+
+
 private:
 	//Shader
 	HRESULT SetUp_ConstantTable(LPD3DXEFFECT pEffect);
-	void Get_WeaponMatrix(const char* tBone);
+
 
 private:
 	//Key Input, Camera, NaviMesh
@@ -59,13 +74,25 @@ private:
 	_bool m_bFront;
 	_bool m_bDead;
 	_bool m_bTwice;
-	
+
 	_bool m_bHit;
 	_bool m_bKnockBack;
-	_bool m_bAirbone;
+	_bool m_bAirborne;
 
 private:
 	_double m_TimeDelta;
+	_double m_HitTime;
+	_double m_AirTime;
+	_double m_KnockTime;
+	_double m_AccTime;
+
+	//KnockBack
+	_uint m_iKnockIdx[5];
+	_uint m_iKnockCnt = 0;
+
+private:
+	const _matrix* m_pBoneMatrix;
+
 private:
 	HRESULT Add_Component();
 
@@ -80,9 +107,6 @@ private:
 	ENGINE::CSphereColl*	m_pTargetSphereColl;
 	ENGINE::CShader*			m_pShader;
 	ENGINE::CWeapon*			m_pWeapon;
-
-private:
-	_matrix m_pBoneMatrix;
 
 public:
 	static CEnemy_Swordman* Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos);

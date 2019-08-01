@@ -172,7 +172,7 @@ private:
 	_double m_RigdTime;
 
 	//Weapon
-	_matrix m_WeaponMat;
+	const _matrix* m_WeaponMat;
 
 public:
 	static CNewPlayer* Create(LPDIRECT3DDEVICE9 pGraphicDev);

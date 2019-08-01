@@ -25,7 +25,7 @@ CNewPlayer::CNewPlayer(LPDIRECT3DDEVICE9 pDevice)
 {
 	m_fGravity = 0.4f;
 	m_fJumpPower = 0.28f;
-
+	m_Delay = 0.0;
 
 }
 
@@ -343,42 +343,42 @@ void CNewPlayer::Key_ChecknFightState(const _double & TimeDelta)
 		case CNewPlayer::COMBO1:
 			m_eFightState = COMBO1;
 			Animate_FSM(m_iComboIdx[m_iComboCnt]);
-			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], 2);
+			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], m_iComboCnt, 2);
 			break;
 		case CNewPlayer::COMBO2:
 			m_eFightState = COMBO2;
 			Animate_FSM(m_iComboIdx[m_iComboCnt]);
-			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], 2);
+			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], m_iComboCnt, 2);
 			break;
 		case CNewPlayer::COMBO3:
 			m_eFightState = COMBO3;
 			Animate_FSM(m_iComboIdx[m_iComboCnt]);
-			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], 2);
+			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], m_iComboCnt, 2);
 			break;
 		case CNewPlayer::COMBO4:
 			m_eFightState = COMBO4;
 			Animate_FSM(m_iComboIdx[m_iComboCnt]);
-			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], 2);
+			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], m_iComboCnt, 2);
 			break;
 		case CNewPlayer::COMBO5:
 			m_eFightState = COMBO5;
 			Animate_FSM(m_iComboIdx[m_iComboCnt]);
-			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], 2);
+			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], m_iComboCnt, 2);
 			break;
 		case CNewPlayer::COMBO6:
 			m_eFightState = COMBO6;
 			Animate_FSM(m_iComboIdx[m_iComboCnt]);
-			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], 2);
+			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], m_iComboCnt, 2);
 			break;
 		case CNewPlayer::COMBO7:		//Airbone
 			m_eFightState = COMBO7;
 			Animate_FSM(m_iComboIdx[m_iComboCnt]);
-			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], 2);
+			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], m_iComboCnt, 2);
 			break;
 		case CNewPlayer::COMBO8:	//Knockback
 			m_eFightState = COMBO8;
 			Animate_FSM(m_iComboIdx[m_iComboCnt]);
-			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], 2);
+			m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[m_iComboCnt], m_iComboCnt, 2);
 			break;
 			//case CNewPlayer::COMBO9:
 			//	m_eFightState = COMBO9;
@@ -388,13 +388,13 @@ void CNewPlayer::Key_ChecknFightState(const _double & TimeDelta)
 			m_iComboCnt = 0;
 			m_eFightState = COMBO_START;
 			m_ePlayerState = NONE;
-			m_pWeapon->Set_AttackState(FALSE, _IDLE, 0);
+			m_pWeapon->Set_AttackState(FALSE, _IDLE);
 			return;
 		default:
 			m_iComboCnt = 0;
 			m_eFightState = COMBO_START;
 			m_ePlayerState = NONE;
-			m_pWeapon->Set_AttackState(FALSE, _IDLE, 0);
+			m_pWeapon->Set_AttackState(FALSE, _IDLE);
 			return;
 		}
 
@@ -427,28 +427,21 @@ void CNewPlayer::Key_ChecknJumpFightState(const _double & TimeDelta)
 			m_bJumpAttack = TRUE;
 			m_eFightState = COMBO1;
 			Animate_FSM(m_iComboJumpIdx[m_iJumpComboCnt]);
-			m_pWeapon->Set_AttackState(TRUE, m_iComboJumpIdx[m_iJumpComboCnt], 2);
+			m_pWeapon->Set_AttackState(TRUE, m_iComboJumpIdx[m_iJumpComboCnt], m_iJumpComboCnt, 2);
 			m_HoldTime = 0.4;
 			break;
 		case CNewPlayer::COMBO2:
 			m_eFightState = COMBO2;
 			Animate_FSM(m_iComboJumpIdx[m_iJumpComboCnt]);
-			m_pWeapon->Set_AttackState(TRUE, m_iComboJumpIdx[m_iJumpComboCnt], 2);
+			m_pWeapon->Set_AttackState(TRUE, m_iComboJumpIdx[m_iJumpComboCnt], m_iJumpComboCnt, 2);
 			m_HoldTime = 0.2;
 			break;
 		case CNewPlayer::COMBO3:
 			m_eFightState = COMBO3;
 			Animate_FSM(m_iComboJumpIdx[m_iJumpComboCnt]);
-			m_pWeapon->Set_AttackState(TRUE, m_iComboJumpIdx[m_iJumpComboCnt], 2);
+			m_pWeapon->Set_AttackState(TRUE, m_iComboJumpIdx[m_iJumpComboCnt], m_iJumpComboCnt, 2);
 			m_HoldTime = 0.8;
 			break;
-			//default:
-			//	m_iComboCnt = 0;
-			//	m_eFightState = COMBO_START;
-			//	m_ePlayerState = NONE;
-			//	m_pSword->Set_AttackState(FALSE, _IDLE, 0);
-			//	Animate_FSM(m_iComboJumpIdx[4]);
-			return;
 		}
 
 		m_ePlayerState = FIGHT_JUMP;
@@ -489,9 +482,15 @@ void CNewPlayer::Fight_Func(const _double & TimeDelta)
 		return;
 
 	_vec3	vPos, vDir;
-	//m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS].y += m_fPosY * 0.0125f;
 	vPos = m_pAdvance->Get_Transform()->Get_NewPlayerPos(_CAMDIST);
 
+	if (m_iCurAniState == m_iComboIdx[7] && m_Delay < 0.4)
+	{
+		m_Delay += TimeDelta;
+		m_pWeapon->Set_AttackState(FALSE, 0);
+	}
+	else if (m_iCurAniState == m_iComboIdx[7] && m_Delay > 0.4)
+		m_pWeapon->Set_AttackState(TRUE, m_iComboIdx[7], m_iComboCnt, 2);
 
 	if (m_iCurAniState == m_iComboIdx[m_iComboCnt] && !m_pMesh->Is_AnimationSetEnd())
 	{
@@ -649,7 +648,7 @@ _int CNewPlayer::Update_Object(const _double & TimeDelta)
 			m_iComboCnt = 0;
 			m_eFightState = COMBO_START;
 			m_ePlayerState = NONE;
-			m_pWeapon->Set_AttackState(FALSE, _IDLE, 0);
+			m_pWeapon->Set_AttackState(FALSE, _IDLE);
 			Animate_FSM(_IDLE);
 		}
 	}
@@ -672,7 +671,7 @@ _int CNewPlayer::Update_Object(const _double & TimeDelta)
 			m_iComboCnt = 0;
 			m_eFightState = COMBO_START;
 			m_ePlayerState = NONE;
-			m_pWeapon->Set_AttackState(FALSE, _IDLE, 0);
+			m_pWeapon->Set_AttackState(FALSE, _IDLE);
 
 		}
 		else if (m_iKnockCnt >= 0 && m_iKnockCnt <= 2 && !m_pMesh->Is_AnimationSetEnd())	//경직 중 날아감
@@ -720,14 +719,14 @@ _int CNewPlayer::Update_Object(const _double & TimeDelta)
 			m_eFightState = COMBO_START;
 			m_ePlayerState = NONE;
 			m_bJumpAttack = FALSE;
-			m_pWeapon->Set_AttackState(FALSE, _IDLE, 0);
+			m_pWeapon->Set_AttackState(FALSE, _IDLE);
 		}
 
 
 		if (m_ePlayerState == NONE)	//아무것도 안할때
 		{
 			Animate_FSM(_IDLE);
-			m_pWeapon->Set_AttackState(FALSE, _IDLE, 0);
+			m_pWeapon->Set_AttackState(FALSE, _IDLE);
 		}
 	}
 
@@ -1073,7 +1072,7 @@ void CNewPlayer::Get_WeaponMatrix()
 {
 	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName("R_Hand");
 
-	m_WeaponMat = pFrame->combinedTransformMatrix * m_pTransform->m_matWorld;
+	m_WeaponMat = &(pFrame->combinedTransformMatrix * m_pTransform->m_matWorld);
 }
 
 void CNewPlayer::Jump_Func(const _double & TimeDelta)
@@ -1137,7 +1136,7 @@ void CNewPlayer::Dash_Func(const _double & TimeDelta)
 		Animate_FSM(98);
 	}
 
-	m_pWeapon->Set_AttackState(FALSE, 0);
+	m_pWeapon->Set_AttackState(FALSE, _IDLE);
 }
 
 void CNewPlayer::Attack_Func(const _double & TimeDelta)

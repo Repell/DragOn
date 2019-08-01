@@ -30,7 +30,6 @@ namespace ENGINE
 
 	typedef		D3DXMATRIX				_matrix;
 
-
 }
 
 #endif // Engine_Typedef_h__

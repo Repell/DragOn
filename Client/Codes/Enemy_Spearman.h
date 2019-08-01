@@ -39,6 +39,7 @@ private:
 
 private:
 	VOID Animate_FSM(_uint iAniState);
+	void Set_Animation();
 
 private:
 	//Shader
@@ -65,6 +66,14 @@ private:
 
 private:
 	_double m_TimeDelta;
+	_double m_HitTime;
+	_double m_AirTime;
+	_double m_KnockTime;
+	_double m_AccTime;
+
+	//KnockBack
+	_uint m_iKnockIdx[5];
+	_uint m_iKnockCnt = 0;
 private:
 	HRESULT Add_Component();
 
@@ -80,7 +89,7 @@ private:
 	ENGINE::CWeapon*			m_pWeapon;
 
 private:
-	_matrix m_pBoneMatrix;
+	const _matrix* m_pBoneMatrix;
 
 public:
 	static CEnemy_Spearman* Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos);
