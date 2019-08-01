@@ -1,5 +1,5 @@
-#ifndef Enemy_Spearman_h__
-#define Enemy_Spearman_h__
+#ifndef Enemy_Bowman_h__
+#define Enemy_Bowman_h__
 
 #include "GameObject.h"
 #include "Effect_Tex.h"
@@ -16,11 +16,11 @@ namespace ENGINE
 	class CWeapon;
 }
 
-class CEnemy_Spearman : public ENGINE::CGameObject
+class CEnemy_Bowman : public ENGINE::CGameObject
 {
 private:
-	explicit CEnemy_Spearman(LPDIRECT3DDEVICE9 pDevice);
-	virtual ~CEnemy_Spearman();
+	explicit CEnemy_Bowman(LPDIRECT3DDEVICE9 pDevice);
+	virtual ~CEnemy_Bowman();
 
 public:
 	virtual HRESULT Ready_Object(_vec3 vPos);
@@ -38,13 +38,12 @@ private:
 private:
 	VOID Animate_FSM(_uint iAniState);
 
-
 private: //Func Pointer
-		 //Set Behavior
+	//Set Behavior
 	VOID Set_Behavior_Progress();
 
 	//Behavior to State Func
-	typedef VOID(CEnemy_Spearman::*BEHAVIOR)();
+	typedef VOID(CEnemy_Bowman::*BEHAVIOR)();
 	BEHAVIOR AiState;
 	VOID State_Awaken();
 	VOID State_Hit();
@@ -59,7 +58,7 @@ private: //Func Pointer
 private:
 	//Shader
 	HRESULT SetUp_ConstantTable(LPD3DXEFFECT pEffect);
-	
+
 
 private:
 	//Key Input, Camera, NaviMesh
@@ -74,7 +73,7 @@ private:
 	_bool m_bFront;
 	_bool m_bDead;
 	_bool m_bTwice;
-	
+
 	_bool m_bHit;
 	_bool m_bKnockBack;
 	_bool m_bAirborne;
@@ -89,6 +88,10 @@ private:
 	//KnockBack
 	_uint m_iKnockIdx[5];
 	_uint m_iKnockCnt = 0;
+
+private:
+	_matrix m_pBoneMatrix;
+
 private:
 	HRESULT Add_Component();
 
@@ -98,19 +101,17 @@ private:
 	ENGINE::CTransform*	m_pTransform;
 	ENGINE::CTransform*	m_pTargetTransform;
 	ENGINE::CNaviMesh*		m_pNaviMesh;
+	//ENGINE::CCollider*			m_pCollider;
 	ENGINE::CSphereColl*	m_pSphereColl;
 	ENGINE::CSphereColl*	m_pTargetSphereColl;
 	ENGINE::CShader*			m_pShader;
 	ENGINE::CWeapon*			m_pWeapon;
 
-private:
-	_matrix m_pBoneMatrix;
-
 public:
-	static CEnemy_Spearman* Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos);
+	static CEnemy_Bowman* Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos);
 	virtual void Free() override;
 
 
 };
 
-#endif // Enemy_Spearman_h__
+#endif // Enemy_Bowman_h__

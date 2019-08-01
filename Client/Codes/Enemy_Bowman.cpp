@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Enemy_Swordman.h"
+#include "Enemy_Bowman.h"
 
 #include "Export_Function.h"
 
@@ -24,7 +24,7 @@
 #define _RISEUP							35	//기상
 
 
-CEnemy_Swordman::CEnemy_Swordman(LPDIRECT3DDEVICE9 pDevice)
+CEnemy_Bowman::CEnemy_Bowman(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice),
 	m_pMesh(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr), m_pNaviMesh(nullptr),
 	m_AttackTime(0.0)
@@ -45,12 +45,12 @@ CEnemy_Swordman::CEnemy_Swordman(LPDIRECT3DDEVICE9 pDevice)
 	m_AccTime = 1.0;
 }
 
-CEnemy_Swordman::~CEnemy_Swordman()
+CEnemy_Bowman::~CEnemy_Bowman()
 {
 
 }
 
-HRESULT CEnemy_Swordman::Ready_Object(_vec3 vPos)
+HRESULT CEnemy_Bowman::Ready_Object(_vec3 vPos)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
@@ -68,7 +68,7 @@ HRESULT CEnemy_Swordman::Ready_Object(_vec3 vPos)
 	return S_OK;
 }
 
-HRESULT CEnemy_Swordman::Late_Init()
+HRESULT CEnemy_Bowman::Late_Init()
 {
 	//m_pTransform->m_vAngle.y = 180.f;
 	//m_pTransform->m_vInfo[ENGINE::INFO_POS] = { 40.f, 0.1f, 3.f };
@@ -85,7 +85,7 @@ HRESULT CEnemy_Swordman::Late_Init()
 	return S_OK;
 }
 
-_int CEnemy_Swordman::Update_Object(const _double& TimeDelta)
+_int CEnemy_Bowman::Update_Object(const _double& TimeDelta)
 {
 	m_TimeDelta = TimeDelta;
 	ENGINE::CGameObject::Late_Init();
@@ -105,13 +105,13 @@ _int CEnemy_Swordman::Update_Object(const _double& TimeDelta)
 	return NO_EVENT;
 }
 
-void CEnemy_Swordman::Late_Update_Object()
+void CEnemy_Bowman::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
 	m_fDist = m_pTransform->Get_TargetDistance(m_pTargetTransform);
 }
 
-void CEnemy_Swordman::Render_Object()
+void CEnemy_Bowman::Render_Object()
 {
 	//Total Enemy Behavior
 	Set_Behavior_Progress();
@@ -182,7 +182,7 @@ void CEnemy_Swordman::Render_Object()
 //}
 
 
-void CEnemy_Swordman::Check_EnemyGroup()
+void CEnemy_Bowman::Check_EnemyGroup()
 {
 	_vec3 vPos = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
 	_vec3 vRevDir = { 0.f, 0.f, 0.f };	//주변에 걸리적 거리는 놈 있으면 밀어내는 거리
@@ -217,7 +217,7 @@ void CEnemy_Swordman::Check_EnemyGroup()
 
 }
 
-_bool CEnemy_Swordman::Check_EnemyColl(_vec3 * vRevDir, const _tchar* szTag)
+_bool CEnemy_Bowman::Check_EnemyColl(_vec3 * vRevDir, const _tchar* szTag)
 {
 	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
 
@@ -255,7 +255,7 @@ _bool CEnemy_Swordman::Check_EnemyColl(_vec3 * vRevDir, const _tchar* szTag)
 	return FALSE;
 }
 
-VOID CEnemy_Swordman::Animate_FSM(_uint iAniState)
+VOID CEnemy_Bowman::Animate_FSM(_uint iAniState)
 {
 	m_iCurAniSet = iAniState;
 
@@ -266,7 +266,7 @@ VOID CEnemy_Swordman::Animate_FSM(_uint iAniState)
 	}
 }
 
-void CEnemy_Swordman::Set_Animation()
+void CEnemy_Bowman::Set_Animation()
 {
 	m_iKnockCnt = 0;
 	m_iKnockIdx[0] = _KnockBack_A;
@@ -276,7 +276,7 @@ void CEnemy_Swordman::Set_Animation()
 	m_iKnockIdx[4] = _RISEUP;
 }
 
-VOID CEnemy_Swordman::Set_Behavior_Progress()
+VOID CEnemy_Bowman::Set_Behavior_Progress()
 {
 	/// 추후 Bool 값으로 제어되는 상태를 하나의 단일 FLAG 연산으로 개선하여 단일 변수로 수정 _uint m_StateFlag , Swith로 제어
 	//Check State
@@ -288,36 +288,36 @@ VOID CEnemy_Swordman::Set_Behavior_Progress()
 	{
 		//State Awaken
 		if (m_bSleep)	//생성 후 기본 대기 루프
-			AiState = &CEnemy_Swordman::State_Awaken;
+			AiState = &CEnemy_Bowman::State_Awaken;
 		//State Hit
 		else if (m_bHit && !m_bKnockBack && !m_bAirborne)	//공격 명중 시, 경직
-			AiState = &CEnemy_Swordman::State_Hit;
+			AiState = &CEnemy_Bowman::State_Hit;
 		//State KnockBack
 		else if (m_bKnockBack)		//넉백 공격 받음
-			AiState = &CEnemy_Swordman::State_KnockBack;
+			AiState = &CEnemy_Bowman::State_KnockBack;
 		//State Airbone
 		else if (m_bAirborne && !m_bKnockBack)	//에어본 공격받음
-			AiState = &CEnemy_Swordman::State_Airborne;
+			AiState = &CEnemy_Bowman::State_Airborne;
 		//State Chase
 		else if (!m_bAttack && !m_bHit && m_fDist < 10.f)	//플레이어 추적 시작
-			AiState = &CEnemy_Swordman::State_Chase;
+			AiState = &CEnemy_Bowman::State_Chase;
 		//State Attack
 		else if (m_bAttack && !m_bHit)		//플레이어 공격 쌉가능
-			AiState = &CEnemy_Swordman::State_Attack;
+			AiState = &CEnemy_Bowman::State_Attack;
 
 		//State Idle
 		if (m_fDist > 10.f && !m_bHit && !m_bKnockBack && !m_bAirborne)	//아무일도... 없엇따!
-			AiState = &CEnemy_Swordman::State_Idle;
+			AiState = &CEnemy_Bowman::State_Idle;
 	}
 	else if (m_bDead)		//으앙 쥬금
 	//State Dead	
-		AiState = &CEnemy_Swordman::State_Dead;
+		AiState = &CEnemy_Bowman::State_Dead;
 
 	//스테이트 설정 완료 시 Func Pointer Start
 	(this->*AiState)();
 }
 
-HRESULT CEnemy_Swordman::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
+HRESULT CEnemy_Bowman::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
 {
 	if (nullptr == pEffect)
 		return E_FAIL;
@@ -338,7 +338,7 @@ HRESULT CEnemy_Swordman::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
 	return S_OK;
 }
 
-void CEnemy_Swordman::Get_WeaponMatrix(const char* tBone)
+void CEnemy_Bowman::Get_WeaponMatrix(const char* tBone)
 {
 	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName(tBone);
 
@@ -347,7 +347,7 @@ void CEnemy_Swordman::Get_WeaponMatrix(const char* tBone)
 
 
 
-HRESULT CEnemy_Swordman::Add_Component()
+HRESULT CEnemy_Bowman::Add_Component()
 {
 
 	ENGINE::CComponent* pComponent = nullptr;
@@ -399,9 +399,9 @@ HRESULT CEnemy_Swordman::Add_Component()
 	return S_OK;
 }
 
-CEnemy_Swordman * CEnemy_Swordman::Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos)
+CEnemy_Bowman * CEnemy_Bowman::Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos)
 {
-	CEnemy_Swordman* pInstance = new CEnemy_Swordman(pGraphicDev);
+	CEnemy_Bowman* pInstance = new CEnemy_Bowman(pGraphicDev);
 
 	if (FAILED(pInstance->Ready_Object(vPos)))
 		ENGINE::Safe_Release(pInstance);
@@ -409,12 +409,12 @@ CEnemy_Swordman * CEnemy_Swordman::Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 v
 	return pInstance;
 }
 
-void CEnemy_Swordman::Free()
+void CEnemy_Bowman::Free()
 {
 	ENGINE::CGameObject::Free();
 }
 
-VOID CEnemy_Swordman::State_Awaken()
+VOID CEnemy_Bowman::State_Awaken()
 {
 	if (m_fDist < 10.f && m_iCurAniSet == _IDLE) //대기 상태에서 플레이어 발견
 	{
@@ -429,7 +429,7 @@ VOID CEnemy_Swordman::State_Awaken()
 	}
 }
 
-VOID CEnemy_Swordman::State_Hit()
+VOID CEnemy_Bowman::State_Hit()
 {
 	m_HitTime += m_TimeDelta;
 	Animate_FSM(_HIT);
@@ -449,7 +449,7 @@ VOID CEnemy_Swordman::State_Hit()
 
 }
 
-VOID CEnemy_Swordman::State_KnockBack()
+VOID CEnemy_Bowman::State_KnockBack()
 {
 	Animate_FSM(m_iKnockIdx[m_iKnockCnt]);	//첫번째 애니 재생
 
@@ -478,7 +478,7 @@ VOID CEnemy_Swordman::State_KnockBack()
 
 }
 
-VOID CEnemy_Swordman::State_Airborne()
+VOID CEnemy_Bowman::State_Airborne()
 {
 	if (m_iCurAniSet == _RISEUP && m_pMesh->Is_AnimationSetEnd())
 	{
@@ -506,7 +506,7 @@ VOID CEnemy_Swordman::State_Airborne()
 
 }
 
-VOID CEnemy_Swordman::State_Idle()
+VOID CEnemy_Bowman::State_Idle()
 {
 	Animate_FSM(_IDLE);
 	m_bAttack = FALSE;
@@ -516,7 +516,7 @@ VOID CEnemy_Swordman::State_Idle()
 
 }
 
-VOID CEnemy_Swordman::State_Chase()
+VOID CEnemy_Bowman::State_Chase()
 {
 
 	//플레이어가 거리 내에 있으면 무적권 시야 고정
@@ -559,7 +559,7 @@ VOID CEnemy_Swordman::State_Chase()
 
 }
 
-VOID CEnemy_Swordman::State_Attack()
+VOID CEnemy_Bowman::State_Attack()
 {
 
 	m_pTransform->Fix_TargetLook(m_pTargetTransform, 10.f);
@@ -631,7 +631,7 @@ VOID CEnemy_Swordman::State_Attack()
 
 }
 
-VOID CEnemy_Swordman::State_Dead()
+VOID CEnemy_Bowman::State_Dead()
 {
 	m_AttackTime += m_TimeDelta;
 	m_bAttack = FALSE;

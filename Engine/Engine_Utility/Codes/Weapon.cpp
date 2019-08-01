@@ -40,7 +40,7 @@ HRESULT CWeapon::Ready_Component(ENGINE::CTransform * pTarget, UNITINFO vInfo, c
 	m_pTransform->m_vAngle = vInfo.m_vAngle;
 
 	m_pCollider->Set_Scale(vInfo.m_vScale.x);
-	
+
 
 	return S_OK;
 }
@@ -72,11 +72,12 @@ _int CWeapon::Update_Component(const _double & TimeDelta)
 		Check_EnemyColl(L"Troll");
 		Check_EnemyColl(L"Enemy_Swordman");
 		Check_EnemyColl(L"Enemy_Spearman");
-		//Check_EnemyColl(L"Troll", L"Com_SphereColl");
+		Check_EnemyColl(L"Enemy_Shieldman");
+		Check_EnemyColl(L"Enemy_Bowman");
 	}
 	else if (m_bAttack && !m_bPlayer)
 		Check_PlayerColl(L"Player");
-	
+
 
 
 	return NO_EVENT;
@@ -91,6 +92,8 @@ void CWeapon::Late_Update_Component()
 		Reset_EnemyColl(L"Troll");
 		Reset_EnemyColl(L"Enemy_Swordman");
 		Reset_EnemyColl(L"Enemy_Spearman");
+		Reset_EnemyColl(L"Enemy_Shieldman");
+		Reset_EnemyColl(L"Enemy_Bowman");
 	}
 }
 
@@ -120,7 +123,7 @@ void CWeapon::Render_Weapon(const _matrix* pParentMat)
 
 	////////////////////////////////////////
 	m_pCollider->Set_Collider(&m_pTransform->m_matWorld);
-	
+
 	if (m_bAttack)
 		m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pTransform->m_matWorld);
 
@@ -205,7 +208,7 @@ void CWeapon::Check_EnemyColl(const _tchar * pObjTag)
 			continue;
 
 		_bool bColl = m_pCollider->Check_ComponentColl(pTarget);
-		_vec3 vKnockDir = {0.f, 0.f, 0.f};
+		_vec3 vKnockDir = { 0.f, 0.f, 0.f };
 
 		if (m_iCurAni != m_iOldAni)
 			pTarget->Get_iHitStack(TRUE);
@@ -218,11 +221,10 @@ void CWeapon::Check_EnemyColl(const _tchar * pObjTag)
 			switch (m_iComboCnt)
 			{
 			case 6:
-				pTarget->m_bAirbone = TRUE;
-				break;
 			case 7:
 				pTarget->m_bAirbone = TRUE;
 				break;
+			case 4:
 			case 8:
 				pTarget->m_bKnockBack = TRUE;
 				vKnockDir = pTarget->Get_CollPos() - m_pTarget->Get_vInfoPos(ENGINE::INFO_POS);
@@ -234,6 +236,7 @@ void CWeapon::Check_EnemyColl(const _tchar * pObjTag)
 				pTarget->m_bHit = TRUE;
 				break;
 			}
+
 		}
 
 	}
@@ -270,7 +273,7 @@ CWeapon * CWeapon::Create(LPDIRECT3DDEVICE9 pDevice, CTransform * pTarget, UNITI
 {
 	CWeapon* pInstance = new CWeapon(pDevice);
 
-	if (FAILED(pInstance->Ready_Component(pTarget, vInfo, szWeapon )))
+	if (FAILED(pInstance->Ready_Component(pTarget, vInfo, szWeapon)))
 		Safe_Release(pInstance);
 
 	return pInstance;

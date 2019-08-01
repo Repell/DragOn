@@ -106,7 +106,7 @@ HRESULT CNewPlayer::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	ENGINE::UNITINFO tInfo = 
-	{ TRUE, _vec3(0.f, 0.f, -100.f), _vec3{0.01f, 1.f, 1.f }, _vec3(90.f, 20.f, 20.f), 50.f};
+	{ TRUE, _vec3(0.f, 0.f, -90.f), _vec3{0.01f, 1.f, 1.f }, _vec3(90.f, 20.f, 20.f), 50.f};
 	pComponent = m_pWeapon = ENGINE::CWeapon::Create(m_pGraphicDev, m_pTransform, tInfo, L"Mesh_Sword");
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Weapon", pComponent);
@@ -126,75 +126,6 @@ HRESULT CNewPlayer::Late_Init()
 	return S_OK;
 }
 
-
-void CNewPlayer::Key_ChecknMoveState(const _double & TimeDelta)
-{
-	if (ENGINE::Key_Combined(ENGINE::dwKEY_W, ENGINE::dwKEY_A))
-	{
-		m_eCurDir = LEFTUP;
-		if (m_ePlayerState != FIGHT)
-			Animate_FSM(107);
-	}
-	else if (ENGINE::Key_Combined(ENGINE::dwKEY_W, ENGINE::dwKEY_D))
-	{
-		m_eCurDir = RIGHTUP;
-		if (m_ePlayerState != FIGHT)
-			Animate_FSM(107);
-
-	}
-	else if (ENGINE::Key_Combined(ENGINE::dwKEY_S, ENGINE::dwKEY_A))
-	{
-		m_eCurDir = LEFTDOWN;
-		if (m_ePlayerState != FIGHT)
-			Animate_FSM(107);
-
-	}
-	else if (ENGINE::Key_Combined(ENGINE::dwKEY_S, ENGINE::dwKEY_D))
-	{
-		m_eCurDir = RIGHTDOWN;
-		if (m_ePlayerState != FIGHT)
-			Animate_FSM(107);
-
-	}
-	else if (ENGINE::Key_Press(ENGINE::dwKEY_W))
-	{
-		m_eCurDir = UP;
-		if (m_ePlayerState != FIGHT)
-			Animate_FSM(107);
-
-	}
-	else if (ENGINE::Key_Press(ENGINE::dwKEY_S))
-	{
-		m_eCurDir = DOWN;
-		if (m_ePlayerState != FIGHT)
-			Animate_FSM(107);
-
-	}
-
-	else if (ENGINE::Key_Press(ENGINE::dwKEY_A))
-	{
-		m_eCurDir = LEFT;
-		if (m_ePlayerState != FIGHT)
-			Animate_FSM(107);
-
-	}
-
-	else if (ENGINE::Key_Press(ENGINE::dwKEY_D))
-	{
-		m_eCurDir = RIGHT;
-		if (m_ePlayerState != FIGHT)
-			Animate_FSM(107);
-
-	}
-
-	if (m_eCurDir != DIR_END && m_ePlayerState != FIGHT)
-		m_ePlayerState = MOVE;
-	else if (m_ePlayerState == FIGHT)
-		m_ePlayerState = FIGHT_MOVE;
-	else
-		m_ePlayerState = NONE;
-}
-
 void CNewPlayer::Key_Check_Advance(const _double & TimeDelta)
 {
 	_vec3 vAdvPos = m_pAdvance->Get_INFO(ENGINE::INFO_POS);
@@ -207,56 +138,6 @@ void CNewPlayer::Key_Check_Advance(const _double & TimeDelta)
 		m_bJump = TRUE;
 	}
 
-	//if (ENGINE::Key_Combined(ENGINE::dwKEY_W, ENGINE::dwKEY_A))
-	//{
-	//	m_eCurDir = LEFTUP;
-	//	if (m_ePlayerState != FIGHT)
-	//	{
-	//		m_pAdvance->Get_Transform()->m_vAngle.y -= _ANGLE * TimeDelta;
-	//		m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] += m_pAdvance->Get_INFO(ENGINE::INFO_LOOK) * TimeDelta * _SPEED;
-	//		//m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vAdvPos, &(vAdvDir * TimeDelta * _SPEED));
-	//		if (!m_bJump)
-	//			Animate_FSM(107);
-
-	//	}
-	//}
-	//else if (ENGINE::Key_Combined(ENGINE::dwKEY_W, ENGINE::dwKEY_D))
-	//{
-	//	m_eCurDir = RIGHTUP;
-	//	if (m_ePlayerState != FIGHT)
-	//	{
-	//		m_pAdvance->Get_Transform()->m_vAngle.y += _ANGLE * TimeDelta;
-	//		m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] += m_pAdvance->Get_INFO(ENGINE::INFO_LOOK) * TimeDelta * _SPEED;
-	//		if (!m_bJump)
-	//			Animate_FSM(107);
-
-	//	}
-	//}
-	//else if (ENGINE::Key_Combined(ENGINE::dwKEY_S, ENGINE::dwKEY_A))
-	//{
-	//	m_eCurDir = LEFTDOWN;
-	//	if (m_ePlayerState != FIGHT)
-	//	{
-	//		m_pAdvance->Get_Transform()->m_vAngle.y -= _ANGLE * TimeDelta;
-	//		m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] -= m_pAdvance->Get_INFO(ENGINE::INFO_LOOK) * TimeDelta * _SPEED;
-	//		if (!m_bJump)
-	//			Animate_FSM(107);
-
-	//	}
-
-	//}
-	//else if (ENGINE::Key_Combined(ENGINE::dwKEY_S, ENGINE::dwKEY_D))
-	//{
-	//	m_eCurDir = RIGHTDOWN;
-	//	if (m_ePlayerState != FIGHT)
-	//	{
-	//		m_pAdvance->Get_Transform()->m_vAngle.y -= _ANGLE * TimeDelta;
-	//		m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] += m_pAdvance->Get_INFO(ENGINE::INFO_LOOK) * TimeDelta * _SPEED;
-	//		if (!m_bJump)
-	//			Animate_FSM(107);
-
-	//	}
-	//}
 	if (ENGINE::Key_Press(ENGINE::dwKEY_A))
 	{
 		m_eCurDir = LEFT;
@@ -304,6 +185,7 @@ void CNewPlayer::Key_Check_Advance(const _double & TimeDelta)
 				Animate_FSM(107);
 		}
 	}
+
 	if (m_bJump)
 	{
 		//Animate_FSM(101);
@@ -520,6 +402,7 @@ void CNewPlayer::Fight_Func(const _double & TimeDelta)
 void CNewPlayer::Move_Func(const _double & TimeDelta)
 {
 	Update_PlayerDir(TimeDelta);
+
 	if (m_ePlayerState == MOVE && m_ePlayerState != FIGHT_MOVE)
 	{
 		_vec3	vPos, vDir;
@@ -658,7 +541,10 @@ _int CNewPlayer::Update_Object(const _double & TimeDelta)
 		Animate_FSM(m_iKnockIdx[m_iKnockCnt]);	//첫번째 애니 재생
 
 		if (m_iKnockCnt == 5 && !m_pMesh->Is_AnimationSetEnd())	//경직 후 기상 모션
+		{
 			Animate_FSM(m_iKnockIdx[m_iKnockCnt]);
+			m_pWeapon->Set_AttackState(TRUE, m_iKnockIdx[m_iKnockCnt], 8, 2);
+		}
 		else if (m_iKnockCnt == 5 && m_pMesh->Is_AnimationSetEnd())	//경직 종료
 		{
 			Animate_FSM(_IDLE);
@@ -745,8 +631,7 @@ void CNewPlayer::Late_Update_Object()
 {
 	CGameObject::Late_Update_Object();
 	//////////////////////
-	Check_DirectionCollision(&_vec3(0.f, 0.f, 0.f));	//몬스터와 충돌 체크, 멤버 변수는 리버스 벡터 반환
-	Get_WeaponMatrix();
+	//Check_DirectionCollision(&_vec3(0.f, 0.f, 0.f));	//몬스터와 충돌 체크, 멤버 변수는 리버스 벡터 반환
 }
 
 void CNewPlayer::Render_Object()
@@ -780,7 +665,8 @@ void CNewPlayer::Render_Object()
 	ENGINE::Safe_Release(pEffect);
 
 	///////////////////////////////////
-	m_pWeapon->Render_Weapon(m_WeaponMat);
+	Get_WeaponMatrix();
+	m_pWeapon->Render_Weapon(&m_WeaponMat);
 	m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld);
 
 
@@ -835,197 +721,45 @@ _vec3 CNewPlayer::MouseFunc()
 	return _vec3(_float(pt.x), _float(pt.y), 0.f);
 }
 
-_bool CNewPlayer::Key_Check_Func(const _double & TimeDelta)
+//_bool CNewPlayer::Check_DirectionCollision(_vec3* vRevDir)
+//{
+//	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
+//
+//	for (auto pList : pLayer->Get_MapObject(L"Enemy_Sword"))
+//	{
+//		
+//		ENGINE::CTransform* pTrans = dynamic_cast<ENGINE::CTransform*>
+//			(pList->Get_Component(L"Com_Transform", ENGINE::COMP_DYNAMIC));
+//
+//		if (pTrans->Get_Dead())
+//			continue;
+//
+//		ENGINE::CSphereColl* pSphere = dynamic_cast<ENGINE::CSphereColl*>
+//			(pList->Get_Component(L"Com_SphereColl", ENGINE::COMP_STATIC));
+//
+//		if (pSphere == nullptr)
+//			return FALSE;
+//
+//		//나도 밀고 상대도 날 미는 리버스 벡터
+//		//*vRevDir = m_pTransform->Get_TargetReverseDir(pTrans) * 0.1f;
+//
+//		if (m_pSphereColl->Check_ComponentColl(pSphere))
+//		{
+//			_vec3 vTargetRevDir = pTrans->Get_TargetReverseDir(m_pTransform)  * 0.01f;
+//			vTargetRevDir.y = 0.f;
+//			pTrans->m_vInfo[ENGINE::INFO_POS] += vTargetRevDir;
+//			return TRUE;
+//		}
+//		else
+//			continue;
+//	}
+//
+//	return FALSE;
+//}
+
+void CNewPlayer::Check_DirectionCollision(const _tchar * szTag, _vec3 * vRevDir)
 {
-	//MouseFunc();
-
-	_long dwMouseMove = 0;
-	if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_X))
-		m_pTransform->m_vAngle.y += dwMouseMove * _ANGLE *TimeDelta;
-
-	//if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_Y))
-	//	m_pTransform->m_vAngle.x += dwMouseMove * _ANGLE *TimeDelta;
-
-	_vec3 vNewDir = m_pTransform->Get_vLookDir();
-	_vec3 vPos = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
-
-	if (m_pTransform->bCamTarget && ENGINE::Key_Down(ENGINE::dwKEY_F4))
-	{
-		if (m_pTransform->bCamTarget)
-			m_pTransform->bCamTarget = false;
-	}
-
-	if (ENGINE::Key_Press(ENGINE::dwKEY_SPACE) && !m_bJump)
-	{
-		m_bJump = true;
-		Animate_FSM(101);
-	}
-
-
-	if (ENGINE::Key_Press(ENGINE::dwKEY_A))
-	{
-		if (ENGINE::Key_Down(ENGINE::dwKEY_Shift) && !m_bDash)
-		{
-			_vec3 vLeft = vNewDir.NewDir(&vNewDir, &_vec3(0.f, 1.f, 0.f));
-			m_vDashDir = -vLeft;
-			m_pTransform->m_vInfo[ENGINE::INFO_POS] -= vLeft * _SPEED * TimeDelta;
-			m_pSphereColl->Set_Invisible(TRUE);
-			Animate_FSM(39);
-			m_bDash = TRUE;
-			m_TimeAccel = 2;
-
-			for (int i = 0; i < 5; ++i)
-				m_bAttack[i] = FALSE;
-
-			return TRUE;
-		}
-		else
-			m_pTransform->m_vAngle.y -= _ANGLE * TimeDelta;
-	}
-
-	if (ENGINE::Key_Press(ENGINE::dwKEY_D))
-	{
-		if (ENGINE::Key_Down(ENGINE::dwKEY_Shift) && !m_bDash)
-		{
-			_vec3 vRight = vNewDir.NewDir(&vNewDir, &_vec3(0.f, 1.f, 0.f));
-			m_vDashDir = vRight;
-			m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRight * _SPEED * TimeDelta;
-			m_pSphereColl->Set_Invisible(TRUE);
-			Animate_FSM(38);
-			m_TimeAccel = 2;
-			m_bDash = TRUE;
-
-			for (int i = 0; i < 5; ++i)
-				m_bAttack[i] = FALSE;
-
-			return TRUE;
-		}
-		else
-			m_pTransform->m_vAngle.y += _ANGLE * TimeDelta;
-	}
-
-	if (!m_bAttack[0] && ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON))
-	{
-		//CGameObject* pObject = CEffect_Tex::Create(m_pGraphicDev, m_pTransform->m_vInfo[ENGINE::INFO_POS], 1.f, 0.5f);
-		//ENGINE::Get_Management()->Add_GameObject(ENGINE::CLayer::OBJECT, L"kaboom", pObject);
-		//m_pMesh->Set_AnimationSet(90);
-		Animate_FSM(m_iComboIdx[0]);
-		m_bAttack[0] = TRUE;
-		m_pWeapon->Set_AttackState(TRUE, m_iCurAniState, 2);
-	}
-
-
-	if (!m_bAttack[0] && ENGINE::Key_Press(ENGINE::dwKEY_W))
-	{
-		if (ENGINE::Key_Down(ENGINE::dwKEY_Shift) && !m_bDash)
-		{
-			D3DXVec3Normalize(&vNewDir, &vNewDir);
-			m_vDashDir = -vNewDir;
-			m_pTransform->m_vInfo[ENGINE::INFO_POS] -= vNewDir * _SPEED * TimeDelta;
-			m_pSphereColl->Set_Invisible(TRUE);
-			//Animate_FSM(105);
-			Animate_FSM(41);
-			//m_pMesh->Set_QuickSet(105);
-			//m_iCurAniState = 105;
-			//m_iPreAniState = m_iCurAniState;
-			m_bDash = TRUE;
-			m_TimeAccel = 2;
-			return TRUE;
-		}
-		else if (!m_bDash)
-		{
-			D3DXVec3Normalize(&vNewDir, &vNewDir);
-			_vec3 vRevDir = {};
-			if (Check_DirectionCollision(&vRevDir))
-			{
-				m_pTransform->m_vInfo[ENGINE::INFO_POS] +=
-					m_pNaviMesh->MoveOn_NaviMesh_Dir(&vPos, &(vRevDir* _SPEED * TimeDelta));;
-				//m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRevDir * _SPEED * TimeDelta;
-			}
-			else
-			{
-				m_pTransform->m_vInfo[ENGINE::INFO_POS] +=
-					m_pNaviMesh->MoveOn_NaviMesh_Dir(&vPos, &(-vNewDir* _SPEED * TimeDelta));
-				//m_pTransform->m_vInfo[ENGINE::INFO_POS] -= vNewDir * _SPEED * TimeDelta;
-			}
-
-			if (!m_bJump)
-				Animate_Quick(107);
-
-			return TRUE;
-		}
-	}
-
-	if (!m_bAttack[0] && ENGINE::Key_Press(ENGINE::dwKEY_S))
-	{
-		if (ENGINE::Key_Down(ENGINE::dwKEY_Shift) && !m_bDash)
-		{
-			D3DXVec3Normalize(&vNewDir, &vNewDir);
-			m_vDashDir = vNewDir;
-			m_pTransform->m_vInfo[ENGINE::INFO_POS] += vNewDir * _SPEED * TimeDelta;
-			m_pSphereColl->Set_Invisible(TRUE);
-			//Animate_FSM(104);
-			Animate_FSM(40);
-			//m_pMesh->Set_QuickSet(104);
-			//m_iCurAniState = 104;
-			//m_iPreAniState = m_iCurAniState;
-			m_bDash = TRUE;
-			m_TimeAccel = 2;
-			return TRUE;
-		}
-		else if (!m_bDash)
-		{
-			D3DXVec3Normalize(&vNewDir, &vNewDir);
-			_vec3 vRevDir = {};
-			if (Check_DirectionCollision(&vRevDir))
-				m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRevDir * _SPEED * TimeDelta;
-			else
-				m_pTransform->m_vInfo[ENGINE::INFO_POS] += vNewDir * _SPEED * TimeDelta;
-
-			if (!m_bJump)
-				Animate_Quick(106);
-
-			return TRUE;
-		}
-	}
-
-	return FALSE;
-}
-
-_bool CNewPlayer::Check_DirectionCollision(_vec3* vRevDir)
-{
-	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
-
-	for (auto pList : pLayer->Get_MapObject(L"Enemy_Sword"))
-	{
-		
-		ENGINE::CTransform* pTrans = dynamic_cast<ENGINE::CTransform*>
-			(pList->Get_Component(L"Com_Transform", ENGINE::COMP_DYNAMIC));
-
-		if (pTrans->Get_Dead())
-			continue;
-
-		ENGINE::CSphereColl* pSphere = dynamic_cast<ENGINE::CSphereColl*>
-			(pList->Get_Component(L"Com_SphereColl", ENGINE::COMP_STATIC));
-
-		if (pSphere == nullptr)
-			return FALSE;
-
-		//나도 밀고 상대도 날 미는 리버스 벡터
-		//*vRevDir = m_pTransform->Get_TargetReverseDir(pTrans) * 0.1f;
-
-		if (m_pSphereColl->Check_ComponentColl(pSphere))
-		{
-			_vec3 vTargetRevDir = pTrans->Get_TargetReverseDir(m_pTransform)  * 0.01f;
-			vTargetRevDir.y = 0.f;
-			pTrans->m_vInfo[ENGINE::INFO_POS] += vTargetRevDir;
-			return TRUE;
-		}
-		else
-			continue;
-	}
-
-	return FALSE;
+	
 }
 
 VOID CNewPlayer::Animate_FSM(_uint iAniState)
@@ -1072,7 +806,7 @@ void CNewPlayer::Get_WeaponMatrix()
 {
 	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName("R_Hand");
 
-	m_WeaponMat = &(pFrame->combinedTransformMatrix * m_pTransform->m_matWorld);
+	m_WeaponMat = pFrame->combinedTransformMatrix * m_pTransform->m_matWorld;
 }
 
 void CNewPlayer::Jump_Func(const _double & TimeDelta)

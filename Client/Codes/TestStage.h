@@ -14,6 +14,8 @@
 #include "Troll.h"
 #include "Enemy_Swordman.h"
 #include "Enemy_Spearman.h"
+#include "Enemy_Shieldman.h"
+#include "Enemy_Bowman.h"
 //Static
 #include "StaticObj.h"
 #include "Sword.h"

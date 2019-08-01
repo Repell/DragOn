@@ -32,9 +32,8 @@ public:
 private:
 	void Set_Animation();
 	void Get_WeaponMatrix(const char* tBone);
+	void Check_EnemyGroup();
 	_bool Check_EnemyColl(_vec3* vRevDir, const _tchar* szTag);
-	//void Render_Set();
-	//void Render_ReSet();
 
 private:
 	VOID Animate_FSM(_uint iAniState);
@@ -91,7 +90,7 @@ private:
 	_uint m_iKnockCnt = 0;
 
 private:
-	const _matrix* m_pBoneMatrix;
+	_matrix m_pBoneMatrix;
 
 private:
 	HRESULT Add_Component();

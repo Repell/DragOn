@@ -95,7 +95,7 @@ private:
 	
 private:
 	//Collision Check
-	_bool Check_DirectionCollision(_vec3* vRevDir);
+	void Check_DirectionCollision(const _tchar* szTag, _vec3* vRevDir);
 private:
 	//Animate Func
 	VOID Animate_FSM(_uint iAniState);
@@ -172,7 +172,7 @@ private:
 	_double m_RigdTime;
 
 	//Weapon
-	const _matrix* m_WeaponMat;
+	_matrix m_WeaponMat;
 
 public:
 	static CNewPlayer* Create(LPDIRECT3DDEVICE9 pGraphicDev);

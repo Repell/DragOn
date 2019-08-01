@@ -101,6 +101,12 @@
     <Filter Include="01.Clinet\02.Scene\09.TestStage\04.Monster\02.Spearman">
       <UniqueIdentifier>{f65f0c32-587a-40f9-8651-96f26a3b3494}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Clinet\02.Scene\09.TestStage\04.Monster\03.Shieldman">
+      <UniqueIdentifier>{e3415b02-b771-4551-b492-edbf518c79c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Clinet\02.Scene\09.TestStage\04.Monster\04.Bowman">
+      <UniqueIdentifier>{25391ef5-3244-41e8-bd60-697dce9622b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clinet.h">
@@ -199,6 +205,12 @@
     <ClInclude Include="..\Codes\Enemy_Spearman.h">
       <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\02.Spearman</Filter>
     </ClInclude>
+    <ClInclude Include="..\Codes\Enemy_Shieldman.h">
+      <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\03.Shieldman</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Enemy_Bowman.h">
+      <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\04.Bowman</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -275,6 +287,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Enemy_Spearman.cpp">
       <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\02.Spearman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Enemy_Shieldman.cpp">
+      <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\03.Shieldman</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Enemy_Bowman.cpp">
+      <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\04.Bowman</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
