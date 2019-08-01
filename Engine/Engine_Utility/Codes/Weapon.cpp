@@ -24,6 +24,11 @@ void CWeapon::Set_AttackState(_bool bState, _uint iCurAni, _uint iCombo, _uint i
 	m_iCurAni = iCurAni;
 }
 
+void CWeapon::Set_ColliderScale(_float fScale)
+{
+	m_pCollider->Set_Scale(fScale);
+}
+
 _bool CWeapon::Check_ComponentColl(CSphereColl* pSphere)
 {
 	return m_pCollider->Check_ComponentColl(pSphere);
