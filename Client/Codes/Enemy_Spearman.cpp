@@ -148,7 +148,7 @@ void CEnemy_Spearman::Render_Object()
 	m_pWeapon->Render_Weapon(&m_pBoneMatrix);
 
 	if (!m_bDead)
-		m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld);
+		m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld, 0.75f);
 
 	////////////////////////////////////////
 }
@@ -587,7 +587,7 @@ HRESULT CEnemy_Spearman::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	ENGINE::UNITINFO tInfo =
-	{ FALSE, _vec3(0.f, 0.f, -110.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(90.f, 20.f, 0.f), 60.f };
+	{ FALSE, _vec3(0.f, 0.f, -110.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(90.f, 20.f, 0.f), _vec3(0.f, 0.f, 0.f), 60.f };
 	pComponent = m_pWeapon = ENGINE::CWeapon::Create(m_pGraphicDev, m_pTransform, tInfo, L"Mesh_Enemy_Spear");
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Weapon", pComponent);

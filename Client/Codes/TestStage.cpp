@@ -127,13 +127,12 @@ HRESULT CTestStage::Add_GameObject_Layer()
 	//pObject = CEnemy_Bowman::Create(m_pGraphicDev, _vec3(38.f, 0.1f, 4.f));
 	//NULL_CHECK_RETURN(pObject, E_FAIL);
 	//pObject_Layer->Add_GameObject(L"Enemy_Bowman", pObject);
-	/*
+	
 	for (int i = 0; i < 5; ++i)
 	{
 		pObject = CEnemy_Swordman::Create(m_pGraphicDev, _vec3(40.f, 0.1f, (7.f + i) * 0.5f));
 		NULL_CHECK_RETURN(pObject, E_FAIL);
 		pObject_Layer->Add_GameObject(L"Enemy_Swordman", pObject);
-
 	}
 
 	for (int i = 0; i < 5; ++i)
@@ -159,8 +158,8 @@ HRESULT CTestStage::Add_GameObject_Layer()
 		pObject_Layer->Add_GameObject(L"Enemy_Bowman", pObject);
 
 	}
-*/
-	
+
+
 	//////////////INSERT LAYER//////////////
 	m_MapLayer.emplace(ENGINE::CLayer::OBJECT, pObject_Layer);
 	return S_OK;
@@ -287,7 +286,7 @@ CTestStage * CTestStage::Create(LPDIRECT3DDEVICE9 pDevice)
 
 void CTestStage::Free()
 {
-	if(m_pLoading != nullptr)
+	if (m_pLoading != nullptr)
 		ENGINE::Safe_Release(m_pLoading);
 
 	ENGINE::CScene::Free();

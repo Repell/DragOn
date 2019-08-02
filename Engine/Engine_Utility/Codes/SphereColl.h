@@ -29,7 +29,7 @@ public:
 
 public:
 	HRESULT Ready_SphereColl(_float fRadius, _int iHp);
-	void Render_SphereColl(const _matrix * pCollMatrix);
+	void Render_SphereColl(const _matrix * pCollMatrix, _float fY = 0.f);
 	//_bool Check_Collision(const _vec3 vTargetPos, _float fTargetRadius);
 	_bool Check_ComponentColl(CSphereColl* pSphere);
 
