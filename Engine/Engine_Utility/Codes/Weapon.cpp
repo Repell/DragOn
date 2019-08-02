@@ -284,5 +284,6 @@ void CWeapon::Free()
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pMesh);
+	Safe_Release(m_pTransform);
 	Safe_Release(m_pGraphicDev);
 }

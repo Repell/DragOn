@@ -287,7 +287,7 @@ VOID CEnemy_Bowman::Set_Behavior_Progress()
 			AiState = &CEnemy_Bowman::State_Attack;
 
 		//State Idle
-		if (m_fDist > 10.f && !m_bHit && !m_bKnockBack && !m_bAirborne)	//아무일도... 없엇따!
+		if (m_fDist > 10.f && !m_bHit && !m_bKnockBack && !m_bAirborne && !m_bSleep)	//아무일도... 없엇따!
 			AiState = &CEnemy_Bowman::State_Idle;
 	}
 	else if (m_bDead)		//으앙 쥬금
@@ -502,10 +502,11 @@ VOID CEnemy_Bowman::State_Fallback()
 	Animate_FSM(_CHASE_RUN);
 	_vec3 vPos = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
 	_vec3 vRevDir = m_pTransform->Get_TargetReverseDir(m_pTargetTransform);
+	vRevDir.y = 0.f;
 	
 	m_pTransform->Fix_TargetRevLook(m_pTargetTransform, 20.f);
 	
-	m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vRevDir * _SPEED * m_TimeDelta));
+	m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRevDir * _SPEED * m_TimeDelta;//m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vRevDir * _SPEED * m_TimeDelta));
 	
 }
 

@@ -137,4 +137,5 @@ CAdvanceCamera * CAdvanceCamera::Create(LPDIRECT3DDEVICE9 pGraphic, ENGINE::CTra
 void CAdvanceCamera::Free()
 {
 	Safe_Release(m_pGraphicDev);
+	
 }

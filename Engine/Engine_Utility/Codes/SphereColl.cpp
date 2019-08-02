@@ -55,6 +55,7 @@ _vec3 CSphereColl::Set_KnockBackDist(_bool bCheck, _vec3 fDist)
 {
 	if(bCheck)
 		m_vKnockBackDir = fDist;
+	m_vKnockBackDir.y = 0.f;
 
 	return m_vKnockBackDir;
 }

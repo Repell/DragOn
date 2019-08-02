@@ -3,9 +3,29 @@
 
 #include "Export_Function.h"
 
-#define _SPEED 2.f
+#define _SPEED 1.4f
 #define _ANGLE 60.f
 #define  _RADIUS 140.f
+
+//STATE DEFINE
+#define _IDLE								0
+#define _CHASE_RUN					2
+#define _CHASE_WALK				4
+#define _ATTACK_START			8
+#define	_ATTACK_END				9
+#define _HIT									18
+#define _AIRBORNE						18
+#define _KnockBack_A				0
+#define _KnockBack_B				0
+#define _KnockBack_C				0
+#define _KnockBack_D				0
+#define  _DEAD							21
+#define _RISEUP							19	//기상
+//Unique State
+#define  _SLEEP							14
+#define _AWAKEN						15
+#define _GROWL						5
+
 
 CTroll::CTroll(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice),
@@ -14,9 +34,21 @@ CTroll::CTroll(LPDIRECT3DDEVICE9 pDevice)
 	m_bAttack = FALSE;
 	m_bSleep = TRUE;
 	m_bDead = FALSE;
+	m_bHit = FALSE;
+	m_bKnockBack = FALSE;
+	m_bAirborne = FALSE;
+	m_bTwice = FALSE;
 
 	m_iCurAniSet = 0;
 	m_iPreAniSet = 0;
+
+	m_HitTime = 0.0;
+	m_AttackTime = 0.0;
+	m_AirTime = 0.0;
+	m_KnockTime = 0.0;
+	m_TimeDelta = 0.0;
+	m_AccTime = 1.0;
+
 }
 
 CTroll::~CTroll()
@@ -30,7 +62,7 @@ HRESULT CTroll::Ready_Object(_vec3 vPos)
 
 	//m_pMesh->Set_AnimationSet(5);
 	//m_iCurAniSet = 5;
-	Animate_FSM(14);
+	Animate_FSM(_SLEEP);
 
 	m_pNaviMesh->Set_CurrentIdx(3);
 	m_pTransform->m_vAngle.y = 0.f;
@@ -86,42 +118,10 @@ void CTroll::Late_Update_Object()
 
 void CTroll::Render_Object()
 {
-	//Render_Set();
+	//Total Enemy Behavior
+	Set_Behavior_Progress();
 
-	if (m_bSleep && !m_bDead)
-	{
-		if (m_fDist < 10.f && m_iCurAniSet == 14)	//WakeUp
-			Animate_FSM(15);
-		else if (m_iCurAniSet == 15 && m_pMesh->Is_AnimationSetEnd())	//WakeUpEnd
-		{
-			m_pTransform->Fix_TargetLook(m_pTargetTransform, 20.f);
-			Animate_FSM(5);
-		}
-		else if (m_iCurAniSet == 5 && m_pMesh->Is_AnimationSetEnd())
-			m_bSleep = FALSE;
-	}
-	else if(!m_bDead)
-	{
-		if (m_iCurAniSet != 8 && m_fDist < 10.f && !m_bAttack)
-			Chase_Target(m_TimeDelta);
-		else if (m_bAttack && m_fDist < 10.f)
-			Attack_Target();
-		else
-		{
-			m_bAttack = FALSE;
-			m_pTransform->m_bAttackState = m_bAttack;
-			Animate_FSM(0);
-		}
-	}
-
-	if (m_bDead)
-	{
-		m_bAttack = FALSE;
-		m_pTransform->m_bAttackState = m_bAttack;
-		Animate_FSM(21);
-	}
-
-	if(m_iCurAniSet == 2)
+	if (m_iCurAniSet == 2)
 		m_pMesh->Play_AnimationSet(m_TimeDelta * 1.5);
 	else
 		m_pMesh->Play_AnimationSet(m_TimeDelta * 1.1);
@@ -140,9 +140,11 @@ void CTroll::Render_Object()
 	pEffect->BeginPass(0);
 	////////////////////////////////////////
 
-	m_pNaviMesh->Render_NaviMesh();
+	//m_pNaviMesh->Render_NaviMesh();
 
 	m_pMesh->Render_Meshes();
+	
+
 
 
 	////////////////////////////////////////
@@ -151,9 +153,11 @@ void CTroll::Render_Object()
 
 	ENGINE::Safe_Release(pEffect);
 
-	if (m_bAttack && !m_bDead)
-		Render_BoneMatrix("L_IRON1");
-	if(!m_bDead)
+	Get_WeaponMatrix("L_IRON1");
+	if (m_bAttack)
+		m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix);
+
+	if (!m_bDead)
 		m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld);
 
 	//_tchar szStr[MAX_PATH] = L"";
@@ -164,122 +168,70 @@ void CTroll::Render_Object()
 	//Render_ReSet();
 }
 
-void CTroll::Render_Set()
+void CTroll::Set_Animation()
 {
-	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-	//Alpha Test Begin
-	m_pGraphicDev->SetRenderState(D3DRS_ALPHAREF, 0x000000ff);
-	m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-	m_pGraphicDev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
-
-	//Render State
-	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-
-	//SetTransform
-	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
+	m_iKnockCnt = 0;
+	m_iKnockIdx[0] = _KnockBack_A;
+	m_iKnockIdx[1] = _KnockBack_B;
+	m_iKnockIdx[2] = _KnockBack_C;
+	m_iKnockIdx[3] = _KnockBack_D;
+	m_iKnockIdx[4] = _RISEUP;
 }
 
-void CTroll::Render_ReSet()
+void CTroll::Get_WeaponMatrix(const char * tBone)
 {
-	//Alpha Test End
-	m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-	//FillMode :: Default == D3DFILL_SOLID
-	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-
-	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
-}
-
-void CTroll::Render_BoneMatrix(const char* tBone)
-{
-	//if(nullptr == m_pBoneMatrix)
 	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName(tBone);
+
 	m_pBoneMatrix = pFrame->combinedTransformMatrix * m_pTransform->m_matWorld;
-
-	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix);
 }
 
-void CTroll::Chase_Target(const _double& TimeDelta)
+void CTroll::Check_EnemyGroup()
 {
+	_vec3 vPos = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
+	_vec3 vRevDir = { 0.f, 0.f, 0.f };	//주변에 걸리적 거리는 놈 있으면 밀어내는 거리
 
-	_bool bColl = m_pSphereColl->Check_ComponentColl(m_pTargetSphereColl);
-	m_pTransform->Fix_TargetLook(m_pTargetTransform, 10.f);	//거리 반환, 반환값 안받아도상관없음
-	//m_bFront = m_pTransform->Check_TargetFront();
-
-	if (!m_bAttack && m_fDist < 4.f /*&& m_bFront */&& bColl)	//공격
+	if (Check_EnemyColl(&vRevDir, L"Troll"))	//객체 별 충돌 체크
 	{
-		Animate_FSM(8);
-
-		m_bAttack = TRUE;
-		m_pTransform->m_bAttackState = m_bAttack;
+		//m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRevDir * _SPEED * m_TimeDelta;
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] =
+			m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vRevDir * _SPEED * m_TimeDelta));
 	}
-	else	if (m_fDist < 10.f && !bColl && !m_bDead)	//추적
-	{
-		_vec3 vRevDir = {};
-			
-		if (Check_EnemyColl(&vRevDir))
-			m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRevDir * _SPEED * TimeDelta;
-		else
-			m_pTransform->Stalk_Target(m_pTargetTransform, TimeDelta, _SPEED);
 
-		Animate_FSM(2);
+	if (Check_EnemyColl(&vRevDir, L"Enemy_Swordman"))	//객체 별 충돌 체크
+	{
+		//m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRevDir * _SPEED * m_TimeDelta;
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] =
+			m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vRevDir * _SPEED * m_TimeDelta));
+	}
+
+	if (Check_EnemyColl(&vRevDir, L"Enemy_Spearman"))	//객체 별 충돌 체크
+	{
+		//m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRevDir * _SPEED * m_TimeDelta;
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] =
+			m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vRevDir * _SPEED * m_TimeDelta));
+	}
+
+	if (Check_EnemyColl(&vRevDir, L"Enemy_Shieldman"))	//객체 별 충돌 체크
+	{
+		//m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRevDir * _SPEED * m_TimeDelta;
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] =
+			m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vRevDir * _SPEED * m_TimeDelta));
+	}
+
+	if (Check_EnemyColl(&vRevDir, L"Enemy_Bowman"))	//객체 별 충돌 체크
+	{
+		//m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRevDir * _SPEED * m_TimeDelta;
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] =
+			m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vRevDir * _SPEED * m_TimeDelta));
 	}
 
 }
 
-void CTroll::Attack_Target()
-{
-	_bool bColl = m_pCollider->Check_ComponentColl(m_pTargetSphereColl);
-
-	if (m_pTargetSphereColl->m_bInvisible)
-	{
-		m_bAttack = FALSE;
-		m_pTransform->m_bAttackState = m_bAttack;
-		return;
-	}
-	
-	if (m_iCurAniSet == 8 && bColl && m_bAttack)
-	{
-		
-		if (m_pTargetSphereColl->m_bHit)
-		{
-			m_pTargetSphereColl->m_bKnockBack = TRUE;
-			_vec3 vKnockDir = m_pTargetSphereColl->Get_CollPos() - m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
-			vKnockDir.y = 0.f;
-			D3DXVec3Normalize(&vKnockDir, &vKnockDir);
-			m_pTargetSphereColl->Set_KnockBackDist(TRUE, vKnockDir);
-		}
-		else
-			m_pTargetSphereColl->m_bHit = TRUE;
-
-		if(!m_pTargetSphereColl->m_bInvisible)
-			m_pTargetSphereColl->Get_iHp(2);
-
-		Animate_FSM(9);
-		//m_bAttack = FALSE;
-	}
-
-	if (m_iCurAniSet == 8 && m_pMesh->Is_AnimationSetEnd())
-	{
-		m_bAttack = FALSE;
-		m_pTransform->m_bAttackState = m_bAttack;
-		Animate_FSM(9);
-	}
-	else if (m_iCurAniSet == 9 && m_pMesh->Is_AnimationSetEnd())
-	{
-		m_bAttack = FALSE;
-		m_pTransform->m_bAttackState = m_bAttack;
-		Animate_FSM(0);
-		return;
-	}
-
-	
-}
-
-_bool CTroll::Check_EnemyColl(_vec3 * vRevDir)
+_bool CTroll::Check_EnemyColl(_vec3 * vRevDir, const _tchar * szTag)
 {
 	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
 
-	for (auto pList : pLayer->Get_MapObject(L"Troll"))
+	for (auto pList : pLayer->Get_MapObject(szTag))
 	{
 		if (pList == this)
 			continue;
@@ -292,25 +244,22 @@ _bool CTroll::Check_EnemyColl(_vec3 * vRevDir)
 
 		ENGINE::CSphereColl* pSphere = dynamic_cast<ENGINE::CSphereColl*>
 			(pList->Get_Component(L"Com_SphereColl", ENGINE::COMP_STATIC));
-		
+
 		if (pSphere == nullptr)
 			return FALSE;
 
-		*vRevDir = m_pTransform->Get_TargetReverseDir(pTrans) * 0.05f;
+		//*vRevDir = m_pTransform->Get_TargetReverseDir(pTrans);
 
 		if (m_pSphereColl->Check_ComponentColl(pSphere))
 		{
-
-			_vec3 vTargetRevDir = pTrans->Get_TargetReverseDir(m_pTransform)  * 0.05f;
+			_vec3 vTargetRevDir = pTrans->Get_TargetReverseDir(m_pTransform);
 			vTargetRevDir.y = 0.f;
 
-			if(pTrans->m_bAttackState == FALSE)
-				pTrans->m_vInfo[ENGINE::INFO_POS] += vTargetRevDir;
-
+			if (pTrans->m_bAttackState == FALSE)
+				pTrans->m_vInfo[ENGINE::INFO_POS] += vTargetRevDir * m_TimeDelta;
 			return TRUE;
 		}
-		else
-			continue;
+
 	}
 
 	return FALSE;
@@ -320,11 +269,304 @@ VOID CTroll::Animate_FSM(_uint iAniState)
 {
 	m_iCurAniSet = iAniState;
 
-	if (/*!m_bAnimate && */m_iCurAniSet != m_iPreAniSet)
+	if (m_iCurAniSet != m_iPreAniSet)
 	{
 		m_pMesh->Set_AnimationSet(m_iCurAniSet);
 		m_iPreAniSet = m_iCurAniSet;
 	}
+}
+
+VOID CTroll::Set_Behavior_Progress()
+{
+	/// 추후 Bool 값으로 제어되는 상태를 하나의 단일 FLAG 연산으로 개선하여 단일 변수로 수정 _uint m_StateFlag , Swith로 제어
+	//Check State
+	//m_bHit = m_pSphereColl->Get_HitState();
+	//m_bKnockBack = m_pSphereColl->Get_KnockBackState();
+	m_bAirborne = m_pSphereColl->Get_AirboneState();
+
+	if (!m_bDead)	//안죽었을 때
+	{
+		//State Awaken
+		if (m_bSleep)	//생성 후 기본 대기 루프
+			AiState = &CTroll::State_Awaken;
+		//State Hit
+		//else if (m_bHit && !m_bKnockBack && !m_bAirborne)	//공격 명중 시, 경직
+		//	AiState = &CTroll::State_Hit;
+		////State KnockBack
+		//else if (m_bKnockBack)		//넉백 공격 받음
+		//	AiState = &CTroll::State_KnockBack;
+		//State Airbone -> Troll to Hit
+		else if (m_bAirborne && !m_bKnockBack)	//에어본 공격받음
+			AiState = &CTroll::State_Airborne;
+		//State Chase
+		else if (!m_bAttack && !m_bHit && m_fDist < 10.f)	//플레이어 추적 시작
+			AiState = &CTroll::State_Chase;
+		//State Attack
+		else if (m_bAttack && !m_bHit)		//플레이어 공격 쌉가능
+			AiState = &CTroll::State_Attack;
+
+		//State Idle
+		if (m_fDist > 10.f && !m_bHit && !m_bKnockBack && !m_bAirborne && !m_bSleep)	//아무일도... 없엇따!
+			AiState = &CTroll::State_Idle;
+	}
+	else if (m_bDead)		//으앙 쥬금
+							//State Dead	
+		AiState = &CTroll::State_Dead;
+
+	//스테이트 설정 완료 시 Func Pointer Start
+	(this->*AiState)();
+}
+
+VOID CTroll::State_Awaken()
+{
+	if (m_fDist < 10.f && m_iCurAniSet == _SLEEP) //대기 상태에서 플레이어 발견
+	{
+		Animate_FSM(_AWAKEN);	
+	}
+	else if (m_iCurAniSet == _AWAKEN && m_pMesh->Is_AnimationSetEnd())	//사기 진작 종료, 행동 시작
+	{
+		Animate_FSM(_GROWL);
+		m_pTransform->Fix_TargetLook(m_pTargetTransform, 20.f);
+	}
+	else if (m_iCurAniSet == _GROWL && m_pMesh->Is_AnimationSetEnd())	//사기 진작 종료, 행동 시작
+	{
+		Animate_FSM(_IDLE);
+		m_bSleep = FALSE;
+	}
+}
+
+VOID CTroll::State_Hit()
+{
+	m_HitTime += m_TimeDelta;
+	Animate_FSM(_HIT);
+	m_AccTime = 3.0;
+
+	if (m_HitTime > 0.5f && m_pMesh->Is_AnimationSetEnd())	//1초 지나면 경직해제
+	{
+		m_pSphereColl->m_bHit = FALSE;
+		m_HitTime = 0.0;
+		m_AccTime = 1.0;
+
+		Animate_FSM(_IDLE);
+		m_bAttack = FALSE;
+		m_pTransform->m_bAttackState = m_bAttack;
+		//m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
+	}
+
+}
+
+VOID CTroll::State_KnockBack()
+{
+	Animate_FSM(m_iKnockIdx[m_iKnockCnt]);	//첫번째 애니 재생
+
+	if (m_iKnockCnt == 4 && !m_pMesh->Is_AnimationSetEnd())	//경직 후 기상 모션
+		Animate_FSM(m_iKnockIdx[m_iKnockCnt]);
+	else if (m_iKnockCnt == 4 && m_pMesh->Is_AnimationSetEnd())	//경직 종료
+	{
+		m_pSphereColl->m_bHit = FALSE;
+		m_pSphereColl->m_bKnockBack = FALSE;
+		m_pSphereColl->m_bAirbone = FALSE;
+
+		m_iKnockCnt = 0;
+		m_AccTime = 1.0;
+		m_bAttack = FALSE;
+		m_pTransform->m_bAttackState = m_bAttack;
+		//m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
+	}
+	else if (m_iKnockCnt >= 0 && m_iKnockCnt <= 2 && !m_pMesh->Is_AnimationSetEnd())	//경직 중 날아감
+	{
+		_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh
+		(&vPos, &(m_pSphereColl->Set_KnockBackDist(FALSE) * m_TimeDelta * 2.f));
+	}
+	else if (m_iCurAniSet == m_iKnockIdx[m_iKnockCnt] && m_pMesh->Is_AnimationSetEnd())	//경직 카운트 증가
+	{
+		m_AccTime = 2.0;
+		++m_iKnockCnt;
+		Animate_FSM(m_iKnockIdx[m_iKnockCnt]);
+	}
+
+}
+
+VOID CTroll::State_Airborne()
+{
+	if (m_iCurAniSet == _RISEUP && m_pMesh->Is_AnimationSetEnd())
+	{
+		Animate_FSM(_IDLE);
+		m_pSphereColl->m_bAirbone = FALSE;
+		m_pSphereColl->m_bHit = FALSE;
+		m_pSphereColl->m_bKnockBack = FALSE;
+		m_AirTime = 0.0;
+	}
+	else if (m_iCurAniSet != _RISEUP)
+	{
+		m_AirTime += m_TimeDelta;
+		Animate_FSM(_AIRBORNE);
+		m_AccTime = 2.0;
+
+		if (m_AirTime < 0.75)
+		{
+			//_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
+			//m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh
+			//(&vPos, &(m_pSphereColl->Set_KnockBackDist(FALSE) * m_TimeDelta * 2.f));
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pSphereColl->Set_KnockBackDist(FALSE) * m_TimeDelta * 2.f;
+		}
+
+		m_bAttack = FALSE;
+		m_bTwice = FALSE;
+		m_pTransform->m_bAttackState = FALSE;
+	}
+
+	if (m_AirTime > 1.5f && m_iCurAniSet == _AIRBORNE && m_pMesh->Is_AnimationSetEnd())	//1초 지나면 경직해제
+	{
+		m_AccTime = 1.0;
+		Animate_FSM(_RISEUP);
+		m_bAttack = FALSE;
+		m_pTransform->m_bAttackState = m_bAttack;
+		//m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
+	}
+
+}
+
+VOID CTroll::State_Idle()
+{
+	Animate_FSM(_IDLE);
+	m_bAttack = FALSE;
+	m_bTwice = FALSE;
+	m_pTransform->m_bAttackState = m_bAttack;
+	//m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
+
+}
+
+VOID CTroll::State_Chase()
+{
+	//플레이어가 거리 내에 있으면 무적권 시야 고정
+	m_pTransform->Fix_TargetLook(m_pTargetTransform, 10.f);
+
+	if (m_fDist > 3.f) //플레이어가 멀리 있음, 달려가 추적
+	{
+		Animate_FSM(_CHASE_RUN);
+
+		Check_EnemyGroup();
+
+		//_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
+		//m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh
+		//(&vPos, &m_pTransform->Stalk_TargetDir(m_pTargetTransform, m_TimeDelta, 1.5f));
+		m_pTransform->Stalk_Target(m_pTargetTransform, m_TimeDelta, 1.5f);
+
+		m_AttackTime = 0.0;
+	}
+	else if (m_fDist < 3.f)
+	{
+		Animate_FSM(_CHASE_WALK);
+
+		Check_EnemyGroup();
+
+		if (m_fDist > 2.75f)
+		{
+			//_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
+			//m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh
+			//(&vPos, &m_pTransform->Stalk_TargetDir(m_pTargetTransform, m_TimeDelta, 1.5f));
+			m_pTransform->Stalk_Target(m_pTargetTransform, m_TimeDelta, 1.5f);
+		}
+
+		else if (m_fDist < 2.75f)	//플레이어와 거리 유지
+		{
+			m_AttackTime += m_TimeDelta;	//공격 시도전 대기 시간
+
+			if (m_AttackTime > 1.5)	// 플레이어와 일정거리를 유지한체 시간을 채움
+			{
+				Animate_FSM(_IDLE);
+				m_bAttack = TRUE;	//공격 시작
+				m_pTransform->m_bAttackState = m_bAttack;
+				m_AttackTime = 0.0;
+			}
+		}
+
+	}
+}
+
+VOID CTroll::State_Attack()
+{
+	_bool bColl = FALSE;
+
+	m_pTransform->Fix_TargetLook(m_pTargetTransform, 10.f);
+
+	if (m_fDist < 2.25f && m_iCurAniSet == _CHASE_WALK || m_iCurAniSet == _IDLE) // 거리가 됐네 공격
+	{
+		Animate_FSM(_ATTACK_START);
+	}
+	else if (m_iCurAniSet == _ATTACK_START && !m_pMesh->Is_AnimationSetEnd())
+	{
+		m_AttackTime += m_TimeDelta;
+		bColl = m_pCollider->Check_ComponentColl(m_pTargetSphereColl);
+
+		if (bColl && m_AttackTime > 1.25)
+		{			
+			m_pTransform->m_bAttackState = TRUE;
+
+			if (!m_bTwice)
+			{
+				m_pTargetSphereColl->m_bHit = TRUE;
+				m_pTargetSphereColl->m_bKnockBack = TRUE;
+
+				_vec3 vKnockDir = m_pTargetSphereColl->Get_CollPos() - m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
+				vKnockDir.y = 0.f;
+				D3DXVec3Normalize(&vKnockDir, &vKnockDir);
+				m_pTargetSphereColl->Set_KnockBackDist(TRUE, vKnockDir);
+
+				m_bTwice = TRUE;
+				m_pTargetSphereColl->Get_iHp(2);
+			}
+			
+		}
+
+	}
+	else if (m_iCurAniSet == _ATTACK_START && m_pMesh->Is_AnimationSetEnd())
+	{
+		m_pTransform->m_bAttackState = FALSE;
+		//m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
+
+		Animate_FSM(_ATTACK_END);
+		m_AttackTime = 0.0;
+	}
+	else if (m_iCurAniSet == _ATTACK_END && m_pMesh->Is_AnimationSetEnd())
+	{
+		m_bAttack = FALSE;
+		m_bTwice = FALSE;
+
+		m_AttackTime = 0.0;
+		Animate_FSM(_IDLE);
+		return;
+	}
+
+	if (m_fDist > 2.25f && !m_bTwice)	//공격 준비됐는데 거리가 좀 머네
+	{
+		m_pTransform->m_bAttackState = FALSE;
+		//m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
+		m_AttackTime = 0.0;
+		Animate_FSM(_CHASE_WALK);
+
+		//_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
+		//m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh
+		//(&vPos, &m_pTransform->Stalk_TargetDir(m_pTargetTransform, m_TimeDelta, 1.5f));
+		m_pTransform->Stalk_Target(m_pTargetTransform, m_TimeDelta, 1.5f);
+
+		Check_EnemyGroup();
+	}
+}
+
+VOID CTroll::State_Dead()
+{
+	m_AttackTime += m_TimeDelta;
+	m_bAttack = FALSE;
+	m_pTransform->m_bAttackState = m_bAttack;
+	//m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
+	Animate_FSM(_DEAD);
+
+	if (m_AttackTime > 1.0 && m_AttackTime < 5.8)
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pTransform->Get_vLookDir() * m_TimeDelta * 0.25;
+
 }
 
 HRESULT CTroll::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
@@ -377,12 +619,12 @@ HRESULT CTroll::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_NaviMesh", pComponent);
 
 	//Collider
-	pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev, 120.f, _vec3(0.f, 0.f, 0.f));
+	pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev, 100.f, _vec3(0.f, 0.f, 0.f));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider", pComponent);
 
 	//Sphere Collider
-	pComponent = m_pSphereColl = ENGINE::CSphereColl::Create(m_pGraphicDev, _RADIUS, 10);
+	pComponent = m_pSphereColl = ENGINE::CSphereColl::Create(m_pGraphicDev, _RADIUS, 20);
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_SphereColl", pComponent);
 

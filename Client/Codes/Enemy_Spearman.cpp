@@ -233,7 +233,7 @@ VOID CEnemy_Spearman::Set_Behavior_Progress()
 			AiState = &CEnemy_Spearman::State_Attack;
 
 		//State Idle
-		if (m_fDist > 10.f && !m_bHit && !m_bKnockBack && !m_bAirborne)	//아무일도... 없엇따!
+		if (m_fDist > 10.f && !m_bHit && !m_bKnockBack && !m_bAirborne && !m_bSleep)	//아무일도... 없엇따!
 			AiState = &CEnemy_Spearman::State_Idle;
 	}
 	else if (m_bDead)		//으앙 쥬금

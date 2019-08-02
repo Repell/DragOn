@@ -256,6 +256,7 @@ void CTransform::Stalk_Target(CTransform * pTransform, const _double& fTime, con
 _vec3 CTransform::Stalk_TargetDir(CTransform * pTransform, const _double & fTime, const _float fSpeed)
 {
 	_vec3 vLookDir = pTransform->m_vInfo[INFO_POS] - m_vInfo[INFO_POS];
+	vLookDir.y = 0.f;
 	return *D3DXVec3Normalize(&vLookDir, &vLookDir) * fSpeed * fTime;
 }
 

@@ -78,21 +78,21 @@ _uint CLoading::Loading_ForLogo()
 		E_FAIL);		//Enemy_Bowman
 
 
-	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
-	//	RESOURCE_LOGO,
-	//	L"Mesh_Rider",
-	//	ENGINE::MESH_DYNAMIC,
-	//	L"../Bin/Resources/Mesh/DynamicMesh/Player_Ride/",
-	//	L"Player_Ride.X"),
-	//	E_FAIL);
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Rider",	
+		ENGINE::MESH_DYNAMIC,
+		L"../Bin/Resources/Mesh/DynamicMesh/Player_Ride/",
+		L"Player_Ride.X"),
+		E_FAIL);
 
-	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
-	//	RESOURCE_LOGO,
-	//	L"Mesh_Michael",
-	//	ENGINE::MESH_DYNAMIC,
-	//	L"../Bin/Resources/Mesh/DynamicMesh/Michael/",
-	//	L"Michael.X"),
-	//	E_FAIL);
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Michael",
+		ENGINE::MESH_DYNAMIC,
+		L"../Bin/Resources/Mesh/DynamicMesh/Michael/",
+		L"Michael.X"),
+		E_FAIL);
 
 	///////////////// STATIC ////////////////////////
 
@@ -144,13 +144,13 @@ _uint CLoading::Loading_ForLogo()
 		L"Enemy_Arrow.X"),
 		E_FAIL);
 
-	//FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
-	//	RESOURCE_LOGO,
-	//	L"Mesh_Spear",
-	//	ENGINE::MESH_STATIC,
-	//	L"../Bin/Resources/Mesh/StaticMesh/Spear/",
-	//	L"Spear_Player.X"),
-	//	E_FAIL);
+	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
+		RESOURCE_LOGO,
+		L"Mesh_Spear",
+		ENGINE::MESH_STATIC,
+		L"../Bin/Resources/Mesh/StaticMesh/Spear/",
+		L"Spear_Player.X"),
+		E_FAIL);
 
 	FAILED_CHECK_RETURN(ENGINE::Ready_Meshes(m_pGraphicDev,
 		RESOURCE_LOGO,

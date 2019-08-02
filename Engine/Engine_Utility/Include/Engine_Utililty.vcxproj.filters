@@ -139,6 +139,9 @@
     <Filter Include="00.Utility\02.SuperClass\02.Component\05.Weapon">
       <UniqueIdentifier>{92bdfd5d-e14c-4325-b398-e6a82d89bf68}</UniqueIdentifier>
     </Filter>
+    <Filter Include="00.Utility\02.SuperClass\02.Component\06.Shadow">
+      <UniqueIdentifier>{6f610203-d44d-48a0-93db-749a5af6e502}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Codes\Management.h">
@@ -261,6 +264,9 @@
     <ClInclude Include="..\Codes\Weapon.h">
       <Filter>00.Utility\02.SuperClass\02.Component\05.Weapon</Filter>
     </ClInclude>
+    <ClInclude Include="..\Codes\Shadow.h">
+      <Filter>00.Utility\02.SuperClass\02.Component\06.Shadow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Management.cpp">
@@ -367,6 +373,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Weapon.cpp">
       <Filter>00.Utility\02.SuperClass\02.Component\05.Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Shadow.cpp">
+      <Filter>00.Utility\02.SuperClass\02.Component\06.Shadow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

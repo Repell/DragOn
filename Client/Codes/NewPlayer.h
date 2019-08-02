@@ -15,6 +15,7 @@ namespace ENGINE
 	class CAdvanceCamera;
 	class CShader;
 	class CWeapon;
+	class CShadow;
 }
 
 class CNewPlayer : public ENGINE::CGameObject
@@ -95,6 +96,14 @@ private:
 	//Animate Func
 	VOID Animate_FSM(_uint iAniState);
 	VOID Animate_Quick(_uint iAniState);
+
+private: //Func Pointer
+		 //Set Behavior
+	VOID Set_Behavior_Progress(const _double& TimeDelta);
+
+	VOID State_Hit(const _double& TimeDelta);
+	VOID State_KnockBack(const _double& TimeDelta);
+
 private:
 	//Shader
 	HRESULT SetUp_ConstantTable(LPD3DXEFFECT pEffect);
@@ -114,6 +123,7 @@ private:
 	ENGINE::CAdvanceCamera* m_pAdvance;
 	ENGINE::CShader*				m_pShader;
 	ENGINE::CWeapon*				m_pWeapon;
+	ENGINE::CShadow*				m_pShadow;
 	
 	//CSword*			m_pSword;
 	

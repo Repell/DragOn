@@ -285,7 +285,7 @@ VOID CEnemy_Shieldman::Set_Behavior_Progress()
 			AiState = &CEnemy_Shieldman::State_Attack;
 
 		//State Idle
-		if (m_fDist > 10.f && !m_bHit && !m_bKnockBack && !m_bAirborne)	//아무일도... 없엇따!
+		if (m_fDist > 10.f && !m_bHit && !m_bKnockBack && !m_bAirborne && !m_bSleep)	//아무일도... 없엇따!
 			AiState = &CEnemy_Shieldman::State_Idle;
 	}
 	else if (m_bDead)		//으앙 쥬금
@@ -531,7 +531,7 @@ VOID CEnemy_Shieldman::State_Attack()
 	{
 		m_AttackTime += m_TimeDelta;
 
-		if (m_pWeapon->Check_ComponentColl(m_pTargetSphereColl) && m_AttackTime > 1.25)
+		if (m_pWeapon->Check_ComponentColl(m_pTargetSphereColl) && m_AttackTime > 1.5)
 		{
 			m_pWeapon->Set_AttackState(m_bAttack, m_iCurAniSet, 2);
 

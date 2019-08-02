@@ -14,6 +14,7 @@ namespace ENGINE
 	class CSphereColl;
 	class CShader;
 	class CWeapon;
+	class CShadow;
 }
 
 class CEnemy_Swordman : public ENGINE::CGameObject
@@ -106,6 +107,7 @@ private:
 	ENGINE::CSphereColl*	m_pTargetSphereColl;
 	ENGINE::CShader*			m_pShader;
 	ENGINE::CWeapon*			m_pWeapon;
+	ENGINE::CShadow*			m_pShadow;
 
 public:
 	static CEnemy_Swordman* Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos);

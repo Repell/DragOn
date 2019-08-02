@@ -241,6 +241,7 @@ call CopyUtility.bat</Command>
     <ClInclude Include="..\Codes\Shader_Sample.hpp" />
     <ClInclude Include="..\Codes\Shader_Shade.hpp" />
     <ClInclude Include="..\Codes\Shader_Terrain.hpp" />
+    <ClInclude Include="..\Codes\Shadow.h" />
     <ClInclude Include="..\Codes\SkyBox.h" />
     <ClInclude Include="..\Codes\SphereColl.h" />
     <ClInclude Include="..\Codes\StaticMesh.h" />
@@ -278,6 +279,7 @@ call CopyUtility.bat</Command>
     <ClCompile Include="..\Codes\ResourcesMgr.cpp" />
     <ClCompile Include="..\Codes\Scene.cpp" />
     <ClCompile Include="..\Codes\Shader.cpp" />
+    <ClCompile Include="..\Codes\Shadow.cpp" />
     <ClCompile Include="..\Codes\SkyBox.cpp" />
     <ClCompile Include="..\Codes\SphereColl.cpp" />
     <ClCompile Include="..\Codes\StaticMesh.cpp" />

@@ -30,15 +30,30 @@ public:
 	virtual void Render_Object() override;
 
 private:
-	void Render_Set();
-	void Render_ReSet();
-	void Render_BoneMatrix(const char* tBone);
-	void Chase_Target(const _double& TimeDelta);
-	void Attack_Target();
-	_bool Check_EnemyColl(_vec3* vRevDir);
+	void Set_Animation();
+	void Get_WeaponMatrix(const char* tBone);
+	void Check_EnemyGroup();
+	_bool Check_EnemyColl(_vec3* vRevDir, const _tchar* szTag);
 
 private:
 	VOID Animate_FSM(_uint iAniState);
+
+private: //Func Pointer
+		 //Set Behavior
+	VOID Set_Behavior_Progress();
+
+	//Behavior to State Func
+	typedef VOID(CTroll::*BEHAVIOR)();
+	BEHAVIOR AiState;
+	VOID State_Awaken();
+	VOID State_Hit();
+	VOID State_KnockBack();
+	VOID State_Airborne();
+	VOID State_Idle();
+	VOID State_Chase();
+	VOID State_Attack();
+	VOID State_Dead();
+
 
 private:
 	//Shader
@@ -46,7 +61,10 @@ private:
 
 private:
 	//Key Input, Camera, NaviMesh
+private:
+	//Key Input, Camera, NaviMesh
 	_bool m_bAttack;
+	_double m_AttackTime;
 	_float m_fDist;
 	_uint m_iCurAniSet;
 	_uint m_iPreAniSet;
@@ -55,9 +73,22 @@ private:
 	_bool m_bSleep;
 	_bool m_bFront;
 	_bool m_bDead;
+	_bool m_bTwice;
+
+	_bool m_bHit;
+	_bool m_bKnockBack;
+	_bool m_bAirborne;
 
 private:
 	_double m_TimeDelta;
+	_double m_HitTime;
+	_double m_AirTime;
+	_double m_KnockTime;
+	_double m_AccTime;
+
+	//KnockBack
+	_uint m_iKnockIdx[5];
+	_uint m_iKnockCnt = 0;
 private:
 	HRESULT Add_Component();
 

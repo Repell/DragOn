@@ -11,6 +11,7 @@
 #include "ProtoTypeMgr.h"
 #include "AdvanceCamera.h"
 #include "Weapon.h"
+#include "Shadow.h"
 
 #include "ResourcesMgr.h"
 

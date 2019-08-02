@@ -137,12 +137,12 @@ _bool CEnemy_Arrow::Fly_Arrow()
 
 		if (m_pSphereColl->Check_ComponentColl(pTarget))
 		{
-			pTarget->Get_iHp(2);
-			pTarget->m_bHit = TRUE;
-
 			if (pTarget->Get_HitState())
 				pTarget->m_bKnockBack = TRUE;
 
+			pTarget->Get_iHp(2);
+			pTarget->m_bHit = TRUE;
+			
 			return TRUE;
 		}
 	}

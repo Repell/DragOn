@@ -148,6 +148,8 @@ void CEnemy_Swordman::Render_Object()
 	if (!m_bDead)
 		m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld, 0.75f);
 
+	m_pShadow->Render_Shadow(&m_pTransform->m_matWorld, 0.45f);
+
 	////////////////////////////////////////
 
 	//_tchar szStr[MAX_PATH] = L"";
@@ -190,7 +192,7 @@ void CEnemy_Swordman::Check_EnemyGroup()
 	if (Check_EnemyColl(&vRevDir, L"Enemy_Swordman"))	//객체 별 충돌 체크
 	{
 		//m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRevDir * _SPEED * m_TimeDelta;
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] = 
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] =
 			m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(vRevDir * _SPEED * m_TimeDelta));
 	}
 
@@ -306,7 +308,7 @@ VOID CEnemy_Swordman::Set_Behavior_Progress()
 			AiState = &CEnemy_Swordman::State_Attack;
 
 		//State Idle
-		if (m_fDist > 10.f && !m_bHit && !m_bKnockBack && !m_bAirborne)	//아무일도... 없엇따!
+		if (m_fDist > 10.f && !m_bHit && !m_bKnockBack && !m_bAirborne && !m_bSleep)	//아무일도... 없엇따!
 			AiState = &CEnemy_Swordman::State_Idle;
 	}
 	else if (m_bDead)		//으앙 쥬금
@@ -390,10 +392,15 @@ HRESULT CEnemy_Swordman::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	ENGINE::UNITINFO tInfo =
-	{ FALSE, _vec3(0.f, 0.f, -100.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(90.f, 0.f, 0.f), _vec3(0.f, 0.f, 0.f), 50.f};
+	{ FALSE, _vec3(0.f, 0.f, -100.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(90.f, 0.f, 0.f), _vec3(0.f, 0.f, 0.f), 50.f };
 	pComponent = m_pWeapon = ENGINE::CWeapon::Create(m_pGraphicDev, m_pTransform, tInfo, L"Mesh_Enemy_Sword");
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Weapon", pComponent);
+
+	//Shadow Component
+	pComponent = m_pShadow = ENGINE::CShadow::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shadow", pComponent);
 
 	////////////////////////////
 	return S_OK;
@@ -468,7 +475,11 @@ VOID CEnemy_Swordman::State_KnockBack()
 		m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
 	}
 	else if (m_iKnockCnt >= 0 && m_iKnockCnt <= 2 && !m_pMesh->Is_AnimationSetEnd())	//경직 중 날아감
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pSphereColl->Set_KnockBackDist(FALSE) * m_TimeDelta * 2.f;
+	{
+		_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh
+		(&vPos, &(m_pSphereColl->Set_KnockBackDist(FALSE) * m_TimeDelta * 2.f));
+	}
 	else if (m_iCurAniSet == m_iKnockIdx[m_iKnockCnt] && m_pMesh->Is_AnimationSetEnd())	//경직 카운트 증가
 	{
 		m_AccTime = 2.0;
@@ -524,24 +535,29 @@ VOID CEnemy_Swordman::State_Chase()
 
 	if (m_fDist > 3.f) //플레이어가 멀리 있음, 달려가 추적
 	{
-		_vec3 vRevDir = { 0.f, 0.f, 0.f };	//주변에 걸리적 거리는 놈 있으면 밀어내는 거리
 		Animate_FSM(_CHASE_RUN);
 
 		Check_EnemyGroup();
 
-		m_pTransform->Stalk_Target(m_pTargetTransform, m_TimeDelta, _SPEED);
+		_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh
+		(&vPos, &m_pTransform->Stalk_TargetDir(m_pTargetTransform, m_TimeDelta, 1.5f));
 
 		m_AttackTime = 0.0;
 	}
 	else if (m_fDist < 3.f)
 	{
-		_vec3 vRevDir = { 0.f, 0.f, 0.f };	//주변에 걸리적 거리는 놈 있으면 밀어내는 거리
 		Animate_FSM(_CHASE_WALK);
 
 		Check_EnemyGroup();
 
 		if (m_fDist > 1.75f)
-			m_pTransform->Stalk_Target(m_pTargetTransform, m_TimeDelta, 0.75f);
+		{
+			_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh
+			(&vPos, &m_pTransform->Stalk_TargetDir(m_pTargetTransform, m_TimeDelta, 1.5f));
+		}
+
 		else if (m_fDist < 1.75f)	//플레이어와 거리 유지
 		{
 			m_AttackTime += m_TimeDelta;	//공격 시도전 대기 시간
@@ -617,13 +633,14 @@ VOID CEnemy_Swordman::State_Attack()
 
 	if (m_fDist > 1.25f && !m_bTwice)	//공격 준비됐는데 거리가 좀 머네
 	{
-		_vec3 vRevDir = { 0.f, 0.f, 0.f };
-
 		m_pTransform->m_bAttackState = FALSE;
 		m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
 		m_AttackTime = 0.0;
 		Animate_FSM(_CHASE_WALK);
-		m_pTransform->Stalk_Target(m_pTargetTransform, m_TimeDelta, 0.75f);
+
+		_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh
+		(&vPos, &m_pTransform->Stalk_TargetDir(m_pTargetTransform, m_TimeDelta, 1.5f));
 
 		Check_EnemyGroup();
 	}
