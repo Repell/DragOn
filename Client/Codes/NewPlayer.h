@@ -48,9 +48,6 @@ private:
 	explicit CNewPlayer(LPDIRECT3DDEVICE9 pDevice);
 	virtual ~CNewPlayer();
 
-public:
-	void Set_CurDir(PLAYERDIR eDir);
-
 public:	//OverRide Func
 	virtual HRESULT Ready_Object() override;
 	virtual HRESULT Late_Init();
@@ -67,6 +64,7 @@ private:
 	//Render D3DRS
 	void Render_Set();
 	void Render_ReSet();
+
 private:
 	//Mouse Func OLD
 	_vec3 MouseFunc();
@@ -129,7 +127,6 @@ private:
 	
 private:
 	//Animate State
-	_bool m_bAnimate;
 	_uint m_iCurAniState;
 	_uint m_iPreAniState;	
 

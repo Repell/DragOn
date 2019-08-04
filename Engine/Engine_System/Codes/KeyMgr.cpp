@@ -72,7 +72,9 @@ void CKeyMgr::KeyInput()
 		m_dwCurKey |= dwKEY_Shift;			//800000
 
 	if (GetAsyncKeyState('0') * 0x8000)
-		m_dwCurKey |= dwKEY_0;
+		m_dwCurKey |= dwKEY_0;		//1000000
+	if (GetAsyncKeyState(VK_CONTROL) * 0x8000)
+		m_dwCurKey |= dwKEY_LCntl;		//2000000
 
 	
 }

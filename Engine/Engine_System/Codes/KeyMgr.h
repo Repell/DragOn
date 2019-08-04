@@ -39,7 +39,7 @@ const DWORD dwKEY_R					 = 0x00400000;
 const DWORD dwKEY_Shift			 = 0x00800000;
 
 const DWORD dwKEY_0				= 0x01000000;
-
+const DWORD dwKEY_LCntl			= 0x02000000;
 
 class ENGINE_DLL CKeyMgr :
 	public CBase

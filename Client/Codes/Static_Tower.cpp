@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "StaticObj.h"
+#include "Static_Tower.h"
 
 #include "Export_Function.h"
 
@@ -7,40 +7,40 @@
 #define _ANGLE 90.f
 #define _RADIUS 200.f
 
-CStaticObj::CStaticObj(LPDIRECT3DDEVICE9 pGraphicDev)
+CStatic_Tower::CStatic_Tower(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CGameObject(pGraphicDev)
 {
 }
 
-CStaticObj::~CStaticObj()
+CStatic_Tower::~CStatic_Tower()
 {
 }
 
-void CStaticObj::Set_Transform(const _vec3 vPos, const _vec3 vRot, const _vec3 vSize)
+void CStatic_Tower::Set_Transform(const _vec3 vPos, const _vec3 vRot, const _vec3 vSize)
 {
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = vPos;
 	m_pTransform->m_vAngle = vRot;
 	m_pTransform->m_vScale = vSize;
 }
 
-_vec3 CStaticObj::Get_vPos()
+_vec3 CStatic_Tower::Get_vPos()
 {
 	// TODO: 여기에 반환 구문을 삽입합니다.
 	return m_pTransform->m_vInfo[ENGINE::INFO_POS];
 }
 
-_vec3 CStaticObj::Get_vRot()
+_vec3 CStatic_Tower::Get_vRot()
 {
 	// TODO: 여기에 반환 구문을 삽입합니다.
 	return m_pTransform->m_vAngle;
 }
 
-_vec3 CStaticObj::Get_vScale()
+_vec3 CStatic_Tower::Get_vScale()
 {
 	return m_pTransform->m_vScale;
 }
 
-HRESULT CStaticObj::Ready_MeshObject(wstring strMesh)
+HRESULT CStatic_Tower::Ready_MeshObject(wstring strMesh)
 {
 	FAILED_CHECK_RETURN(Add_Component_MeshObject(strMesh), E_FAIL);
 
@@ -52,7 +52,7 @@ HRESULT CStaticObj::Ready_MeshObject(wstring strMesh)
 	return S_OK;
 }
 
-HRESULT CStaticObj::Ready_Object()
+HRESULT CStatic_Tower::Ready_Object()
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
@@ -62,13 +62,17 @@ HRESULT CStaticObj::Ready_Object()
 	return S_OK;
 }
 
-HRESULT CStaticObj::Late_Init()
+HRESULT CStatic_Tower::Late_Init()
 {
+	_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
+	vPos.y += 54.f;
+	CGameObject* pObject = CEffect_Torch::Create(m_pGraphicDev, vPos, 1000.f);
+	ENGINE::Get_Management()->Add_GameObject(ENGINE::CLayer::OBJECT, L"Torch", pObject);
 
 	return S_OK;
 }
 
-_int CStaticObj::Update_Object(const _double& TimeDelta)
+_int CStatic_Tower::Update_Object(const _double& TimeDelta)
 {
 	ENGINE::CGameObject::Late_Init();
 	ENGINE::CGameObject::Update_Object(TimeDelta);
@@ -77,13 +81,13 @@ _int CStaticObj::Update_Object(const _double& TimeDelta)
 	return 0;
 }
 
-void CStaticObj::Late_Update_Object()
+void CStatic_Tower::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
 	m_matWorld = m_pTransform->m_matWorld;
 }
 
-void CStaticObj::Render_Object()
+void CStatic_Tower::Render_Object()
 {
 	if (nullptr == m_pShader)
 		return;
@@ -116,7 +120,7 @@ void CStaticObj::Render_Object()
 
 }
 
-HRESULT CStaticObj::Add_Component()
+HRESULT CStatic_Tower::Add_Component()
 {
 	ENGINE::CComponent* pComponent = nullptr;
 
@@ -151,7 +155,7 @@ HRESULT CStaticObj::Add_Component()
 	return S_OK;
 }
 
-HRESULT CStaticObj::Add_Component_MeshObject(wstring strMesh)
+HRESULT CStatic_Tower::Add_Component_MeshObject(wstring strMesh)
 {
 	ENGINE::CComponent* pComponent = nullptr;
 
@@ -186,7 +190,7 @@ HRESULT CStaticObj::Add_Component_MeshObject(wstring strMesh)
 }
 
 
-void CStaticObj::Render_Set()
+void CStatic_Tower::Render_Set()
 {
 	//Lighting
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
@@ -203,7 +207,7 @@ void CStaticObj::Render_Set()
 
 }
 
-void CStaticObj::Render_ReSet()
+void CStatic_Tower::Render_ReSet()
 {
 	//Lighting
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
@@ -213,7 +217,7 @@ void CStaticObj::Render_ReSet()
 	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 }
 
-void CStaticObj::Render_Font(const _vec2 * pPos)
+void CStatic_Tower::Render_Font(const _vec2 * pPos)
 {
 	RECT rc = { _long(pPos->x), _long(pPos->y) };
 	//Fonts
@@ -230,7 +234,7 @@ void CStaticObj::Render_Font(const _vec2 * pPos)
 
 }
 
-HRESULT CStaticObj::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
+HRESULT CStatic_Tower::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
 {
 	if (nullptr == pEffect)
 		return E_FAIL;
@@ -251,9 +255,9 @@ HRESULT CStaticObj::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
 	return S_OK;
 }
 
-CStaticObj * CStaticObj::Create(LPDIRECT3DDEVICE9 pGraphicDev)
+CStatic_Tower * CStatic_Tower::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 {
-	CStaticObj* pInstnace = new CStaticObj(pGraphicDev);
+	CStatic_Tower* pInstnace = new CStatic_Tower(pGraphicDev);
 
 	if (FAILED(pInstnace->Ready_Object()))
 	{
@@ -264,9 +268,9 @@ CStaticObj * CStaticObj::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 	return pInstnace;
 }
 
-CStaticObj * CStaticObj::Create_MeshObject(LPDIRECT3DDEVICE9 pGraphicDev, wstring strMesh, _vec3 vTransform[])
+CStatic_Tower * CStatic_Tower::Create_MeshObject(LPDIRECT3DDEVICE9 pGraphicDev, wstring strMesh, _vec3 vTransform[])
 {
-	CStaticObj* pInstnace = new CStaticObj(pGraphicDev);
+	CStatic_Tower* pInstnace = new CStatic_Tower(pGraphicDev);
 
 	if (FAILED(pInstnace->Ready_MeshObject(strMesh)))
 	{
@@ -280,7 +284,7 @@ CStaticObj * CStaticObj::Create_MeshObject(LPDIRECT3DDEVICE9 pGraphicDev, wstrin
 	return pInstnace;
 }
 
-void CStaticObj::Free()
+void CStatic_Tower::Free()
 {
 	ENGINE::CGameObject::Free();
 }

@@ -15,6 +15,7 @@ private:
 
 public:
 	void Set_Transform_Pos(ENGINE::INFO eInfo, const _vec3* vPos);
+	void Set_Transform_Dir(ENGINE::INFO eInfo, const _vec3* vDir);
 	ENGINE::CTransform* Get_Transform() 
 	{		return m_pTransform;	}
 	void Set_PlayerTransform(ENGINE::CTransform* pTrans)

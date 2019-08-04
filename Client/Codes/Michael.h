@@ -13,10 +13,22 @@ namespace ENGINE
 	class CNaviMesh;
 	class CCollider;
 	class CSphereColl;
+	class CShader;
 }
 
 class CMichael : public ENGINE::CGameObject
 {
+	enum DRAGONDIRECTION
+	{
+		FLYIDLE, FLYUP, FLYDOWN, FLYLEFT, FLYRIGHT, FLYBACK, FLYEND
+		
+	};
+
+	enum DRAGONSTATE
+	{
+		IDLE, FLY, FIRE, HIT, END
+	};
+
 private:
 	explicit CMichael(LPDIRECT3DDEVICE9 pDevice);
 	virtual ~CMichael();
@@ -29,17 +41,46 @@ public:
 	virtual void Render_Object() override;
 
 private:
-	void Render_Set();
-	void Render_ReSet();
-	void Find_BoneMatrix();
-	void Chase_Target(const _double& TimeDelta);
-	void Attack_Target();
+	_vec3 MouseFunc();
+	_bool Key_check(const _double& TimeDelta);
+	_bool Enemy_Check();
 
 private:
+	void Render_Set();
+	void Render_ReSet();
+	void Find_BoneMatrix(const char* szBone);
+
+private:
+	//Animate Func
+	VOID Animate_FSM(_uint iAniState);
+	VOID Animate_Quick(_uint iAniState);
+
+private: //Func Pointer
+		 //Set Behavior
+	VOID Set_Behavior_Progress(const _double& TimeDelta);
+
+private:
+	//Shader
+	HRESULT SetUp_ConstantTable(LPD3DXEFFECT pEffect);
+
+private:
+	//Animate State
+	_uint m_iCurAniState;
+	_uint m_iPreAniState;
+
+	DRAGONSTATE m_eState;
+	DRAGONDIRECTION m_eDir;
+
+private:
+	//
+
 	//Key Input, Camera, NaviMesh
 	_bool bAttack;
 	_float fDist;
 	_uint iCurAniSet;
+
+	_double m_TimeAccel;
+
 private:
 	HRESULT Add_Component();
 
@@ -48,10 +89,10 @@ private:
 	ENGINE::CDynamicMesh* m_pMesh;
 	ENGINE::CTransform*	m_pTransform;
 	ENGINE::CTransform*	m_pTargetTransform;
-	ENGINE::CNaviMesh*		m_pNaviMesh;
 	ENGINE::CCollider*			m_pCollider;
 	ENGINE::CSphereColl*	m_pSphereColl;
 	ENGINE::CSphereColl*	m_pTargetSphereColl;
+	ENGINE::CShader*			m_pShader;
 
 private:
 	_matrix m_pBoneMatrix;

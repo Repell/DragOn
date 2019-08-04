@@ -60,7 +60,7 @@ HRESULT CEnemy_Swordman::Ready_Object(_vec3 vPos)
 
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = vPos;
 	m_pTransform->m_vScale = { 0.006f, 0.006f, 0.006f };
-	m_pSphereColl->Set_Scale(0.005f);
+	m_pSphereColl->Set_Scale(0.004f);
 	//m_pCollider->Set_Scale(0.005f);
 
 	Set_Animation();
@@ -241,6 +241,7 @@ _bool CEnemy_Swordman::Check_EnemyColl(_vec3 * vRevDir, const _tchar* szTag)
 			return FALSE;
 
 		*vRevDir = m_pTransform->Get_TargetReverseDir(pTrans);
+		vRevDir->y = 0.f;
 
 		if (m_pSphereColl->Check_ComponentColl(pSphere))
 		{
@@ -248,7 +249,7 @@ _bool CEnemy_Swordman::Check_EnemyColl(_vec3 * vRevDir, const _tchar* szTag)
 			vTargetRevDir.y = 0.f;
 
 			if (pTrans->m_bAttackState == FALSE)
-				pTrans->m_vInfo[ENGINE::INFO_POS] += vTargetRevDir * m_TimeDelta;
+				pTrans->m_vInfo[ENGINE::INFO_POS] += vTargetRevDir * m_TimeDelta * 1.1f;
 			return TRUE;
 		}
 
@@ -392,7 +393,7 @@ HRESULT CEnemy_Swordman::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	ENGINE::UNITINFO tInfo =
-	{ FALSE, _vec3(0.f, 0.f, -100.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(90.f, 0.f, 0.f), _vec3(0.f, 0.f, 0.f), 50.f };
+	{ FALSE, _vec3(0.f, 0.f, -100.f), _vec3{ 0.006f, 1.f, 1.f }, _vec3(90.f, 0.f, 0.f), _vec3(0.f, 0.f, 0.f), 50.f };
 	pComponent = m_pWeapon = ENGINE::CWeapon::Create(m_pGraphicDev, m_pTransform, tInfo, L"Mesh_Enemy_Sword");
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Weapon", pComponent);
@@ -544,6 +545,7 @@ VOID CEnemy_Swordman::State_Chase()
 		(&vPos, &m_pTransform->Stalk_TargetDir(m_pTargetTransform, m_TimeDelta, 1.5f));
 
 		m_AttackTime = 0.0;
+		m_fWaitTime = ENGINE::CWell512::Get_Instance()->Get_floatValues(1.f, 3.f);
 	}
 	else if (m_fDist < 3.f)
 	{
@@ -555,14 +557,17 @@ VOID CEnemy_Swordman::State_Chase()
 		{
 			_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
 			m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh
-			(&vPos, &m_pTransform->Stalk_TargetDir(m_pTargetTransform, m_TimeDelta, 1.5f));
+			(&vPos, &m_pTransform->Stalk_TargetDir(m_pTargetTransform, m_TimeDelta, 0.2f));
+			
+			_vec3 vRight = m_pTransform->m_vInfo[ENGINE::INFO_RIGHT];
+			D3DXVec3Normalize(&vRight, &vRight);
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRight * m_TimeDelta * 0.5f;
 		}
-
 		else if (m_fDist < 1.75f)	//플레이어와 거리 유지
 		{
 			m_AttackTime += m_TimeDelta;	//공격 시도전 대기 시간
 
-			if (m_AttackTime > 1.5)	// 플레이어와 일정거리를 유지한체 시간을 채움
+			if (m_AttackTime > m_fWaitTime)	// 플레이어와 일정거리를 유지한체 시간을 채움
 			{
 				Animate_FSM(_IDLE);
 				m_bAttack = TRUE;	//공격 시작
@@ -588,7 +593,7 @@ VOID CEnemy_Swordman::State_Attack()
 	{
 		m_AttackTime += m_TimeDelta;
 
-		if (m_pWeapon->Check_ComponentColl(m_pTargetSphereColl) && m_AttackTime > 0.75)
+		if (m_pWeapon->Check_ComponentColl(m_pTargetSphereColl) && m_AttackTime > 1.25)
 		{
 			m_pWeapon->Set_AttackState(m_bAttack, m_iCurAniSet, 2);
 
@@ -642,7 +647,7 @@ VOID CEnemy_Swordman::State_Attack()
 		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh
 		(&vPos, &m_pTransform->Stalk_TargetDir(m_pTargetTransform, m_TimeDelta, 1.5f));
 
-		Check_EnemyGroup();
+		//Check_EnemyGroup();
 	}
 
 
@@ -656,7 +661,7 @@ VOID CEnemy_Swordman::State_Dead()
 	m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
 	Animate_FSM(_DEAD);
 
-	if (m_AttackTime > 1.0 && m_AttackTime < 5.8)
+	if (m_AttackTime > 1.0 && m_AttackTime < 5.6)
 		m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_pTransform->Get_vLookDir() * m_TimeDelta * 0.25;
 
 }

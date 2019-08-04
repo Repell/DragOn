@@ -45,8 +45,7 @@ public:
 	D3DXVECTOR3 Reverse(const D3DXVECTOR3* vDir)
 	{
 		D3DXVECTOR3 vNewDir = *vDir * -1.f;
-		D3DXVec3Normalize(&vNewDir, &vNewDir);
-		return vNewDir;
+		return *D3DXVec3Normalize(&vNewDir, &vNewDir);
 	}
 
 

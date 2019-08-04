@@ -144,7 +144,6 @@ _bool CPlayer::Key_check(const _double& TimeDelta)
 {
 	_vec3 vNewDir = m_pTransform->m_vInfo[ENGINE::INFO_LOOK];
 	_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
-	vNewDir.y = 0.f;
 
 	POINT pt = { WINCX >> 1, WINCY >> 1 };
 	ClientToScreen(g_hWnd, &pt);
@@ -155,7 +154,7 @@ _bool CPlayer::Key_check(const _double& TimeDelta)
 		m_pTransform->m_vAngle.y += dwMouseMove * _ANGLE *TimeDelta;
 
 	//if (dwMouseMove = ENGINE::Get_DIMouseMove(ENGINE::CInputDev::DIMS_Y))
-	//	m_pTransform->m_vAngle.x += dwMouseMove * ANGLE *TimeDelta;
+	//	m_pTransform->m_vAngle.x += dwMouseMove * _ANGLE *TimeDelta;
 
 	if (m_pTransform->bCamTarget && ENGINE::Key_Down(ENGINE::dwKEY_F4))
 	{

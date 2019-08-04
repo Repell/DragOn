@@ -1,18 +1,16 @@
 #include "stdafx.h"
-#include "TestStage.h"
+#include "BossStage.h"
 
-#include "Export_Function.h"
-
-CTestStage::CTestStage(LPDIRECT3DDEVICE9 pDevice)
+CBossStage::CBossStage(LPDIRECT3DDEVICE9 pDevice)
 	: ENGINE::CScene(pDevice), m_pLoading(nullptr)
 {
 }
 
-CTestStage::~CTestStage()
+CBossStage::~CBossStage()
 {
 }
 
-HRESULT CTestStage::Ready_Scene()
+HRESULT CBossStage::Ready_Scene()
 {
 	RenderPipeLine_SetUp();
 	Create_Light();
@@ -21,38 +19,28 @@ HRESULT CTestStage::Ready_Scene()
 
 	FAILED_CHECK_RETURN(Add_Environment_Layer(), E_FAIL);
 	FAILED_CHECK_RETURN(Add_GameObject_Layer(), E_FAIL);
-	//FAILED_CHECK_RETURN(Add_UI_Layer(), E_FAIL);
+	FAILED_CHECK_RETURN(Add_UI_Layer(), E_FAIL);
 
 	return S_OK;
 }
 
-_int CTestStage::Update_Scene(_double TimeDelta)
+_int CBossStage::Update_Scene(_double TimeDelta)
 {
 	ENGINE::CScene::Update_Scene(TimeDelta);
 
 	return NO_EVENT;
 }
 
-void CTestStage::Late_Update_Scene()
+void CBossStage::Late_Update_Scene()
 {
 	ENGINE::CScene::Late_Update_Scene();
-
-	if (ENGINE::Key_Down(ENGINE::dwKEY_RETURN))
-	{
-		ENGINE::CScene* pScene = nullptr;
-
-		pScene = CBossStage::Create(m_pGraphicDev);
-		NULL_CHECK(pScene);
-
-		ENGINE::SetUp_CurrentScene(pScene);
-	}
 }
 
-void CTestStage::Render_Scene()
+void CBossStage::Render_Scene()
 {
 }
 
-HRESULT CTestStage::Add_Environment_Layer()
+HRESULT CBossStage::Add_Environment_Layer()
 {
 	ENGINE::CLayer* pObject_Layer = ENGINE::CLayer::Create();
 	NULL_CHECK_RETURN(pObject_Layer, E_FAIL);
@@ -76,7 +64,7 @@ HRESULT CTestStage::Add_Environment_Layer()
 	return S_OK;
 }
 
-HRESULT CTestStage::Add_GameObject_Layer()
+HRESULT CBossStage::Add_GameObject_Layer()
 {
 	ENGINE::CLayer* pObject_Layer = ENGINE::CLayer::Create();
 	NULL_CHECK_RETURN(pObject_Layer, E_FAIL);
@@ -86,30 +74,28 @@ HRESULT CTestStage::Add_GameObject_Layer()
 
 	//Normal
 
-	pObject = CNewPlayer::Create(m_pGraphicDev);
-	NULL_CHECK_RETURN(pObject, E_FAIL);
-	pObject_Layer->Add_GameObject(L"Player", pObject);
+	//pObject = CNewPlayer::Create(m_pGraphicDev);
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Player", pObject);
 
 	//pObject = CSword::Create(m_pGraphicDev, 0);
 	//NULL_CHECK_RETURN(pObject, E_FAIL);
 	//pObject_Layer->Add_GameObject(L"Sword", pObject);
 
 	//Rider
+	pObject = CMichael::Create(m_pGraphicDev, _vec3(100.f, 2.1f, 100.f));
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Player", pObject);
 
-	//pObject = CMichael::Create(m_pGraphicDev, _vec3(20.f, 1.1f, 20.f));
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Player", pObject);
+	pObject = CPlayer_Rider::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Player_Rider", pObject);
 
-	//pObject = CPlayer_Rider::Create(m_pGraphicDev);
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Player_Rider", pObject);
-
-	//pObject = CSpear::Create(m_pGraphicDev, 0);
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Spear", pObject);
+	pObject = CSpear::Create(m_pGraphicDev, 0);
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Spear", pObject);
 
 	//ETC
-
 	pObject = CEffect_Tex::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pObject, E_FAIL);
 	pObject_Layer->Add_GameObject(L"Effect", pObject);
@@ -118,16 +104,28 @@ HRESULT CTestStage::Add_GameObject_Layer()
 	//NULL_CHECK_RETURN(pObject, E_FAIL);
 	//pObject_Layer->Add_GameObject(L"Shade", pObject);
 
-	//Troll
+	//Monster
+
+	pObject = CBlue::Create(m_pGraphicDev, _vec3(30.f, 0.f, 30.f));
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
+
+	//pObject = CBlue::Create(m_pGraphicDev, _vec3(190.f, 0.f, 30.f));
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
+
+	//pObject = CBlue::Create(m_pGraphicDev, _vec3(30.f, 0.f, 190.f));
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
+
+	//pObject = CBlue::Create(m_pGraphicDev, _vec3(190.f, 0.f, 190.f));
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
 
 	//pObject = CTroll::Create(m_pGraphicDev, _vec3(39.f, 0.1f, 12.f));
 	//NULL_CHECK_RETURN(pObject, E_FAIL);
 	//pObject_Layer->Add_GameObject(L"Troll", pObject);
-
-	//pObject = CBlue::Create(m_pGraphicDev, _vec3(60.f +39.f, 0.1f, 60.f +12.f));
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
-
+	
 	//pObject = CEnemy_Swordman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 12.f));
 	//NULL_CHECK_RETURN(pObject, E_FAIL);
 	//pObject_Layer->Add_GameObject(L"Enemy_Swordman", pObject);
@@ -181,7 +179,7 @@ HRESULT CTestStage::Add_GameObject_Layer()
 	return S_OK;
 }
 
-HRESULT CTestStage::Add_UI_Layer()
+HRESULT CBossStage::Add_UI_Layer()
 {
 	ENGINE::CLayer* pObject_Layer = ENGINE::CLayer::Create();
 	NULL_CHECK_RETURN(pObject_Layer, E_FAIL);
@@ -204,7 +202,7 @@ HRESULT CTestStage::Add_UI_Layer()
 	return S_OK;
 }
 
-void CTestStage::RenderPipeLine_SetUp()
+void CBossStage::RenderPipeLine_SetUp()
 {
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
@@ -214,7 +212,7 @@ void CTestStage::RenderPipeLine_SetUp()
 	m_pGraphicDev->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 }
 
-void CTestStage::Create_Light()
+void CBossStage::Create_Light()
 {
 	D3DLIGHT9 DirLight;
 	ZeroMemory(&DirLight, sizeof(D3DLIGHT9));
@@ -237,11 +235,11 @@ void CTestStage::Create_Light()
 
 }
 
-void CTestStage::LoadForStaticDat(ENGINE::CLayer* pLayer)
+void CBossStage::LoadForStaticDat(ENGINE::CLayer* pLayer)
 {
 	ENGINE::CGameObject* pObject = nullptr;
 
-	HANDLE hFile = CreateFile(L"../../Data/Static2.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	HANDLE hFile = CreateFile(L"../../Data/Boss_Static.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 
 	if (INVALID_HANDLE_VALUE == hFile)
 	{
@@ -284,16 +282,26 @@ void CTestStage::LoadForStaticDat(ENGINE::CLayer* pLayer)
 		if (dwByte == 0)
 			break;
 
-		pObject = CStaticObj::Create_MeshObject(m_pGraphicDev, pMesh.pMeshTag, vTransform);
-		NULL_CHECK_RETURN(pObject);
-		pLayer->Add_GameObject(pMesh.pMeshTag, pObject);
+		if (pMesh.pMeshTag == L"Mesh_Structure")
+		{
+			pObject = CStatic_Tower::Create_MeshObject(m_pGraphicDev, pMesh.pMeshTag, vTransform);
+			NULL_CHECK_RETURN(pObject);
+			pLayer->Add_GameObject(pMesh.pMeshTag, pObject);
+		}
+		else
+		{
+			pObject = CStaticObj::Create_MeshObject(m_pGraphicDev, pMesh.pMeshTag, vTransform);
+			NULL_CHECK_RETURN(pObject);
+			pLayer->Add_GameObject(pMesh.pMeshTag, pObject);
+		}
+
 	}
 
 }
 
-CTestStage * CTestStage::Create(LPDIRECT3DDEVICE9 pDevice)
+CBossStage * CBossStage::Create(LPDIRECT3DDEVICE9 pDevice)
 {
-	CTestStage* pInstance = new CTestStage(pDevice);
+	CBossStage* pInstance = new CBossStage(pDevice);
 
 	if (FAILED(pInstance->Ready_Scene()))
 		ENGINE::Safe_Release(pInstance);
@@ -301,7 +309,7 @@ CTestStage * CTestStage::Create(LPDIRECT3DDEVICE9 pDevice)
 	return pInstance;
 }
 
-void CTestStage::Free()
+void CBossStage::Free()
 {
 	if (m_pLoading != nullptr)
 		ENGINE::Safe_Release(m_pLoading);

@@ -8,16 +8,6 @@ NS_BEGIN(ENGINE)
 class ENGINE_DLL CTransform :
 	public CComponent
 {
-public:
-	enum eDirect
-	{
-		DIR_UP,
-		DIR_DOWN,
-		DIR_LEFT,
-		DIR_RIGHT
-	};
-
-
 private:
 	explicit CTransform();
 	virtual ~CTransform();
@@ -25,13 +15,23 @@ private:
 public:
 	void Set_ParentMatrix(const _matrix* pParentMat)
 	{		m_matWorld *= *pParentMat; 	}
+	void Set_AniState(_uint iAni)
+	{		m_iCurAniIndex = iAni;	}
+	void Set_StartPos(_vec3 vPos)
+	{
+		m_vStartPos = vPos;
+	}
+
 
 	_vec3 Get_vLookDir();	//Y°ª 0.f;
+	_vec3 Get_vLookRealDir();	
 	_vec3 Get_vInfoPos(ENGINE::INFO eInfo);
+	_float Get_BossDistance(CTransform* pTarget, _float fY);
 	_float Get_TargetDistance(CTransform* pTarget);
 	_vec3 Get_TargetReverseDir(CTransform* pTarget);
 	_bool Get_Dead(_bool bDead = FALSE);
 	_vec3 Get_NewPlayerPos(_float fDist);
+	_float Fall_BackBoss(_float fSpeed, const _double& TimeDelta);
 
 public:
 	HRESULT Ready_Trasnform(_vec3 vLook);
@@ -67,12 +67,12 @@ public:
 	_bool m_bDead;
 	_bool m_bFront;
 	_bool bRotate;
+	_bool m_bWeak;
 	_double m_TimeDelta;
 	_float m_fRotate;
 	_float m_fFixAngleY;
-	eDirect m_eCurDir;
-	eDirect m_ePreDir;
-
+	_uint m_iCurAniIndex;
+	_vec3 m_vStartPos;
 	
 
 public:

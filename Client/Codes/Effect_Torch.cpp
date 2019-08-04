@@ -1,40 +1,40 @@
 #include "stdafx.h"
-#include "Effect_Tex.h"
+#include "Effect_Torch.h"
 #include "Export_Utility.h"
 
-CEffect_Tex::CEffect_Tex(LPDIRECT3DDEVICE9 pDevice)
+CEffect_Torch::CEffect_Torch(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice),
-	m_Frame(0.f), m_MaxFrame(90.f), m_LifeTime(0.f), m_Time(0.f)
+	m_Frame(0.f), m_MaxFrame(32.f), m_LifeTime(0.f), m_Time(0.f)
 {
 }
 
-CEffect_Tex::~CEffect_Tex()
+CEffect_Torch::~CEffect_Torch()
 {
 }
 
-void CEffect_Tex::Set_Pos(_vec3 vPos)
+void CEffect_Torch::Set_Pos(_vec3 vPos)
 {
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = vPos;
 	m_pTransform->m_vInfo[ENGINE::INFO_POS].y += 1.f;
 }
 
-void CEffect_Tex::Set_LifeTime(_double fLife, _double fDelay)
+void CEffect_Torch::Set_LifeTime(_double fLife, _double fDelay)
 {
 	m_LifeTime = fLife;
 	m_Time -= fDelay;
 }
 
-HRESULT CEffect_Tex::Ready_Object()
+HRESULT CEffect_Torch::Ready_Object()
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
-	m_pTransform->m_vScale = { 15.f, 15.f, 15.f };
+	m_pTransform->m_vScale = { 8.f, 8.f, 8.f };
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = { 0.f, 0.f, 0.f };
 	
 	return S_OK;
 }
 
-_int CEffect_Tex::Update_Object(const _double& TimeDelta)
+_int CEffect_Torch::Update_Object(const _double& TimeDelta)
 {
 	//ENGINE::CGameObject::Late_Init();
 	m_Time += TimeDelta;
@@ -52,12 +52,12 @@ _int CEffect_Tex::Update_Object(const _double& TimeDelta)
 	return NO_EVENT;
 }
 
-void CEffect_Tex::Late_Update_Object()
+void CEffect_Torch::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
 }
 
-void CEffect_Tex::Render_Object()
+void CEffect_Torch::Render_Object()
 {
 	//Render_Set();
 
@@ -72,7 +72,7 @@ void CEffect_Tex::Render_Object()
 	//Render_ReSet();
 }
 
-HRESULT CEffect_Tex::Add_Component()
+HRESULT CEffect_Torch::Add_Component()
 {
 	ENGINE::CComponent* pComponent = nullptr;
 	/////////INSERT COMPONENT/////////
@@ -85,7 +85,7 @@ HRESULT CEffect_Tex::Add_Component()
 
 	//Texture Componet
 	pComponent = m_pTexture = dynamic_cast<ENGINE::CTexture*>
-		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Texture_Explosion"));
+		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Texture_Torch"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Texture", pComponent);
 
@@ -104,7 +104,7 @@ HRESULT CEffect_Tex::Add_Component()
 	return S_OK;
 }
 
-void CEffect_Tex::Update_Frame(_float fTimeDelta)
+void CEffect_Torch::Update_Frame(_float fTimeDelta)
 {
 	if(m_Time > 0.f)
 	m_Frame += m_MaxFrame * fTimeDelta;
@@ -113,7 +113,7 @@ void CEffect_Tex::Update_Frame(_float fTimeDelta)
 		m_Frame = 0.f;
 }
 
-void CEffect_Tex::Update_Billboard()
+void CEffect_Torch::Update_Billboard()
 {
 	///////////////////////////////////////
 	_matrix		matView, matBill, matWorld;
@@ -133,7 +133,7 @@ void CEffect_Tex::Update_Billboard()
 	///////////////////////////////////////
 }
 
-void CEffect_Tex::Render_Set()
+void CEffect_Torch::Render_Set()
 {
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
 	//Alpha Test Begin
@@ -153,7 +153,7 @@ void CEffect_Tex::Render_Set()
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 }
 
-void CEffect_Tex::Render_ReSet()
+void CEffect_Torch::Render_ReSet()
 {
 	//Alpha Test End
 	//m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
@@ -167,9 +167,9 @@ void CEffect_Tex::Render_ReSet()
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
-CEffect_Tex * CEffect_Tex::Create(LPDIRECT3DDEVICE9 pDevice)
+CEffect_Torch * CEffect_Torch::Create(LPDIRECT3DDEVICE9 pDevice)
 {
-	CEffect_Tex* pInstance = new CEffect_Tex(pDevice);
+	CEffect_Torch* pInstance = new CEffect_Torch(pDevice);
 
 	if (FAILED(pInstance->Ready_Object()))
 		ENGINE::Safe_Release(pInstance);
@@ -177,9 +177,9 @@ CEffect_Tex * CEffect_Tex::Create(LPDIRECT3DDEVICE9 pDevice)
 	return pInstance;
 }
 
-CEffect_Tex * CEffect_Tex::Create(LPDIRECT3DDEVICE9 pDevice, _vec3 vPos, _double fLife, _double fDelay)
+CEffect_Torch * CEffect_Torch::Create(LPDIRECT3DDEVICE9 pDevice, _vec3 vPos, _double fLife, _double fDelay)
 {
-	CEffect_Tex* pInstance = new CEffect_Tex(pDevice);
+	CEffect_Torch* pInstance = new CEffect_Torch(pDevice);
 
 	if (FAILED(pInstance->Ready_Object()))
 		ENGINE::Safe_Release(pInstance);
@@ -190,7 +190,7 @@ CEffect_Tex * CEffect_Tex::Create(LPDIRECT3DDEVICE9 pDevice, _vec3 vPos, _double
 	return pInstance;
 }
 
-void CEffect_Tex::Free()
+void CEffect_Torch::Free()
 {
 	ENGINE::CGameObject::Free();
 }

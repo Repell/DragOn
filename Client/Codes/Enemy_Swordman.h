@@ -65,6 +65,7 @@ private:
 	//Key Input, Camera, NaviMesh
 	_bool m_bAttack;
 	_double m_AttackTime;
+	_float m_fWaitTime;
 	_float m_fDist;
 	_uint m_iCurAniSet;
 	_uint m_iPreAniSet;

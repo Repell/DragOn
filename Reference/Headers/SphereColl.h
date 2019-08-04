@@ -25,9 +25,6 @@ public:
 	_uint Get_iHitStack(_bool bState = FALSE);
 
 public:
-	virtual void Late_Update_Component() override;
-
-public:
 	HRESULT Ready_SphereColl(_float fRadius, _int iHp);
 	void Render_SphereColl(const _matrix * pCollMatrix, _float fY = 0.f);
 	//_bool Check_Collision(const _vec3 vTargetPos, _float fTargetRadius);

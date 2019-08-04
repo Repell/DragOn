@@ -1,8 +1,7 @@
-#ifndef TestStage_h__
-#define TestStage_h__
+#ifndef BossStage_h__
+#define BossStage_h__
 
 #include "Scene.h"
-#include "BossStage.h"
 #include "Loading.h"
 #include "Terrain.h"
 #include "TerrainSkyBox.h"
@@ -22,6 +21,7 @@
 
 //Static
 #include "StaticObj.h"
+#include "Static_Tower.h"
 #include "Sword.h"
 #include "Spear.h"
 
@@ -31,12 +31,12 @@
 #include "DynamicCamera.h"
 #include "StaticCamera.h"
 
-class CTestStage : public ENGINE::CScene
+class CBossStage : public ENGINE::CScene
 {
 private:
-	explicit CTestStage(LPDIRECT3DDEVICE9 pDevice);
+	explicit CBossStage(LPDIRECT3DDEVICE9 pDevice);
 public:
-	virtual ~CTestStage();
+	virtual ~CBossStage();
 
 public:
 	virtual HRESULT Ready_Scene();
@@ -59,9 +59,9 @@ private:
 
 
 public:
-	static CTestStage* Create(LPDIRECT3DDEVICE9 pDevice);
+	static CBossStage* Create(LPDIRECT3DDEVICE9 pDevice);
 	virtual void Free();
 
 };
 
-#endif // TestStage_h__
+#endif // BossStage_h__

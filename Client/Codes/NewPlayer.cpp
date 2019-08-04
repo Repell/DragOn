@@ -16,7 +16,7 @@ CNewPlayer::CNewPlayer(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice),
 	m_pTransform(nullptr), m_pNaviMesh(nullptr), m_pMesh(nullptr),
 	m_pSphereColl(nullptr), m_pRenderer(nullptr), m_pWeapon(nullptr),
-	m_bAnimate(FALSE), m_iCurAniState(0), m_iPreAniState(0), m_TimeAccel(1),
+	 m_iCurAniState(0), m_iPreAniState(0), m_TimeAccel(1),
 	m_bJump(FALSE), m_fPosY(0.f), m_JumpTime(0.0),
 	m_bJumpAttack(FALSE), m_HoldTime(1.0),
 	m_bDash(FALSE), m_DashTime(0.0),
@@ -32,14 +32,6 @@ CNewPlayer::CNewPlayer(LPDIRECT3DDEVICE9 pDevice)
 CNewPlayer::~CNewPlayer()
 {
 
-}
-
-void CNewPlayer::Set_CurDir(PLAYERDIR eDir)
-{
-	if (m_eCurDir == eDir)
-		return;
-
-	m_eCurDir = eDir;
 }
 
 HRESULT CNewPlayer::Ready_Object()
@@ -72,7 +64,7 @@ HRESULT CNewPlayer::Add_Component()
 	m_MapComponent[ENGINE::COMP_DYNAMIC].emplace(L"Com_Mesh", pComponent);
 
 	//Transform Component
-	pComponent = m_pTransform = ENGINE::CTransform::Create(_vec3(0.f, 0.f, -1.f));
+	pComponent = m_pTransform = ENGINE::CTransform::Create(_vec3(-1.f, 0.f, 0.f));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_DYNAMIC].emplace(L"Com_Transform", pComponent);
 	m_pTransform->m_vScale = { 0.006f, 0.006f, 0.006f };
@@ -370,8 +362,8 @@ void CNewPlayer::Fight_Func(const _double & TimeDelta)
 	if (m_ePlayerState == NONE)
 		return;
 
-	_vec3	vPos, vDir;
-	vPos = m_pAdvance->Get_Transform()->Get_NewPlayerPos(_CAMDIST);
+	
+	_vec3	vCamPos = m_pAdvance->Get_vNewPos(_CAMDIST);
 
 	if (m_iCurAniState == m_iComboIdx[7] && m_Delay < 0.4)
 	{
@@ -383,13 +375,13 @@ void CNewPlayer::Fight_Func(const _double & TimeDelta)
 
 	if (m_iCurAniState == m_iComboIdx[m_iComboCnt] && !m_pMesh->Is_AnimationSetEnd())
 	{
-		_vec3 vDir = m_pTransform->Get_vLookDir();
+		_vec3 vPlayerDir = m_pTransform->Get_vLookDir();
 		if (m_iComboCnt == 4)
-			vDir *= -1.f;
+			vPlayerDir *= -1.f;
 		else if (m_iComboCnt == 7)
-			vDir = { 0.f, 0.f, 0.f };
-		m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] -= vDir * TimeDelta;
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh_Jump(&vPos, &(vDir * TimeDelta * -_SPEED), &m_fPosY);
+			vPlayerDir = { 0.f, 0.f, 0.f };
+		m_pAdvance->Set_Transform_Dir(ENGINE::INFO_POS, &(-vPlayerDir * TimeDelta));
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh(&vCamPos, &(vPlayerDir * TimeDelta * -_SPEED));
 		m_ePlayerState = FIGHT;
 	}
 	else if (m_iCurAniState == m_iComboIdx[m_iComboCnt] && m_pMesh->Is_AnimationSetEnd())
@@ -411,7 +403,7 @@ void CNewPlayer::Move_Func(const _double & TimeDelta)
 	Update_PlayerDir(TimeDelta);
 
 	_vec3	vPos = m_pAdvance->Get_INFO(ENGINE::INFO_POS);
-	if (m_ePlayerState == MOVE && m_ePlayerState != FIGHT_MOVE)
+	if (m_ePlayerState == MOVE && m_ePlayerState != FIGHT_MOVE || m_ePlayerState == FIGHT_JUMP )
 	{
 		//_vec3 vNewPos = m_pNaviMesh->MoveOn_NaviMesh(&vPos, &(m_vMoveDir * TimeDelta * _SPEED));
 		//vPos = m_vMoveDir * TimeDelta * _SPEED;

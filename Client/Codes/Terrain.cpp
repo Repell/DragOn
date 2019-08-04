@@ -59,8 +59,8 @@ void CTerrain::Render_Object()
 	pEffect->Begin(NULL, 0);
 	pEffect->BeginPass(0);
 
-	//m_pTexture->Render_Texture();
-	//m_pBuffer->Render_Buffer();
+	m_pTexture->Render_Texture();
+	m_pBuffer->Render_Buffer();
 
 	pEffect->EndPass();
 	pEffect->End();

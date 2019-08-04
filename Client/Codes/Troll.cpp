@@ -103,7 +103,7 @@ _int CTroll::Update_Object(const _double& TimeDelta)
 		m_pTransform->Get_Dead(TRUE);
 	}
 
-	if (m_bDead && m_iCurAniSet == 21 && m_pMesh->Is_AnimationSetEnd())
+	if (m_bDead && m_iCurAniSet == _DEAD && m_pMesh->Is_AnimationSetEnd())
 		return END_EVENT;
 
 	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_NONALPHA, this);

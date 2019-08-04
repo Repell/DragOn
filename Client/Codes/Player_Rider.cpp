@@ -326,12 +326,12 @@ void CPlayer_Rider::UI_Sample()
 void CPlayer_Rider::Get_ParentMatrix()
 {
 	ENGINE::CTransform* pTrans = dynamic_cast<ENGINE::CTransform*>
-		(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player_Michael", L"Com_Transform", ENGINE::COMP_DYNAMIC));
+		(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player", L"Com_Transform", ENGINE::COMP_DYNAMIC));
 
 	if (nullptr == m_pParentBoneMatrix)
 	{
 		ENGINE::CDynamicMesh* pPlayerMesh = dynamic_cast<ENGINE::CDynamicMesh*>
-			(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player_Michael", L"Com_Mesh", ENGINE::COMP_DYNAMIC));
+			(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player", L"Com_Mesh", ENGINE::COMP_DYNAMIC));
 
 		if (nullptr == pPlayerMesh)
 			return;

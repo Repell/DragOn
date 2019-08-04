@@ -23,6 +23,11 @@ void CAdvanceCamera::Set_Transform_Pos(ENGINE::INFO eInfo, const _vec3* vPos)
 	m_pTransform->m_vInfo[eInfo] = *vPos;
 }
 
+void CAdvanceCamera::Set_Transform_Dir(ENGINE::INFO eInfo, const _vec3 * vDir)
+{
+	m_pTransform->m_vInfo[eInfo] += *vDir;
+}
+
 
 _vec3 CAdvanceCamera::Get_INFO(ENGINE::INFO eInfo)
 {

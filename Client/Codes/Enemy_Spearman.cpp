@@ -43,6 +43,7 @@ CEnemy_Spearman::CEnemy_Spearman(LPDIRECT3DDEVICE9 pDevice)
 	m_KnockTime = 0.0;
 	m_TimeDelta = 0.0;
 	m_AccTime = 1.0;
+	m_fWaitTime = 0.f;
 }
 
 CEnemy_Spearman::~CEnemy_Spearman()
@@ -60,7 +61,7 @@ HRESULT CEnemy_Spearman::Ready_Object(_vec3 vPos)
 
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = vPos;
 	m_pTransform->m_vScale = { 0.006f, 0.006f, 0.006f };
-	m_pSphereColl->Set_Scale(0.005f);
+	m_pSphereColl->Set_Scale(0.004f);
 	//m_pCollider->Set_Scale(0.005f);
 
 	Set_Animation();
@@ -183,7 +184,7 @@ _bool CEnemy_Spearman::Check_EnemyColl(_vec3 * vRevDir, const _tchar* szTag)
 			vTargetRevDir.y = 0.f;
 
 			if (pTrans->m_bAttackState == FALSE)
-				pTrans->m_vInfo[ENGINE::INFO_POS] += vTargetRevDir * m_TimeDelta;
+				pTrans->m_vInfo[ENGINE::INFO_POS] += vTargetRevDir * m_TimeDelta * 1.1f;
 			return TRUE;
 		}
 
@@ -359,24 +360,34 @@ VOID CEnemy_Spearman::State_Chase()
 
 		Check_EnemyGroup();
 
-		m_pTransform->Stalk_Target(m_pTargetTransform, m_TimeDelta, _SPEED);
+		_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh
+		(&vPos, &m_pTransform->Stalk_TargetDir(m_pTargetTransform, m_TimeDelta, 1.5f));
 
 		m_AttackTime = 0.0;
+		m_fWaitTime = ENGINE::CWell512::Get_Instance()->Get_floatValues(1.f, 3.f);
 	}
 	else if (m_fDist < 3.f)
 	{
-		_vec3 vRevDir = { 0.f, 0.f, 0.f };	//주변에 걸리적 거리는 놈 있으면 밀어내는 거리
 		Animate_FSM(_CHASE_WALK);
 		
 		Check_EnemyGroup();
 
-		if (m_fDist > 1.75f)
-			m_pTransform->Stalk_Target(m_pTargetTransform, m_TimeDelta, 0.75f);
-		else if (m_fDist < 1.75f)	//플레이어와 거리 유지
+		if (m_fDist > 2.25f)
+		{
+			_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh
+			(&vPos, &m_pTransform->Stalk_TargetDir(m_pTargetTransform, m_TimeDelta, 0.2f));
+
+			_vec3 vRight = m_pTransform->m_vInfo[ENGINE::INFO_RIGHT];
+			D3DXVec3Normalize(&vRight, &vRight);
+			m_pTransform->m_vInfo[ENGINE::INFO_POS] += vRight * m_TimeDelta * 0.5f;
+		}
+		else if (m_fDist < 2.25f)	//플레이어와 거리 유지
 		{
 			m_AttackTime += m_TimeDelta;	//공격 시도전 대기 시간
 
-			if (m_AttackTime > 1.5)	// 플레이어와 일정거리를 유지한체 시간을 채움
+			if (m_AttackTime > m_fWaitTime)	// 플레이어와 일정거리를 유지한체 시간을 채움
 			{
 				m_bAttack = TRUE;	//공격 시작
 				m_pTransform->m_bAttackState = m_bAttack;
@@ -401,7 +412,7 @@ VOID CEnemy_Spearman::State_Attack()
 	{
 		m_AttackTime += m_TimeDelta;
 
-		if (m_pWeapon->Check_ComponentColl(m_pTargetSphereColl) && m_AttackTime > 1.0)
+		if (m_pWeapon->Check_ComponentColl(m_pTargetSphereColl) && m_AttackTime > 1.25)
 		{
 			m_pWeapon->Set_AttackState(m_bAttack, m_iCurAniSet, 2);
 
@@ -587,7 +598,7 @@ HRESULT CEnemy_Spearman::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	ENGINE::UNITINFO tInfo =
-	{ FALSE, _vec3(0.f, 0.f, -110.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(90.f, 20.f, 0.f), _vec3(0.f, 0.f, 0.f), 60.f };
+	{ FALSE, _vec3(0.f, 0.f, -130.f), _vec3{ 0.006f, 1.f, 1.f }, _vec3(90.f, 20.f, 0.f), _vec3(0.f, 0.f, 0.f), 60.f };
 	pComponent = m_pWeapon = ENGINE::CWeapon::Create(m_pGraphicDev, m_pTransform, tInfo, L"Mesh_Enemy_Spear");
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Weapon", pComponent);

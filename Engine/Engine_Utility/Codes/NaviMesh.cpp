@@ -87,6 +87,7 @@ _vec3 CNaviMesh::MoveOn_NaviMesh_Jump(const _vec3 * pTargetPos, const _vec3 * pT
 	{
 		//벽이 아닐경우 네비매쉬의 높이값 추가
 		vEndPos.y = Compute_OnTerrain(pTargetPos, &m_dwCurrentIdx);
+		//vEndPos.y += 0.1f;
 		vEndPos.y += *fJump;
 		return vEndPos;
 	}
@@ -265,6 +266,8 @@ _float CNaviMesh::Compute_OnTerrain(const _vec3 * pPos, _ulong * pCellIndex)
 		m_vecCell[(*pCellIndex)]->Get_Point(CCell::POINT_A),
 		m_vecCell[(*pCellIndex)]->Get_Point(CCell::POINT_B),
 		m_vecCell[(*pCellIndex)]->Get_Point(CCell::POINT_C));
+
+
 
 	return (-d3Plane.a * pPos->x - d3Plane.c * pPos->z - d3Plane.d) / d3Plane.b;
 }

@@ -14,8 +14,8 @@ CTransform::CTransform()
 {
 	m_bFront = FALSE;
 	bRotate = FALSE;
-	m_eCurDir = DIR_UP;
 	m_bDead = FALSE;
+	m_bWeak = FALSE;
 	m_fRotate = 0;
 }
 
@@ -27,7 +27,14 @@ _vec3 CTransform::Get_vLookDir()
 {
 	_vec3 vLookPos = m_vInfo[ENGINE::INFO_LOOK];;
 	vLookPos.y = 0.f;
-	
+
+	return *D3DXVec3Normalize(&vLookPos, &vLookPos);
+}
+
+_vec3 CTransform::Get_vLookRealDir()
+{
+	_vec3 vLookPos = m_vInfo[ENGINE::INFO_LOOK];;
+
 	return *D3DXVec3Normalize(&vLookPos, &vLookPos);
 }
 
@@ -52,6 +59,16 @@ _vec3 CTransform::Get_vInfoPos(ENGINE::INFO eInfo)
 	}
 
 	return vPos;
+}
+
+_float CTransform::Get_BossDistance(CTransform * pTarget, _float fY)
+{
+	_vec3 vWeakPos = m_vInfo[INFO_POS];
+	vWeakPos.y += fY;
+	_vec3 vNewDir = pTarget->m_vInfo[INFO_POS] - vWeakPos;
+	_float fDistance = D3DXVec3Length(&vNewDir);
+
+	return fDistance;
 }
 
 HRESULT CTransform::Ready_Trasnform(_vec3 vLook)
@@ -199,7 +216,7 @@ _float CTransform::Fix_TargetLookAngleY(CTransform * pTarget, _float fSearchDist
 		return fDistance;
 
 	m_vAngle.y += fRotY;
-	
+
 	//////////////////////////////////////////////
 	return fDistance;
 }
@@ -227,7 +244,7 @@ _float CTransform::Fix_TargetLook(CTransform * pTarget, _float fSearchDist)
 
 _float CTransform::Fix_TargetRevLook(CTransform * pTarget, _float fSearchDist)
 {
-	_vec3 vNewDir = pTarget->m_vInfo[INFO_POS] - m_vInfo[INFO_POS];
+	_vec3 vNewDir = m_vInfo[INFO_POS] - pTarget->m_vInfo[INFO_POS];
 	_float fDistance = D3DXVec3Length(&vNewDir);
 
 	if (fSearchDist < fDistance)
@@ -235,7 +252,7 @@ _float CTransform::Fix_TargetRevLook(CTransform * pTarget, _float fSearchDist)
 
 	D3DXVec3Normalize(&vNewDir, &vNewDir);
 	D3DXVec3Normalize(&m_vLook, &m_vLook);
-	_float fRad = D3DXVec3Dot(&-m_vLook, &vNewDir);
+	_float fRad = D3DXVec3Dot(&m_vLook, &vNewDir);
 
 	m_vAngle.y = D3DXToDegree(acosf(fRad));
 
@@ -271,7 +288,7 @@ _float CTransform::Get_TargetDistance(CTransform * pTarget)
 _vec3 CTransform::Get_TargetReverseDir(CTransform * pTarget)
 {
 	_vec3 vRevDir = m_vInfo[INFO_POS] - pTarget->m_vInfo[INFO_POS];
-	
+
 	return *D3DXVec3Normalize(&vRevDir, &vRevDir);
 }
 
@@ -291,6 +308,25 @@ _vec3 CTransform::Get_NewPlayerPos(_float fDist)
 	return vNewPos;
 }
 
+_float CTransform::Fall_BackBoss(_float fSpeed, const _double & TimeDelta)
+{
+	_vec3 vFallBack = m_vStartPos - m_vInfo[INFO_POS];
+	_float fDistance = D3DXVec3Length(&vFallBack);
+	D3DXVec3Normalize(&vFallBack, &vFallBack);
+	vFallBack.y = 0.f;
+
+	D3DXVec3Normalize(&m_vLook, &m_vLook);
+	_float fRad = D3DXVec3Dot(&m_vLook, &vFallBack);
+
+	m_vAngle.y = D3DXToDegree(acosf(fRad));
+
+	if (m_vStartPos.x > m_vInfo[ENGINE::INFO_POS].x)
+		m_vAngle.y *= -1.f;
+	
+	m_vInfo[INFO_POS] += vFallBack * fSpeed * TimeDelta;
+	return fDistance;
+}
+
 _bool CTransform::Check_TargetFront()
 {
 	if (m_vAngle.y > m_fRotate - 4.f && m_vAngle.y < m_fRotate + 4.f)
@@ -303,7 +339,7 @@ _bool CTransform::Check_TargetFront()
 
 void CTransform::Rotation_AngleY(const _double & TimeDelta)
 {
-	
+
 }
 
 CTransform * CTransform::Create(_vec3& vLook)

@@ -252,6 +252,7 @@ call CopyUtility.bat</Command>
     <ClInclude Include="..\Codes\TriTex.h" />
     <ClInclude Include="..\Codes\ViBuffer.h" />
     <ClInclude Include="..\Codes\Weapon.h" />
+    <ClInclude Include="..\Codes\Well512.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\AdvanceCamera.cpp" />
@@ -290,6 +291,7 @@ call CopyUtility.bat</Command>
     <ClCompile Include="..\Codes\TriTex.cpp" />
     <ClCompile Include="..\Codes\ViBuffer.cpp" />
     <ClCompile Include="..\Codes\Weapon.cpp" />
+    <ClCompile Include="..\Codes\Well512.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Engine_Headers\Export_Utility.inl" />

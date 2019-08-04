@@ -20,11 +20,11 @@ HRESULT CDynamicCamera::Ready_Object()
 {
 	Add_Component();
 
-	m_fTargetDist = 7.f;
-	m_fCamAngle = -25.f;
+	//m_pTransCom->m_vScale = { 0.01f, 0.01f, 0.01f };
+	m_fTargetDist = 20.f;
+	m_fCamAngle = -10.f;
 	m_fCamSpeed = 1.f;
-	m_fCamAngleY = 180.f;
-
+	
 	m_pGraphicDev->SetTransform(D3DTS_VIEW, &m_matView);
 	m_pGraphicDev->SetTransform(D3DTS_PROJECTION, &m_matProj);
 
@@ -88,10 +88,9 @@ HRESULT CDynamicCamera::Add_Component()
 
 void CDynamicCamera::Reset_Camera()
 {
-	m_fTargetDist = 7.f;
-	m_fCamAngle = -25.f;
+	m_fTargetDist = 20.f;
+	m_fCamAngle = -10.f;
 	m_fCamSpeed = 1.f;
-	m_fCamAngleY = 180.f;
 
 	m_pGraphicDev->SetTransform(D3DTS_VIEW, &m_matView);
 	m_pGraphicDev->SetTransform(D3DTS_PROJECTION, &m_matProj);
@@ -172,7 +171,7 @@ void CDynamicCamera::Key_Spectre(const _double& TimeDelta)
 
 void CDynamicCamera::Target_Renewal()
 {
-	_vec3 vEye = vEye.Reverse(&m_pCamTarget->m_vDir);
+	_vec3 vEye = vEye.Reverse(&m_pCamTarget->Get_vLookRealDir());
 
 	//카메라는 플레이어의 역방향
 	vEye *= -m_fTargetDist;
@@ -183,37 +182,26 @@ void CDynamicCamera::Target_Renewal()
 
 	//right 벡터 기준으로 축 회전
 	D3DXMATRIX matRotAxis;
-	
+
 	//D3DXMatrixRotationAxis: 임의의 축회전
 	D3DXMatrixRotationAxis(&matRotAxis, &vRight, D3DXToRadian(m_fCamAngle));
 	D3DXVec3TransformNormal(&vEye, &vEye, &matRotAxis);
 
 	//카메라의 위치
 	vEye += m_pCamTarget->m_vInfo[ENGINE::INFO_POS];
-
-	if (vEye.y < m_vEye.y)
-		vEye.y = m_vEye.y;
-	else
-		m_vEye = vEye;
+	m_vEye = vEye;
 
 	_vec3 vAt = m_pCamTarget->m_vInfo[ENGINE::INFO_POS];
 	vAt.y += m_pCamTarget->m_fJump;
-
-	if (vAt.y < 0.f)
-		vAt.y = 0.1f;
-
 	m_pTransCom->m_vInfo[ENGINE::INFO_POS] = vAt;		//Spectre Cam StartPos
-	vAt.y += 0.5f;
+	vAt.y += 1.25f;
 
-	//if (m_pCamTarget->m_vAngle.x > 44.f || m_pCamTarget->m_vAngle.x < -135.f)
-	//	ENGINE::CCamera::Make_ViewMatrix(&vEye, &vAt, &_vec3(0.f, -1.f, 0.f));
-	//else
 	ENGINE::CCamera::Make_ViewMatrix(&vEye, &vAt, &_vec3(0.f, 1.f, 0.f));
 }
 
 void CDynamicCamera::Target_Spectre()
 {
-	_vec3 vEye = vEye.Reverse(&m_pTransCom->m_vDir);
+	_vec3 vEye = vEye.Reverse(&m_pTransCom->Get_vLookRealDir());
 	//_vec3 vEye = vEye.Reverse(&m_pCamTarget->m_vDir);
 
 	//카메라는 플레이어의 역방향

@@ -75,12 +75,6 @@ _bool CSphereColl::Get_AirboneState()
 	return m_bAirbone;
 }
 
-void CSphereColl::Late_Update_Component()
-{
-	//if(m_bHit)
-	//	m_bHit = FALSE;
-}
-
 HRESULT CSphereColl::Ready_SphereColl(_float fRadius, _int iHp)
 {
 	m_iHp = iHp;
@@ -98,26 +92,26 @@ void CSphereColl::Render_SphereColl(const _matrix * pCollMatrix, _float fY)
 	pMatrix._42 += fY;
 	memcpy(m_vCollPos, &pMatrix.m[3][0], sizeof(_vec3));
 
-//#ifdef _DEBUG
-//	_ulong iNumVertice = m_pMesh->GetNumVertices();
-//	_ulong iNumFaces = m_pMesh->GetNumFaces();
-//
-//	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-//	m_pGraphicDev->SetTransform(D3DTS_WORLD, &pMatrix);
-//	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-//	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-//
-//	m_pGraphicDev->SetTexture(0, m_pTexture);
-//
-//	m_pGraphicDev->SetStreamSource(0, m_pVB, 0, sizeof(VTX_SPHERE));
-//	m_pGraphicDev->SetFVF(VTXFVF_SPHERE);
-//	m_pGraphicDev->SetIndices(m_pIB);
-//	m_pGraphicDev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, iNumVertice, 0, iNumFaces);
-//
-//	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
-//	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-//	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-//#endif
+#ifdef _DEBUG
+	_ulong iNumVertice = m_pMesh->GetNumVertices();
+	_ulong iNumFaces = m_pMesh->GetNumFaces();
+
+	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	m_pGraphicDev->SetTransform(D3DTS_WORLD, &pMatrix);
+	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
+
+	m_pGraphicDev->SetTexture(0, m_pTexture);
+
+	m_pGraphicDev->SetStreamSource(0, m_pVB, 0, sizeof(VTX_SPHERE));
+	m_pGraphicDev->SetFVF(VTXFVF_SPHERE);
+	m_pGraphicDev->SetIndices(m_pIB);
+	m_pGraphicDev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, iNumVertice, 0, iNumFaces);
+
+	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
+	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+#endif
 }
 
 //_bool CSphereColl::Check_Collision(const _vec3 vTargetPos, _float fTargetRadius)

@@ -170,7 +170,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Codes\BossStage.h" />
+    <ClInclude Include="..\Codes\Boss_Blue.h" />
+    <ClInclude Include="..\Codes\Dragon_Fireball.h" />
     <ClInclude Include="..\Codes\Effect_Tex.h" />
+    <ClInclude Include="..\Codes\Effect_Torch.h" />
     <ClInclude Include="..\Codes\Enemy_Arrow.h" />
     <ClInclude Include="..\Codes\Enemy_Bowman.h" />
     <ClInclude Include="..\Codes\Enemy_Shieldman.h" />
@@ -182,6 +186,7 @@
     <ClInclude Include="..\Codes\Player_Rider.h" />
     <ClInclude Include="..\Codes\Shade.h" />
     <ClInclude Include="..\Codes\StaticCamera.h" />
+    <ClInclude Include="..\Codes\Static_Tower.h" />
     <ClInclude Include="..\Codes\Troll.h" />
     <ClInclude Include="..\Codes\Spear.h" />
     <ClInclude Include="..\Codes\StaticObj.h" />
@@ -207,7 +212,11 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Codes\BossStage.cpp" />
+    <ClCompile Include="..\Codes\Boss_Blue.cpp" />
+    <ClCompile Include="..\Codes\Dragon_Fireball.cpp" />
     <ClCompile Include="..\Codes\Effect_Tex.cpp" />
+    <ClCompile Include="..\Codes\Effect_Torch.cpp" />
     <ClCompile Include="..\Codes\Enemy_Arrow.cpp" />
     <ClCompile Include="..\Codes\Enemy_Bowman.cpp" />
     <ClCompile Include="..\Codes\Enemy_Shieldman.cpp" />
@@ -219,6 +228,7 @@
     <ClCompile Include="..\Codes\Player_Rider.cpp" />
     <ClCompile Include="..\Codes\Shade.cpp" />
     <ClCompile Include="..\Codes\StaticCamera.cpp" />
+    <ClCompile Include="..\Codes\Static_Tower.cpp" />
     <ClCompile Include="..\Codes\Troll.cpp" />
     <ClCompile Include="..\Codes\Spear.cpp" />
     <ClCompile Include="..\Codes\StaticObj.cpp" />

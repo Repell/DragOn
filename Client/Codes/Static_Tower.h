@@ -1,7 +1,8 @@
-#ifndef StaticObj_h__
-#define StaticObj_h__
+#ifndef Static_Tower_h__
+#define Static_Tower_h__
 
 #include "GameObject.h"
+#include "Effect_Torch.h"
 
 namespace ENGINE
 {
@@ -12,12 +13,12 @@ namespace ENGINE
 	class CSphereColl;
 }
 
-class CStaticObj :
+class CStatic_Tower :
 	public ENGINE::CGameObject
 {
 private:
-	explicit CStaticObj(LPDIRECT3DDEVICE9 pGraphicDev);
-	virtual ~CStaticObj();
+	explicit CStatic_Tower(LPDIRECT3DDEVICE9 pGraphicDev);
+	virtual ~CStatic_Tower();
 
 public:
 	void Set_Transform(const _vec3 vPos, const _vec3 vRot, const _vec3 vSize);
@@ -60,8 +61,8 @@ private:
 	_matrix m_matWorld;
 
 public:
-	static CStaticObj* Create(LPDIRECT3DDEVICE9 pGraphicDev);
-	static CStaticObj* Create_MeshObject(LPDIRECT3DDEVICE9 pGraphicDev, wstring strMesh, _vec3 vTransform[]);
+	static CStatic_Tower* Create(LPDIRECT3DDEVICE9 pGraphicDev);
+	static CStatic_Tower* Create_MeshObject(LPDIRECT3DDEVICE9 pGraphicDev, wstring strMesh, _vec3 vTransform[]);
 
 private:
 	virtual void Free() override;
@@ -69,4 +70,4 @@ private:
 
 };
 
-#endif // StaticObj_h__
+#endif // Static_Tower_h__
