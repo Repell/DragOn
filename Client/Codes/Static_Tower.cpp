@@ -10,6 +10,7 @@
 CStatic_Tower::CStatic_Tower(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CGameObject(pGraphicDev)
 {
+	m_bFire = FALSE;
 }
 
 CStatic_Tower::~CStatic_Tower()
@@ -21,6 +22,11 @@ void CStatic_Tower::Set_Transform(const _vec3 vPos, const _vec3 vRot, const _vec
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = vPos;
 	m_pTransform->m_vAngle = vRot;
 	m_pTransform->m_vScale = vSize;
+}
+
+void CStatic_Tower::Set_Fire(_bool bFire)
+{
+	m_bFire = bFire;
 }
 
 _vec3 CStatic_Tower::Get_vPos()
@@ -66,7 +72,7 @@ HRESULT CStatic_Tower::Late_Init()
 {
 	_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
 	vPos.y += 54.f;
-	CGameObject* pObject = CEffect_Torch::Create(m_pGraphicDev, vPos, 1000.f);
+	CGameObject* pObject = CEffect_Torch::Create(m_pGraphicDev, vPos, _vec3(8.f, 8.f, 8.f), 1000.f);
 	ENGINE::Get_Management()->Add_GameObject(ENGINE::CLayer::OBJECT, L"Torch", pObject);
 
 	return S_OK;
@@ -76,6 +82,9 @@ _int CStatic_Tower::Update_Object(const _double& TimeDelta)
 {
 	ENGINE::CGameObject::Late_Init();
 	ENGINE::CGameObject::Update_Object(TimeDelta);
+
+	if (m_bFire)
+		Create_Fire();
 
 	m_pRender->Add_RenderGroup(ENGINE::RENDER_NONALPHA, this);
 	return 0;
@@ -187,6 +196,22 @@ HRESULT CStatic_Tower::Add_Component_MeshObject(wstring strMesh)
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	return S_OK;
+}
+
+void CStatic_Tower::Create_Fire()
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		_double aa = i * 1.5;
+		_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
+		vPos.y += 54.f;
+		CGameObject* pObject = CEffect_Fireball::Create(m_pGraphicDev, vPos, _vec3(4.f, 4.f, 4.f), 20.f, aa);
+		ENGINE::Get_Management()->Add_GameObject(ENGINE::CLayer::OBJECT, L"Fireball", pObject);
+		CEffect_Fireball* pTorch = dynamic_cast<CEffect_Fireball*>(pObject);
+		pTorch->Set_Move(TRUE);
+	}
+
+	m_bFire = FALSE;
 }
 
 

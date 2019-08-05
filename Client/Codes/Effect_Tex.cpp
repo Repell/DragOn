@@ -104,10 +104,10 @@ HRESULT CEffect_Tex::Add_Component()
 	return S_OK;
 }
 
-void CEffect_Tex::Update_Frame(_float fTimeDelta)
+void CEffect_Tex::Update_Frame(const _double & TimeDelta)
 {
-	if(m_Time > 0.f)
-	m_Frame += m_MaxFrame * fTimeDelta;
+	if (m_Time > 0.f)
+		m_Frame += m_MaxFrame * TimeDelta;
 
 	if (m_Frame > m_MaxFrame)
 		m_Frame = 0.f;

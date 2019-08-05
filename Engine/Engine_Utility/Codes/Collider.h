@@ -26,6 +26,7 @@ public:
 	void Render_Collider(COLLTYPE eType, const _matrix* pCollMatrix);
 
 	_bool Check_ComponentColl(CSphereColl* pSphere);
+	_bool Check_ComponentBossColl(CSphereColl* pSphere);
 
 private:
 	_vec3 m_vMin;

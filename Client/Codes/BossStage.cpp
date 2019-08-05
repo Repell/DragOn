@@ -110,17 +110,17 @@ HRESULT CBossStage::Add_GameObject_Layer()
 	NULL_CHECK_RETURN(pObject, E_FAIL);
 	pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
 
-	//pObject = CBlue::Create(m_pGraphicDev, _vec3(190.f, 0.f, 30.f));
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
+	pObject = CBlue::Create(m_pGraphicDev, _vec3(190.f, 0.f, 30.f));
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
 
-	//pObject = CBlue::Create(m_pGraphicDev, _vec3(30.f, 0.f, 190.f));
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
+	pObject = CBlue::Create(m_pGraphicDev, _vec3(30.f, 0.f, 190.f));
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
 
-	//pObject = CBlue::Create(m_pGraphicDev, _vec3(190.f, 0.f, 190.f));
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
+	pObject = CBlue::Create(m_pGraphicDev, _vec3(190.f, 0.f, 190.f));
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
 
 	//pObject = CTroll::Create(m_pGraphicDev, _vec3(39.f, 0.1f, 12.f));
 	//NULL_CHECK_RETURN(pObject, E_FAIL);
@@ -285,6 +285,12 @@ void CBossStage::LoadForStaticDat(ENGINE::CLayer* pLayer)
 		if (pMesh.pMeshTag == L"Mesh_Structure")
 		{
 			pObject = CStatic_Tower::Create_MeshObject(m_pGraphicDev, pMesh.pMeshTag, vTransform);
+			NULL_CHECK_RETURN(pObject);
+			pLayer->Add_GameObject(pMesh.pMeshTag, pObject);
+		}
+		else if (pMesh.pMeshTag == L"Mesh_Relic")
+		{
+			pObject = CStatic_Relic::Create_MeshObject(m_pGraphicDev, pMesh.pMeshTag, vTransform);
 			NULL_CHECK_RETURN(pObject);
 			pLayer->Add_GameObject(pMesh.pMeshTag, pObject);
 		}

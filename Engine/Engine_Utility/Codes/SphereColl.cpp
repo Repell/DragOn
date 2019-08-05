@@ -18,6 +18,11 @@ _vec3& CSphereColl::Get_CollPos()
 	return m_vCollPos;
 }
 
+_vec3 & CSphereColl::Get_WeakPos()
+{
+	return m_vWeakPos;
+}
+
 _float CSphereColl::Get_Radius()
 {
 	return (m_fRadius * m_fScale);
@@ -26,6 +31,12 @@ _float CSphereColl::Get_Radius()
 void CSphereColl::Set_Scale(_float fScale)
 {
 	m_fScale = fScale;
+}
+
+void CSphereColl::Set_WeakPos(const _matrix * vBone)
+{
+	memcpy(m_vWeakPos, vBone->m[3], sizeof(_vec3));
+	m_vWeakPos;
 }
 
 _int CSphereColl::Get_iHp(_int iDamage)

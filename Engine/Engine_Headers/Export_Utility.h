@@ -12,6 +12,7 @@
 #include "AdvanceCamera.h"
 #include "Weapon.h"
 #include "Shadow.h"
+#include "Aura.h"
 #include "Well512.h"
 
 #include "ResourcesMgr.h"

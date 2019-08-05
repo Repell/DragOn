@@ -13,10 +13,12 @@ private:
 
 public:
 	void Set_Scale(_float fScale);
+	void Set_WeakPos(const _matrix* vBone);
 	void Set_Invisible(_bool bState);
 	_vec3 Set_KnockBackDist(_bool bCheck, _vec3 fDist = _vec3(0.f, 0.f, 0.f));
 
 	_vec3& Get_CollPos();
+	_vec3& Get_WeakPos();
 	_float Get_Radius();
 	_bool Get_HitState();
 	_bool Get_KnockBackState();
@@ -44,6 +46,7 @@ public:
 
 	//Collision 
 	_vec3 m_vCollPos;
+	_vec3 m_vWeakPos;
 	_float m_fRadius;
 	_float m_fScale;
 

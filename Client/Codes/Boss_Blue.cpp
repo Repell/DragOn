@@ -55,7 +55,9 @@ CBlue::CBlue(LPDIRECT3DDEVICE9 pDevice)
 	m_bKnockBack = FALSE;
 	m_bAirborne = FALSE;
 	m_bTwice = FALSE;
+	m_bRelicTwice = FALSE;
 	m_bWeak = FALSE;
+	m_bFire = FALSE;
 
 	m_iCurAniSet = 0;
 	m_iPreAniSet = 0;
@@ -80,7 +82,7 @@ CBlue::~CBlue()
 HRESULT CBlue::Ready_Object(_vec3 vPos)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
-	
+
 	//m_pMesh->Set_AnimationSet(5);
 	//m_iCurAniSet = 5;
 	Animate_Twice(_SLEEP);
@@ -98,7 +100,7 @@ HRESULT CBlue::Ready_Object(_vec3 vPos)
 
 HRESULT CBlue::Late_Init()
 {
-	
+
 	m_pTargetTransform = dynamic_cast<ENGINE::CTransform*>
 		(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player", L"Com_Transform", ENGINE::COMP_DYNAMIC));
 	NULL_CHECK_RETURN(m_pTargetTransform, E_FAIL);
@@ -107,7 +109,27 @@ HRESULT CBlue::Late_Init()
 		(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player", L"Com_SphereColl", ENGINE::COMP_STATIC));
 	NULL_CHECK_RETURN(m_pTargetSphereColl, E_FAIL);
 
+	m_pRelicSphere = dynamic_cast<ENGINE::CSphereColl*>
+		(ENGINE::Get_Component(ENGINE::CLayer::ENVIRONMENT, L"Mesh_Relic", L"Com_SphereColl", ENGINE::COMP_STATIC));
+	NULL_CHECK_RETURN(m_pRelicSphere, E_FAIL);
 
+	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::ENVIRONMENT);
+
+	if (pLayer->Get_MapObject(L"Mesh_Structure").empty())
+		return FALSE;
+
+	for (auto& pList : pLayer->Get_MapObject(L"Mesh_Structure"))
+	{
+		ENGINE::CTransform* pTrans = dynamic_cast<ENGINE::CTransform*>
+			(pList->Get_Component(L"Com_Transform", ENGINE::COMP_DYNAMIC));
+
+		if (m_pTransform->Get_TargetDistance(pTrans) < 20.f)
+		{
+			m_pTower = dynamic_cast<CStatic_Tower*>(pList);
+		}
+
+	}
+	
 	return S_OK;
 }
 
@@ -116,7 +138,7 @@ _int CBlue::Update_Object(const _double& TimeDelta)
 	m_TimeDelta = TimeDelta * m_FuryTime;
 
 	ENGINE::CGameObject::Late_Init();
-	
+
 	ENGINE::CGameObject::Update_Object(TimeDelta);
 
 	if (m_pSphereBody->Get_iHp() < 0)
@@ -125,13 +147,27 @@ _int CBlue::Update_Object(const _double& TimeDelta)
 		m_pTransform->m_bWeak = TRUE;
 	}
 
-	if (m_pSphereHead->Get_iHp() <= 0 )
+	if (m_pSphereHead->Get_iHp() <= 0)
 	{
 		m_bDead = TRUE;
 		m_pTransform->Get_Dead(TRUE);
 
 		if (m_pTransform->m_vScale.x < _SCALE)
+		{
 			m_pTransform->m_vScale += _vec3(0.0004f, 0.0004f, 0.0004f);
+			m_fScale += 0.002f;
+		}
+	}
+
+	if (!m_pTransform->m_bWeak)
+	{
+		m_FuryTime = 1.5;
+		m_pSphereHead->Set_Invisible(TRUE);
+	}
+	else
+	{
+		m_FuryTime = 3.0;
+		//m_pSphereHead->Set_Invisible(FALSE);
 	}
 
 	if (m_bDead && m_iCurAniSet == _DEAD && m_pMesh->Is_AnimationSetEnd())
@@ -144,22 +180,8 @@ _int CBlue::Update_Object(const _double& TimeDelta)
 void CBlue::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
-	
-	m_fDist = m_pTransform->Get_BossDistance(m_pTargetTransform, m_pSphereBody->Get_CollPos().y);
 
-	if (ENGINE::Key_Down(ENGINE::dwKEY_F2))
-	{
-		if (m_bWeak)
-		{
-			m_bWeak = FALSE;
-			m_pTransform->m_bWeak = FALSE;
-		}
-		else
-		{
-			m_bWeak = TRUE;
-			m_pTransform->m_bWeak = TRUE;
-		}
-	}
+	m_fDist = m_pTransform->Get_BossDistance(m_pTargetTransform, m_pSphereBody->Get_CollPos().y);
 }
 
 void CBlue::Render_Object()
@@ -196,8 +218,8 @@ void CBlue::Render_Object()
 	////////////////////////////////////////
 
 	//m_pNaviMesh->Render_NaviMesh();
-	
-	if(m_bWeak)
+
+	if (m_bWeak)
 		m_pMesh2->Render_Meshes();
 	else
 		m_pMesh->Render_Meshes();
@@ -210,6 +232,10 @@ void CBlue::Render_Object()
 
 	ENGINE::Safe_Release(pEffect);
 
+	///////////////////////////////////////
+	Get_WeaponMatrix("BODY1");
+	m_pShadow->Render_Shadow(&m_pBoneMatrix, (30.f * 0.65f * m_fScale), 1.f);
+
 	//if (m_bAttack)
 	Get_WeaponMatrix("R_Hand");
 	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix);
@@ -218,33 +244,23 @@ void CBlue::Render_Object()
 	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix);
 
 
-	if(m_pSphereHead->m_iHp != 0);
+	if (m_pSphereHead->m_iHp > 0 && m_pTransform->m_bWeak);
 	{
 		Get_WeaponMatrix("HEAD");
 		m_pSphereHead->Render_SphereColl(&m_pBoneMatrix);
-
-		if (!m_pTransform->m_bWeak)
-		{
-			m_FuryTime = 1.5;
-			m_pSphereHead->Set_Invisible(TRUE);
-		}
-		else
-		{
-			m_FuryTime = 3.0;
-			m_pSphereHead->Set_Invisible(FALSE);
-		}
 	}
 
 	if (m_pSphereBody->m_iHp != 0)
 	{
 		Get_WeaponMatrix("BODY1");
 		m_pSphereBody->Render_SphereColl(&m_pBoneMatrix);
+		m_pSphereBody->Set_WeakPos(&m_pBoneMatrix);
 	}
-
-	_tchar szStr[MAX_PATH] = L"";
-	swprintf_s(szStr, L"fSize : %4.2f", m_fScale);
-	////swprintf_s(szStr, L"Monster HP: %d", m_pSphereColl->Get_iHp(0));
-	ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 10.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
+	
+	//_tchar szStr[MAX_PATH] = L"";
+	//swprintf_s(szStr, L"fSize : %4.2f", m_fScale);
+	//////swprintf_s(szStr, L"Monster HP: %d", m_pSphereColl->Get_iHp(0));
+	//ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 10.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 
 	//Render_ReSet();
 }
@@ -378,10 +394,10 @@ _bool CBlue::Check_EnemySphereColl(const _tchar * szTag)
 
 		Get_WeaponMatrix("R_Hand");
 		m_pCollider->Set_Collider(&m_pBoneMatrix);
-		if (m_pCollider->Check_ComponentColl(pSphere) && !pTrans->m_bWeak)
+		if (m_pCollider->Check_ComponentBossColl(pSphere) && !pTrans->m_bWeak)
 		{
 			pSphere->m_bHit = TRUE;
-			pSphere->Get_iHp(6);
+			pSphere->Get_iHp(10);
 
 			return TRUE;
 		}
@@ -419,9 +435,9 @@ VOID CBlue::Set_Behavior_Progress()
 {
 	/// 추후 Bool 값으로 제어되는 상태를 하나의 단일 FLAG 연산으로 개선하여 단일 변수로 수정 _uint m_StateFlag , Swith로 제어
 	//Check State
-	
+
 	m_bHit = m_pSphereBody->Get_HitState();
-	
+
 	//m_bKnockBack = m_pSphereColl->Get_KnockBackState();
 	//m_bAirborne = m_pSphereBody->Get_AirboneState();
 
@@ -466,7 +482,7 @@ VOID CBlue::State_Awaken()
 {
 	if (m_fDist < 200.f && m_iCurAniSet == _SLEEP) //대기 상태에서 플레이어 발견
 	{
-		Animate_Twice(_AWAKEN);	
+		Animate_Twice(_AWAKEN);
 	}
 	else if (m_iCurAniSet == _AWAKEN && m_pMesh->Is_AnimationSetEnd())	//사기 진작 종료, 행동 시작
 	{
@@ -483,15 +499,26 @@ VOID CBlue::State_Awaken()
 VOID CBlue::State_Weak()
 {
 	m_WeakTime += m_TimeDelta;
-	
-	if (m_pTransform->Fall_BackBoss(2.f, m_TimeDelta) > 1.f)
+
+	if (!m_bFire)
 	{
+		m_pTower->Set_Fire(TRUE);
+		m_bFire = TRUE;
+	}
+
+	_float fdist = D3DXVec3Length(&(m_pTransform->m_vStartPos - m_pTransform->m_vInfo[ENGINE::INFO_POS]));
+
+	if (fdist > 2.f)
+	{
+		m_pTransform->Fall_BackBoss(2.f, m_TimeDelta);
 		Animate_Twice(_CHASE_RUN);
 	}
 	else if (m_iCurAniSet == _GROWL && m_pMesh->Is_AnimationSetEnd())
 	{
 		m_WeakTime = 0.0;
 		m_bWeak = FALSE;
+		m_bFire = FALSE;
+		
 		m_pTransform->m_bWeak = FALSE;
 
 		if (m_pSphereHead->Get_iHp() != 0)
@@ -503,17 +530,17 @@ VOID CBlue::State_Weak()
 		m_pSphereHead->Set_Scale((_SCALE * m_fScale));
 		m_pSphereBody->Set_Scale((_SCALE * m_fScale));
 		m_pCollider->Set_Scale((_SCALE * m_fScale));
-			
+
 		Animate_Twice(_IDLE);
 	}
-	else if(m_WeakTime > 15.0)
+	else if (m_WeakTime > 15.0 || fdist < 2.f)
 	{
 		m_pTransform->Fix_TargetLook(m_pTargetTransform, 200.f);
 		if (m_pTransform->m_vScale.x < (_SCALE * m_fScale))
 			m_pTransform->m_vScale += _vec3(0.0004f, 0.0004f, 0.0004f);
 		Animate_Twice(_GROWL);
 	}
-	
+
 }
 
 
@@ -530,8 +557,8 @@ VOID CBlue::State_Hit()
 		{
 			m_bWeak = TRUE;
 			m_pTransform->m_bWeak = TRUE;
-			
-			 m_fScale -= 0.2f;
+
+			m_fScale -= 0.2f;
 
 			if (m_fScale < 0.4f)
 				m_fScale = 0.4f;
@@ -539,7 +566,7 @@ VOID CBlue::State_Hit()
 
 		m_pSphereHead->m_bHit = FALSE;
 		m_pSphereBody->m_bHit = FALSE;
-		
+
 		m_HitTime = 0.0;
 		m_AccTime = 1.0;
 
@@ -644,14 +671,20 @@ VOID CBlue::State_Chase()
 
 	if (m_fDist > (70.f * m_fScale)) //플레이어가 멀리 있음, 달려가 추적
 	{
-		Animate_Twice(_CHASE_RUN);
+		if (m_iCurAniSet != _BLOCK)
+		{
+			Animate_Twice(_CHASE_RUN);
+			m_pTransform->Stalk_Target(m_pTargetTransform, m_TimeDelta, 5.5f);
+		}
+		else if (m_iCurAniSet == _BLOCK && m_pMesh->Is_AnimationSetEnd())
+			Animate_Twice(_IDLE);
 
 		//Check_EnemyGroup();
 
 		//_vec3 vPos = m_pTransform->m_vInfo[ENGINE::INFO_POS];
 		//m_pTransform->m_vInfo[ENGINE::INFO_POS] = m_pNaviMesh->MoveOn_NaviMesh
 		//(&vPos, &m_pTransform->Stalk_TargetDir(m_pTargetTransform, m_TimeDelta, 1.5f));
-		m_pTransform->Stalk_Target(m_pTargetTransform, m_TimeDelta, 5.5f);
+
 
 		m_AttackTime = 0.0;
 	}
@@ -675,7 +708,7 @@ VOID CBlue::State_Chase()
 		}
 		else  if (m_fDist > (40.f * m_fScale))	//플레이어와 거리 유지
 		{
-			
+
 			if (m_iCurAniSet == _BLOCK && m_pMesh->Is_AnimationSetEnd())	// 플레이어와 일정거리를 유지한체 시간을 채움
 			{
 				Animate_Twice(_IDLE);
@@ -706,6 +739,7 @@ VOID CBlue::State_Quake()
 		m_bQuake = FALSE;
 		m_bAttack = FALSE;
 		m_bTwice = FALSE;
+		m_bRelicTwice = FALSE;
 		m_pTransform->m_bAttackState = m_bAttack;
 		//m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
 	}
@@ -717,6 +751,18 @@ VOID CBlue::State_Quake()
 
 		m_AttackTime += m_TimeDelta;
 		_bool bColl = m_pCollider->Check_ComponentColl(m_pTargetSphereColl);
+		_bool bRelicColl = m_pCollider->Check_ComponentColl(m_pRelicSphere);
+
+
+		if (bRelicColl && m_AttackTime > 1.0)
+		{
+			if (!m_bRelicTwice)
+			{
+				m_bRelicTwice = TRUE;
+				m_pRelicSphere->Get_iHp(10);
+			}
+
+		}
 
 		if (bColl && m_AttackTime > 1.0)
 		{
@@ -752,19 +798,19 @@ VOID CBlue::State_Attack()
 {
 	_bool bColl = FALSE;
 	_bool bEnemyColl = FALSE;
+	_bool bRelicColl = FALSE;
 
-	
-	if (m_fDist < (65.f * m_fScale) && m_iCurAniSet == _CHASE_WALK || m_iCurAniSet == _IDLE) // 거리가 됐네 공격
+	if (!m_bAttack && m_fDist < (70.f * m_fScale) && m_iCurAniSet == _CHASE_WALK || m_iCurAniSet == _IDLE) // 거리가 됐네 공격
 	{
 		Get_WeaponMatrix("BODY1");
 		_float fy = m_pBoneMatrix._42;
 		_vec3 vPlayerPos = m_pTargetTransform->Get_vInfoPos(ENGINE::INFO_POS);
 
-		if(fy > vPlayerPos.y + 2.f)
+		if (fy > vPlayerPos.y + 2.f)
 			Animate_Twice(_ATTACK_DOWN_START);
-		else if(fy < vPlayerPos.y + 2.f)
+		else if (fy < vPlayerPos.y + 2.f)
 			Animate_Twice(_ATTACK_UP_START);
-		else		
+		else
 			Animate_Twice(_ATTACK_MID_START);
 
 		m_bAttStart = TRUE;
@@ -774,8 +820,25 @@ VOID CBlue::State_Attack()
 		m_AttackTime += m_TimeDelta;
 		bColl = m_pCollider->Check_ComponentColl(m_pTargetSphereColl);
 
-		if (bColl && m_AttackTime > 1.25)
-		{			
+		bRelicColl = m_pCollider->Check_ComponentColl(m_pRelicSphere);
+
+		if (bRelicColl && m_AttackTime > 0.5)
+		{
+			if (!m_bRelicTwice)
+			{
+				m_bRelicTwice = TRUE;
+				m_pRelicSphere->Get_iHp(5);
+			}
+
+		}
+
+		if (m_AttackTime > 1.0)
+		{
+			bEnemyColl = Check_EnemySphereColl(L"Boss_Blue");
+		}
+
+		if (bColl && m_AttackTime > 1.0)
+		{
 			m_pTransform->m_bAttackState = TRUE;
 
 			if (!m_bTwice)
@@ -791,12 +854,12 @@ VOID CBlue::State_Attack()
 
 				m_bTwice = TRUE;
 				m_pTargetSphereColl->Get_iHp(2);
+
+
 			}
-			
-			
 		}
 
-		bEnemyColl = Check_EnemySphereColl(L"Boss_Blue");
+		
 	}
 	else if (m_bAttStart && m_pMesh->Is_AnimationSetEnd())
 	{
@@ -804,11 +867,11 @@ VOID CBlue::State_Attack()
 		m_bAttStart = FALSE;
 		//m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
 
-		if(m_iCurAniSet == _ATTACK_MID_START)
+		if (m_iCurAniSet == _ATTACK_MID_START)
 			Animate_Twice(_ATTACK_MID_END);
-		else if(m_iCurAniSet == _ATTACK_DOWN_START)
+		else if (m_iCurAniSet == _ATTACK_DOWN_START)
 			Animate_Twice(_ATTACK_DOWN_END);
-		else if(m_iCurAniSet == _ATTACK_UP_START)
+		else if (m_iCurAniSet == _ATTACK_UP_START)
 			Animate_Twice(_ATTACK_UP_END);
 
 		m_AttackTime = 0.0;
@@ -817,13 +880,14 @@ VOID CBlue::State_Attack()
 	{
 		m_bAttack = FALSE;
 		m_bTwice = FALSE;
+		m_bRelicTwice = FALSE;
 
 		m_AttackTime = 0.0;
 		Animate_Twice(_IDLE);
 		return;
 	}
 
-	if (m_fDist > (65.f * m_fScale) && !m_bTwice)	//공격 준비됐는데 거리가 좀 머네
+	if (!m_bAttack && m_fDist > (70.f * m_fScale) && !m_bTwice)	//공격 준비됐는데 거리가 좀 머네
 	{
 		m_pTransform->m_bAttackState = FALSE;
 		//m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
@@ -911,7 +975,7 @@ HRESULT CBlue::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider", pComponent);
 
 	//Sphere Collider
-	pComponent = m_pSphereHead = ENGINE::CSphereColl::Create(m_pGraphicDev, (_RADIUS -50.f), 10);
+	pComponent = m_pSphereHead = ENGINE::CSphereColl::Create(m_pGraphicDev, (_RADIUS - 50.f), 10);
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_SphereHead", pComponent);
 
@@ -923,6 +987,11 @@ HRESULT CBlue::Add_Component()
 	pComponent = m_pShader = dynamic_cast<ENGINE::CShader*>(ENGINE::Clone(L"Shader_Transform"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
+
+	//Shadow Component
+	pComponent = m_pShadow = ENGINE::CShadow::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shadow", pComponent);
 
 	////////////////////////////
 	return S_OK;

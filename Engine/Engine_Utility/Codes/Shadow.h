@@ -16,7 +16,7 @@ private:
 
 public:
 	virtual _int Update_Component(const _double& TimeDelta) override;
-	void Render_Shadow(const _matrix* pMatrix, _float fSize);
+	void Render_Shadow(const _matrix* pMatrix, _float fSize, _float fY = 0.f);
 	
 private:
 	HRESULT Ready_Component();

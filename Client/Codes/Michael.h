@@ -43,7 +43,8 @@ public:
 private:
 	_vec3 MouseFunc();
 	_bool Key_check(const _double& TimeDelta);
-	_bool Enemy_Check();
+	_bool EnemyColl_Check();
+	_bool RelicColl_Check(const _double& TimeDelta);
 
 private:
 	void Render_Set();
@@ -72,7 +73,8 @@ private:
 	DRAGONDIRECTION m_eDir;
 
 private:
-	//
+	//Fire Gauge
+	_float m_fFireGauge;
 
 	//Key Input, Camera, NaviMesh
 	_bool bAttack;

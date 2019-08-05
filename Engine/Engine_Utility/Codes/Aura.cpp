@@ -1,16 +1,16 @@
-#include "Shadow.h"
+#include "Aura.h"
 #include "Export_Utility.h"
 
 USING(ENGINE)
 
-CShadow::CShadow(LPDIRECT3DDEVICE9 pDevice)
+CAura::CAura(LPDIRECT3DDEVICE9 pDevice)
 	: m_pGraphicDev(pDevice)
 {
 	m_pGraphicDev->AddRef();
 }
 
 
-HRESULT CShadow::Ready_Component()
+HRESULT CAura::Ready_Component(wstring str)
 {
 	//Shader 
 	m_pShader = dynamic_cast<ENGINE::CShader*>(ENGINE::Clone(L"Shader_Transform"));
@@ -19,13 +19,13 @@ HRESULT CShadow::Ready_Component()
 	m_pBuffer = dynamic_cast<ENGINE::CRcTex*>(ENGINE::Clone_Resources(0, L"Buffer_RcTex"));
 	NULL_CHECK_RETURN(m_pBuffer, E_FAIL);
 
-	m_pTexture = dynamic_cast<ENGINE::CTexture*>(ENGINE::Clone_Resources(1, L"Texture_Shade"));
+	m_pTexture = dynamic_cast<ENGINE::CTexture*>(ENGINE::Clone_Resources(1, str.c_str()));
 	NULL_CHECK_RETURN(m_pTexture, E_FAIL);
 
 	return S_OK;
 }
 
-HRESULT CShadow::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
+HRESULT CAura::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
 {
 	if (nullptr == pEffect)
 		return E_FAIL;
@@ -49,12 +49,12 @@ HRESULT CShadow::SetUp_ConstantTable(LPD3DXEFFECT pEffect)
 	return S_OK;
 }
 
-_int CShadow::Update_Component(const _double & TimeDelta)
+_int CAura::Update_Component(const _double & TimeDelta)
 {
 	return NO_EVENT;
 }
 
-void CShadow::Render_Shadow(const _matrix * pMatrix, _float fSize, _float fY)
+void CAura::Render_Shadow(const _matrix * pMatrix, _float fSize, _float fY)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	_matrix matScale, matRot;
@@ -102,17 +102,17 @@ void CShadow::Render_Shadow(const _matrix * pMatrix, _float fSize, _float fY)
 }
 
 
-CShadow * CShadow::Create(LPDIRECT3DDEVICE9 pGraphic)
+CAura * CAura::Create(LPDIRECT3DDEVICE9 pGraphic, wstring str)
 {
-	CShadow* pInstance = new CShadow(pGraphic);
+	CAura* pInstance = new CAura(pGraphic);
 
-	if (FAILED(pInstance->Ready_Component()))
+	if (FAILED(pInstance->Ready_Component(str)))
 		Safe_Release(pInstance);
 	
 	return pInstance;
 }
 
-void CShadow::Free()
+void CAura::Free()
 {
 	Safe_Release(m_pBuffer);
 	Safe_Release(m_pShader);

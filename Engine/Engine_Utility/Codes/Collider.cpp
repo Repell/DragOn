@@ -210,6 +210,22 @@ _bool CCollider::Check_ComponentColl(CSphereColl * pSphere)
 	return FALSE;
 }
 
+_bool CCollider::Check_ComponentBossColl(CSphereColl * pSphere)
+{
+	_vec3 vCollPos = { 0.f, 0.f, 0.f };
+	memcpy(vCollPos, m_matColWorld.m[3], sizeof(_vec3));
+
+	_float fTargetRad = pSphere->Get_Radius();
+
+	_vec3 vDiff = pSphere->Get_WeakPos() - vCollPos;
+	_float fDist = D3DXVec3Length(&vDiff);
+
+	if (fDist <= (fTargetRad + (m_fRadius* m_fScale)))
+		return TRUE;
+
+	return FALSE;
+}
+
 HRESULT CCollider::Ready_Collider_Sphere(_float fRadius, _vec3 vCollPos)
 {
 	//D3DXComputeBoundingSphere(pPos, dwNumVtx, sizeof(_vec3), &m_vCenter, &m_fRadius);

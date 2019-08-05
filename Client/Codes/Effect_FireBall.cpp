@@ -1,41 +1,41 @@
 #include "stdafx.h"
-#include "Effect_Torch.h"
+#include "Effect_FireBall.h"
 #include "Export_Utility.h"
 
-CEffect_Torch::CEffect_Torch(LPDIRECT3DDEVICE9 pDevice)
+CEffect_Fireball::CEffect_Fireball(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice),
-	m_Frame(0.f), m_MaxFrame(32.f), m_LifeTime(0.f), m_Time(0.f), m_fScale(1.f), m_bMove(FALSE)
+	m_Frame(0.f), m_MaxFrame(15.f), m_LifeTime(0.f), m_Time(0.f), m_fScale(1.f), m_bMove(FALSE)
 {
 }
 
-CEffect_Torch::~CEffect_Torch()
+CEffect_Fireball::~CEffect_Fireball()
 {
 }
 
-void CEffect_Torch::Set_Pos(_vec3 vPos)
+void CEffect_Fireball::Set_Pos(_vec3 vPos)
 {
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = vPos;
 	m_pTransform->m_vInfo[ENGINE::INFO_POS].y += 1.f;
 }
 
-void CEffect_Torch::Set_Scale(_vec3 vScale)
+void CEffect_Fireball::Set_Scale(_vec3 vScale)
 {
 	m_pTransform->m_vScale = vScale;
 	constScale = vScale;
 }
 
-void CEffect_Torch::Set_TotalScale(_float fScale)
+void CEffect_Fireball::Set_TotalScale(_float fScale)
 {
 	m_fScale = fScale;
 }
 
-void CEffect_Torch::Set_LifeTime(_double fLife, _double fDelay)
+void CEffect_Fireball::Set_LifeTime(_double fLife, _double fDelay)
 {
 	m_LifeTime = fLife;
 	m_Time -= fDelay;
 }
 
-HRESULT CEffect_Torch::Ready_Object()
+HRESULT CEffect_Fireball::Ready_Object()
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
@@ -45,7 +45,7 @@ HRESULT CEffect_Torch::Ready_Object()
 	return S_OK;
 }
 
-HRESULT CEffect_Torch::Late_Init()
+HRESULT CEffect_Fireball::Late_Init()
 {
 	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::ENVIRONMENT);
 
@@ -75,7 +75,7 @@ HRESULT CEffect_Torch::Late_Init()
 
 
 
-_int CEffect_Torch::Update_Object(const _double& TimeDelta)
+_int CEffect_Fireball::Update_Object(const _double& TimeDelta)
 {
 	ENGINE::CGameObject::Late_Init();
 	m_Time += TimeDelta;
@@ -100,12 +100,12 @@ _int CEffect_Torch::Update_Object(const _double& TimeDelta)
 	return NO_EVENT;
 }
 
-void CEffect_Torch::Late_Update_Object()
+void CEffect_Fireball::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
 }
 
-void CEffect_Torch::Render_Object()
+void CEffect_Fireball::Render_Object()
 {
 	//Render_Set();
 
@@ -120,7 +120,7 @@ void CEffect_Torch::Render_Object()
 	//Render_ReSet();
 }
 
-HRESULT CEffect_Torch::Add_Component()
+HRESULT CEffect_Fireball::Add_Component()
 {
 	ENGINE::CComponent* pComponent = nullptr;
 	/////////INSERT COMPONENT/////////
@@ -133,7 +133,7 @@ HRESULT CEffect_Torch::Add_Component()
 
 	//Texture Componet
 	pComponent = m_pTexture = dynamic_cast<ENGINE::CTexture*>
-		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Texture_Torch"));
+		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Texture_Fireball"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Texture", pComponent);
 
@@ -152,7 +152,7 @@ HRESULT CEffect_Torch::Add_Component()
 	return S_OK;
 }
 
-void CEffect_Torch::Update_Frame(const _double& TimeDelta)
+void CEffect_Fireball::Update_Frame(const _double& TimeDelta)
 {
 	if (m_Time > 0.0)
 		m_Frame += m_MaxFrame * TimeDelta;
@@ -161,7 +161,7 @@ void CEffect_Torch::Update_Frame(const _double& TimeDelta)
 		m_Frame = 0.0;
 }
 
-void CEffect_Torch::Update_Billboard()
+void CEffect_Fireball::Update_Billboard()
 {
 	///////////////////////////////////////
 	_matrix		matView, matBill, matWorld;
@@ -181,7 +181,7 @@ void CEffect_Torch::Update_Billboard()
 	///////////////////////////////////////
 }
 
-_int CEffect_Torch::Fire_Fireball(const _double& TimeDelta)
+_int CEffect_Fireball::Fire_Fireball(const _double& TimeDelta)
 {
 	_float fDist = m_pTransform->Get_TargetDistance(m_pTarget);
 
@@ -198,7 +198,7 @@ _int CEffect_Torch::Fire_Fireball(const _double& TimeDelta)
 	}
 }
 
-void CEffect_Torch::Render_Set()
+void CEffect_Fireball::Render_Set()
 {
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
 	//Alpha Test Begin
@@ -218,7 +218,7 @@ void CEffect_Torch::Render_Set()
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 }
 
-void CEffect_Torch::Render_ReSet()
+void CEffect_Fireball::Render_ReSet()
 {
 	//Alpha Test End
 	//m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
@@ -232,9 +232,9 @@ void CEffect_Torch::Render_ReSet()
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
-CEffect_Torch * CEffect_Torch::Create(LPDIRECT3DDEVICE9 pDevice)
+CEffect_Fireball * CEffect_Fireball::Create(LPDIRECT3DDEVICE9 pDevice)
 {
-	CEffect_Torch* pInstance = new CEffect_Torch(pDevice);
+	CEffect_Fireball* pInstance = new CEffect_Fireball(pDevice);
 
 	if (FAILED(pInstance->Ready_Object()))
 		ENGINE::Safe_Release(pInstance);
@@ -242,9 +242,9 @@ CEffect_Torch * CEffect_Torch::Create(LPDIRECT3DDEVICE9 pDevice)
 	return pInstance;
 }
 
-CEffect_Torch * CEffect_Torch::Create(LPDIRECT3DDEVICE9 pDevice, _vec3 vPos, _vec3 vScale, _double fLife, _double fDelay)
+CEffect_Fireball * CEffect_Fireball::Create(LPDIRECT3DDEVICE9 pDevice, _vec3 vPos, _vec3 vScale, _double fLife, _double fDelay)
 {
-	CEffect_Torch* pInstance = new CEffect_Torch(pDevice);
+	CEffect_Fireball* pInstance = new CEffect_Fireball(pDevice);
 
 	if (FAILED(pInstance->Ready_Object()))
 		ENGINE::Safe_Release(pInstance);
@@ -256,7 +256,7 @@ CEffect_Torch * CEffect_Torch::Create(LPDIRECT3DDEVICE9 pDevice, _vec3 vPos, _ve
 	return pInstance;
 }
 
-void CEffect_Torch::Free()
+void CEffect_Fireball::Free()
 {
 	ENGINE::CGameObject::Free();
 }

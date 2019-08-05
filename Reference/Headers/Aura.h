@@ -1,5 +1,5 @@
-#ifndef Shadow_h__
-#define Shadow_h__
+#ifndef Aura_h__
+#define Aura_h__
 
 #include "Component.h"
 
@@ -8,18 +8,18 @@ NS_BEGIN(ENGINE)
 class CRcTex;
 class CShader;
 class CTexture;
-class ENGINE_DLL CShadow : public CComponent
+class ENGINE_DLL CAura : public CComponent
 {
 private:
-	explicit CShadow(LPDIRECT3DDEVICE9 pDevice);
-	virtual ~CShadow() = default;
+	explicit CAura(LPDIRECT3DDEVICE9 pDevice);
+	virtual ~CAura() = default;
 
 public:
 	virtual _int Update_Component(const _double& TimeDelta) override;
 	void Render_Shadow(const _matrix* pMatrix, _float fSize, _float fY = 0.f);
 	
 private:
-	HRESULT Ready_Component();
+	HRESULT Ready_Component(wstring str);
 
 	//Shader
 	HRESULT SetUp_ConstantTable(LPD3DXEFFECT pEffect);
@@ -34,11 +34,11 @@ private:		//Transform
 	_matrix m_matWorld;
 	
 public:
-	static CShadow* Create(LPDIRECT3DDEVICE9 pGraphic);
+	static CAura* Create(LPDIRECT3DDEVICE9 pGraphic, wstring str);
 	virtual void Free();
 	
 };
 
 NS_END	
 
-#endif // Shadow_h__
+#endif // Aura_h__

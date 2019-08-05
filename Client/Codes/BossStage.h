@@ -22,6 +22,7 @@
 //Static
 #include "StaticObj.h"
 #include "Static_Tower.h"
+#include "Static_Relic.h"
 #include "Sword.h"
 #include "Spear.h"
 

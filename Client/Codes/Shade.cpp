@@ -11,13 +11,13 @@ CShade::~CShade()
 {
 }
 
-HRESULT CShade::Ready_Object()
+HRESULT CShade::Ready_Object(wstring str)
 {
-	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
+	FAILED_CHECK_RETURN(Add_Component(str), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_LogoLoad(m_pGraphicDev, LOADING_LOGO), E_FAIL);
 
 	m_pTransform->m_vAngle.x += 90.f;
-	m_pTransform->m_vScale = {0.5f, 0.5f, 0.5f};
+	m_pTransform->m_vScale = {10.5f, 10.5f, 10.5f};
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = {0.f, 0.f, 0.f};
 	
 	return S_OK;
@@ -76,7 +76,7 @@ void CShade::Render_Object()
 	Render_ReSet();
 }
 
-HRESULT CShade::Add_Component()
+HRESULT CShade::Add_Component(wstring str)
 {
 	ENGINE::CComponent* pComponent = nullptr;
 	/////////INSERT COMPONENT/////////
@@ -89,7 +89,7 @@ HRESULT CShade::Add_Component()
 
 	//Texture Componet
 	pComponent = m_pTexture = dynamic_cast<ENGINE::CTexture*>
-		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Texture_Shade"));
+		(ENGINE::Clone_Resources(RESOURCE_LOGO, str.c_str()));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Texture", pComponent);
 
@@ -124,14 +124,14 @@ void CShade::Render_Set()
 {
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
 	//Alpha Test Begin
-	//m_pGraphicDev->SetRenderState(D3DRS_ALPHAREF, 0x000000ff);
-	//m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-	//m_pGraphicDev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
+	m_pGraphicDev->SetRenderState(D3DRS_ALPHAREF, 0x000000ff);
+	m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	m_pGraphicDev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
 
 	//Alpha Blend
-	m_pGraphicDev->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-	m_pGraphicDev->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	m_pGraphicDev->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	//m_pGraphicDev->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	//m_pGraphicDev->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	//m_pGraphicDev->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	//Render State
 	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
@@ -143,20 +143,20 @@ void CShade::Render_Set()
 void CShade::Render_ReSet()
 {
 	//Alpha Blend End
-	m_pGraphicDev->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	//m_pGraphicDev->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	//Alpha Test End
-	//m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+	m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 	//FillMode :: Default == D3DFILL_SOLID
 	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
-CShade * CShade::Create(LPDIRECT3DDEVICE9 pDevice)
+CShade * CShade::Create(LPDIRECT3DDEVICE9 pDevice, wstring str)
 {
 	CShade* pInstance = new CShade(pDevice);
 
-	if (FAILED(pInstance->Ready_Object()))
+	if (FAILED(pInstance->Ready_Object(str)))
 		ENGINE::Safe_Release(pInstance);
 
 	return pInstance;

@@ -22,13 +22,13 @@ private:
 	virtual ~CShade();
 
 public:
-	virtual HRESULT Ready_Object() override;
+	virtual HRESULT Ready_Object(wstring str);
 	virtual _int Update_Object(const _double& TimeDelta) override;
 	virtual void Late_Update_Object() override;
 	virtual void Render_Object() override;
 
 private:
-	HRESULT Add_Component();
+	HRESULT Add_Component(wstring str);
 
 	HRESULT Ready_LogoLoad(LPDIRECT3DDEVICE9 pGraphicDev, LOADINGID eID);
 	void Update_Frame(const _float& fTimeDelta);
@@ -46,7 +46,7 @@ private:
 	ENGINE::CShader*				m_pShader;
 
 public:
-	static CShade* Create(LPDIRECT3DDEVICE9 pDevice);
+	static CShade* Create(LPDIRECT3DDEVICE9 pDevice, wstring str);
 	virtual void Free();
 
 };

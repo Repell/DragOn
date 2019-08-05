@@ -3,6 +3,7 @@
 
 #include "GameObject.h"
 #include "Effect_Tex.h"
+#include "Static_Tower.h"
 
 namespace ENGINE
 {
@@ -14,6 +15,7 @@ namespace ENGINE
 	class CCollider;
 	class CSphereColl;
 	class CShader;
+	class CShadow;
 }
 
 class CBlue : public ENGINE::CGameObject
@@ -79,10 +81,12 @@ private:
 
 private:
 	_bool m_bWeak;
+	_bool m_bFire;
 	_bool m_bSleep;
 	_bool m_bFront;
 	_bool m_bDead;
 	_bool m_bTwice;
+	_bool m_bRelicTwice;
 
 	_bool m_bHit;
 	_bool m_bKnockBack;
@@ -122,8 +126,12 @@ private:
 	ENGINE::CSphereColl*	m_pSphereHead;
 	ENGINE::CSphereColl*	m_pSphereBody;
 	ENGINE::CSphereColl*	m_pTargetSphereColl;
+	ENGINE::CSphereColl*	m_pRelicSphere;
 
 	ENGINE::CShader*			m_pShader;
+	ENGINE::CShadow*			m_pShadow;
+
+	CStatic_Tower*				m_pTower;
 
 private:
 	_matrix m_pBoneMatrix;

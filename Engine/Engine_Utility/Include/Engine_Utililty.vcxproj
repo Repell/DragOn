@@ -214,6 +214,7 @@ call CopyUtility.bat</Command>
     <ClInclude Include="..\..\Engine_Headers\Export_Utility.h" />
     <ClInclude Include="..\Codes\AdvanceCamera.h" />
     <ClInclude Include="..\Codes\AniControll.h" />
+    <ClInclude Include="..\Codes\Aura.h" />
     <ClInclude Include="..\Codes\Calculator.h" />
     <ClInclude Include="..\Codes\Camera.h" />
     <ClInclude Include="..\Codes\Cell.h" />
@@ -257,6 +258,7 @@ call CopyUtility.bat</Command>
   <ItemGroup>
     <ClCompile Include="..\Codes\AdvanceCamera.cpp" />
     <ClCompile Include="..\Codes\AniControll.cpp" />
+    <ClCompile Include="..\Codes\Aura.cpp" />
     <ClCompile Include="..\Codes\Calculator.cpp" />
     <ClCompile Include="..\Codes\Camera.cpp" />
     <ClCompile Include="..\Codes\Cell.cpp" />

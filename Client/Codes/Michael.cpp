@@ -31,6 +31,7 @@ CMichael::CMichael(LPDIRECT3DDEVICE9 pDevice)
 	
 	iCurAniSet = 0;
 	m_TimeAccel = 0.0;
+	m_fFireGauge = 0.f;
 }
 
 CMichael::~CMichael()
@@ -72,7 +73,7 @@ _int CMichael::Update_Object(const _double& TimeDelta)
 
 	ENGINE::CGameObject::Update_Object(TimeDelta);
 	////////////////////////		▼조건 함수
-
+	RelicColl_Check(TimeDelta);
 
 
 	//if (m_pSphereColl->Get_iHp() <= 0)
@@ -92,7 +93,7 @@ void CMichael::Late_Update_Object()
 {
 	CGameObject::Late_Update_Object();
 	//////////////////////
-
+	
 
 }
 
@@ -139,6 +140,9 @@ void CMichael::Render_Object()
 	swprintf_s(szStr, L"PlayerPos | X : %3.2f, Y : %3.2f,  Z : %3.2f ", m_pTransform->m_vInfo[ENGINE::INFO_POS].x, m_pTransform->m_vInfo[ENGINE::INFO_POS].y, m_pTransform->m_vInfo[ENGINE::INFO_POS].z);
 	ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 50.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 
+	swprintf_s(szStr, L"FireGauge : %4.2f ", m_fFireGauge);
+	ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 70.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
+
 
 }
 
@@ -171,10 +175,10 @@ _bool CMichael::Key_check(const _double & TimeDelta)
 				m_pTransform->m_vAngle.x -= dwMouseMove * _ANGLE * TimeDelta;
 	}
 
-	if (ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON) && Enemy_Check())
+	if (ENGINE::Key_Down(ENGINE::dwKEY_LBUTTON) && m_fFireGauge > 200.f)
 	{
 		Find_BoneMatrix("JAW");
-		//Animate_FSM(_ATTACKFIREBALL);
+		m_fFireGauge -= 200.f;
 
 		_vec3 vFirePos = {};
 		memcpy(vFirePos, m_pBoneMatrix.m[3], sizeof(_vec3));
@@ -182,49 +186,6 @@ _bool CMichael::Key_check(const _double & TimeDelta)
 		{ FALSE, vFirePos, _vec3(0.1f, 0.1f, 0.1f),m_pTransform->m_vAngle, m_pTransform->Get_vInfoPos(ENGINE::INFO_LOOK),  30.f };
 		CGameObject* pObject = CDragon_Fireball::Create(m_pGraphicDev, tInfo);
 		ENGINE::Get_Management()->Add_GameObject(ENGINE::CLayer::OBJECT, L"Dragon_Fireball", pObject);
-				
-	}
-
-
-	if (ENGINE::Key_Press(ENGINE::dwKEY_W))
-	{
-		m_eDir = FLYIDLE;
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] -= vNewDir * _SPEED * TimeDelta;
-
-		if(m_iCurAniState == _FLYINGB && m_pMesh->Is_AnimationSetEnd())
-			Animate_FSM(_FLYINGA);
-		else
-			Animate_FSM(_FLYINGB);
-	}
-	if (ENGINE::Key_Press(ENGINE::dwKEY_S))
-	{
-		m_eDir = FLYBACK;
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] += vNewDir * _SPEED * TimeDelta;
-	
-		if (m_iCurAniState == _TURNBACK && m_pMesh->Is_AnimationSetEnd())
-			Animate_FSM(_FLYINGA);
-		else
-			Animate_FSM(_TURNBACK);
-	}
-	if (ENGINE::Key_Press(ENGINE::dwKEY_A))
-	{
-		m_eDir = FLYLEFT;
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] -= vNewDir.NewDir(&vNewDir, &_vec3(0.f, 1.f, 0.f)) * _SPEED * TimeDelta;
-	
-		if (m_iCurAniState == _TURNLEFT && m_pMesh->Is_AnimationSetEnd())
-			Animate_FSM(_FLYINGB);
-		else
-			Animate_FSM(_TURNLEFT);
-	}
-	if (ENGINE::Key_Press(ENGINE::dwKEY_D))
-	{
-		m_eDir = FLYRIGHT;
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] += vNewDir.NewDir(&vNewDir, &_vec3(0.f, 1.f, 0.f)) * _SPEED * TimeDelta;
-		
-		if (m_iCurAniState == _TURNRIGHT && m_pMesh->Is_AnimationSetEnd())
-			Animate_FSM(_FLYINGB);
-		else
-			Animate_FSM(_TURNRIGHT);
 	}
 
 	if (ENGINE::Key_Press(ENGINE::dwKEY_SPACE))
@@ -237,16 +198,58 @@ _bool CMichael::Key_check(const _double & TimeDelta)
 		else
 			Animate_FSM(_FLYUP);
 	}
-	if (ENGINE::Key_Press(ENGINE::dwKEY_LCntl))
+	else if (ENGINE::Key_Press(ENGINE::dwKEY_LCntl))
 	{
 		m_eDir = FLYDOWN;
 		m_pTransform->m_vInfo[ENGINE::INFO_POS].y -= _SPEED * TimeDelta;
-		
+
 		if (m_iCurAniState == _FLYDOWN && m_pMesh->Is_AnimationSetEnd())
 			Animate_FSM(_FLYINGB);
 		else
 			Animate_FSM(_FLYDOWN);
 	}
+	else if (ENGINE::Key_Press(ENGINE::dwKEY_W))
+	{
+		m_eDir = FLYIDLE;
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] -= vNewDir * _SPEED * TimeDelta;
+
+		if(m_iCurAniState == _FLYINGB && m_pMesh->Is_AnimationSetEnd())
+			Animate_FSM(_FLYINGA);
+		else
+			Animate_FSM(_FLYINGB);
+	}
+	else if (ENGINE::Key_Press(ENGINE::dwKEY_S))
+	{
+		m_eDir = FLYBACK;
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] += vNewDir * _SPEED * TimeDelta;
+	
+		if (m_iCurAniState == _TURNBACK && m_pMesh->Is_AnimationSetEnd())
+			Animate_FSM(_FLYINGA);
+		else
+			Animate_FSM(_TURNBACK);
+	}
+	else if (ENGINE::Key_Press(ENGINE::dwKEY_A))
+	{
+		m_eDir = FLYLEFT;
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] -= vNewDir.NewDir(&vNewDir, &_vec3(0.f, 1.f, 0.f)) * _SPEED * TimeDelta;
+	
+		if (m_iCurAniState == _TURNLEFT && m_pMesh->Is_AnimationSetEnd())
+			Animate_FSM(_FLYINGB);
+		else
+			Animate_FSM(_TURNLEFT);
+	}
+	else if (ENGINE::Key_Press(ENGINE::dwKEY_D))
+	{
+		m_eDir = FLYRIGHT;
+		m_pTransform->m_vInfo[ENGINE::INFO_POS] += vNewDir.NewDir(&vNewDir, &_vec3(0.f, 1.f, 0.f)) * _SPEED * TimeDelta;
+		
+		if (m_iCurAniState == _TURNRIGHT && m_pMesh->Is_AnimationSetEnd())
+			Animate_FSM(_FLYINGB);
+		else
+			Animate_FSM(_TURNRIGHT);
+	}
+
+	
 
 	if (m_eDir != FLYEND && m_eState != FIRE)
 		m_eState = FLY;
@@ -258,13 +261,38 @@ _bool CMichael::Key_check(const _double & TimeDelta)
 	return FALSE;
 }
 
-_bool CMichael::Enemy_Check()
+_bool CMichael::EnemyColl_Check()
 {
 	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
 	if (pLayer->Get_MapObject(L"Boss_Blue").empty())
 		return FALSE;
 
 	return TRUE;
+}
+
+_bool CMichael::RelicColl_Check(const _double& TimeDelta)
+{
+	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::ENVIRONMENT);
+	
+	if (pLayer->Get_MapObject(L"Mesh_Relic").empty())
+		return FALSE;
+
+	for (auto pList : pLayer->Get_MapObject(L"Mesh_Relic"))
+	{
+		ENGINE::CSphereColl* pSphere = dynamic_cast<ENGINE::CSphereColl*>
+			(pList->Get_Component(L"Com_SphereColl", ENGINE::COMP_STATIC));
+
+		if (m_pSphereColl->Check_ComponentColl(pSphere))
+		{
+			if(m_fFireGauge < 1000.f)
+				m_fFireGauge += 100.f * TimeDelta;
+
+			return TRUE;
+		}
+
+	}
+
+	return FALSE;
 }
 
 void CMichael::Render_Set()

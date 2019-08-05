@@ -128,6 +128,12 @@
     <Filter Include="02.SubApp\02.Effect\00.Effect_Torch">
       <UniqueIdentifier>{f20d1ef6-4c26-49db-a0df-02d28c124809}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Clinet\02.Scene\09.TestStage\07.StaticObject\01.Static_Relic">
+      <UniqueIdentifier>{50f2689c-050c-4506-8d1b-687235ae4ea6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.SubApp\02.Effect\01.Effect_Fireball">
+      <UniqueIdentifier>{e45e0bdc-5be6-48a5-a8fa-a36d5bcbd6c1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clinet.h">
@@ -250,6 +256,12 @@
     <ClInclude Include="..\Codes\Effect_Torch.h">
       <Filter>02.SubApp\02.Effect\00.Effect_Torch</Filter>
     </ClInclude>
+    <ClInclude Include="..\Codes\Static_Relic.h">
+      <Filter>01.Clinet\02.Scene\09.TestStage\07.StaticObject\01.Static_Relic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Effect_FireBall.h">
+      <Filter>02.SubApp\02.Effect\01.Effect_Fireball</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -350,6 +362,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Effect_Torch.cpp">
       <Filter>02.SubApp\02.Effect\00.Effect_Torch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Static_Relic.cpp">
+      <Filter>01.Clinet\02.Scene\09.TestStage\07.StaticObject\01.Static_Relic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Effect_FireBall.cpp">
+      <Filter>02.SubApp\02.Effect\01.Effect_Fireball</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
