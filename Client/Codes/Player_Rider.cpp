@@ -26,7 +26,7 @@ HRESULT CPlayer_Rider::Ready_Object()
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 	m_pMesh->Set_AnimationSet(1);
 
-	m_pNaviMesh->Set_CurrentIdx(0);
+	//m_pNaviMesh->Set_CurrentIdx(0);
 
 	//m_pTransform->m_vAngle.y = 90.f;
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = { 0.f, 0.1f, 0.f };
@@ -93,7 +93,7 @@ void CPlayer_Rider::Render_Object()
 
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 
-	m_pNaviMesh->Render_NaviMesh();
+	//m_pNaviMesh->Render_NaviMesh();
 
 	m_pMesh->Render_Meshes();
 
@@ -371,9 +371,9 @@ HRESULT CPlayer_Rider::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Renderer", pComponent);
 
 	//NaviMesh
-	pComponent = m_pNaviMesh = dynamic_cast<ENGINE::CNaviMesh*>
-		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Mesh_Navi"));
-	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_NaviMesh", pComponent);
+	//pComponent = m_pNaviMesh = dynamic_cast<ENGINE::CNaviMesh*>
+	//	(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Mesh_Navi"));
+	//m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_NaviMesh", pComponent);
 	
 	//Collider
 	//pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev,

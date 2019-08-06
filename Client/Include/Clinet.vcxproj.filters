@@ -134,6 +134,18 @@
     <Filter Include="02.SubApp\02.Effect\01.Effect_Fireball">
       <UniqueIdentifier>{e45e0bdc-5be6-48a5-a8fa-a36d5bcbd6c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Clinet\02.Scene\09.TestStage\NewFilter1">
+      <UniqueIdentifier>{a1027818-912c-41ee-8015-821dc002e6c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Clinet\02.Scene\09.TestStage\04.Monster\06.Keroberos">
+      <UniqueIdentifier>{70178ef8-54fc-41fd-b707-daf656acf46a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Clinet\02.Scene\09.TestStage\04.Monster\06.Keroberos\00.KeroFire">
+      <UniqueIdentifier>{3db1881b-e643-4baf-8c94-82c257f8086e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29\02.GroundFireball">
+      <UniqueIdentifier>{494650ae-15a9-41b2-aeed-d6101f6a3dd9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clinet.h">
@@ -262,6 +274,15 @@
     <ClInclude Include="..\Codes\Effect_FireBall.h">
       <Filter>02.SubApp\02.Effect\01.Effect_Fireball</Filter>
     </ClInclude>
+    <ClInclude Include="..\Codes\Boss_Keroberos.h">
+      <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\06.Keroberos</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Effect_KeroFire.h">
+      <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\06.Keroberos\00.KeroFire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\Dragon_GroundFire.h">
+      <Filter>01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29\02.GroundFireball</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -368,6 +389,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Effect_FireBall.cpp">
       <Filter>02.SubApp\02.Effect\01.Effect_Fireball</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Boss_Keroberos.cpp">
+      <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\06.Keroberos</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Effect_KeroFire.cpp">
+      <Filter>01.Clinet\02.Scene\09.TestStage\04.Monster\06.Keroberos\00.KeroFire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Dragon_GroundFire.cpp">
+      <Filter>01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29\02.GroundFireball</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

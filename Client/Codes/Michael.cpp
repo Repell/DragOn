@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Michael.h"
-#include "Dragon_Fireball.h"
+
 
 #include "Export_Function.h"
 
@@ -25,7 +25,8 @@
 
 CMichael::CMichael(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice),
-	m_pMesh(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr)
+	m_pMesh(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr),
+	m_bAI(FALSE), m_AiFireTime(0.0)
 {
 	bAttack = FALSE;
 	
@@ -50,6 +51,7 @@ HRESULT CMichael::Ready_Object(_vec3 vPos)
 	m_pSphereColl->Set_Scale(0.01f);
 	m_pCollider->Set_Scale(0.01f);
 
+	m_pAi_Transform->m_vInfo[ENGINE::INFO_POS] = m_pAi_Transform->m_vStartPos + (m_pAi_Transform->Get_vLookDir() * 20.f);
 	return S_OK;
 }
 
@@ -65,12 +67,32 @@ _int CMichael::Update_Object(const _double& TimeDelta)
 	CGameObject::Late_Init();
 	////////////////////////		▼최우선 함수
 
-	MouseFunc();
-	if (m_pTransform->bCamTarget)
-		Key_check(TimeDelta);
+	if (!m_bAI)
+	{
+		MouseFunc();
+		if (m_pTransform->bCamTarget)
+			Key_check(TimeDelta);
 
-	Set_Behavior_Progress(TimeDelta);
+		Set_Behavior_Progress(TimeDelta);
+		
+		m_AiFireTime = 0;
+	}
+	else if (m_bAI)	//Ai Update
+	{
+		m_AiFireTime += TimeDelta;
+		
+		m_pAi_Transform->m_vAngle.y += 45.f * TimeDelta;
+		m_pAi_Transform->m_vInfo[ENGINE::INFO_POS] = m_pAi_Transform->m_vStartPos + (m_pAi_Transform->Get_vLookDir() * 80.f);
+		m_pAi_Transform->Update_Component(TimeDelta);
+		memcpy(m_vChasePos, m_pAi_Transform->m_matWorld.m[3], sizeof(_vec3));
 
+		Ai_State();
+
+		if (m_AiFireTime > 5.0)
+			Ai_Fire();
+
+	}
+	
 	ENGINE::CGameObject::Update_Object(TimeDelta);
 	////////////////////////		▼조건 함수
 	RelicColl_Check(TimeDelta);
@@ -94,6 +116,13 @@ void CMichael::Late_Update_Object()
 	CGameObject::Late_Update_Object();
 	//////////////////////
 	
+	if (ENGINE::Key_Down(ENGINE::dwKEY_F3))
+	{
+		if(!m_bAI)
+			m_bAI = TRUE;
+		else
+			m_bAI = FALSE;
+	}
 
 }
 
@@ -128,8 +157,10 @@ void CMichael::Render_Object()
 
 	///////////////////////////////////
 
-	Find_BoneMatrix("HEAD");
-	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix);
+	//Find_BoneMatrix("HEAD");
+	//m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix);
+
+	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pAi_Transform->m_matWorld);
 	m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld, 1.5f);
 
 	_tchar szStr[MAX_PATH] = L"";
@@ -295,6 +326,29 @@ _bool CMichael::RelicColl_Check(const _double& TimeDelta)
 	return FALSE;
 }
 
+void CMichael::Ai_State()
+{
+	m_pTransform->Chase_Target(&m_vChasePos, 0.75f);
+	m_pTransform->Fix_TargetLook(m_pAi_Transform, 100.f);
+}
+
+void CMichael::Ai_Fire()
+{
+	m_AiFireTime = 0;
+
+	Find_BoneMatrix("JAW");
+
+	_vec3 vFirePos = {};
+	memcpy(vFirePos, m_pBoneMatrix.m[3], sizeof(_vec3));
+	_vec3 vLook = m_pTransform->Get_vLookDir();
+	vLook.y += 0.35f;
+	ENGINE::UNITINFO tInfo =
+	{ FALSE, vFirePos, _vec3(0.1f, 0.1f, 0.1f),m_pTransform->m_vAngle, vLook,  30.f };
+	CGameObject* pObject = CDragon_GroundFire::Create(m_pGraphicDev, tInfo);
+	ENGINE::Get_Management()->Add_GameObject(ENGINE::CLayer::OBJECT, L"Dragon_GroundFire", pObject);
+
+}
+
 void CMichael::Render_Set()
 {
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
@@ -391,9 +445,14 @@ HRESULT CMichael::Add_Component()
 	m_MapComponent[ENGINE::COMP_DYNAMIC].emplace(L"Com_Mesh", pComponent);
 
 	//Transform Component
-	pComponent = m_pTransform = ENGINE::CTransform::Create(_vec3(0.f, 0.f, 1.f));
+	pComponent = m_pTransform = ENGINE::CTransform::Create(_vec3(0.f, 0.f, -1.f));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_DYNAMIC].emplace(L"Com_Transform", pComponent);
+
+	m_pAi_Transform = ENGINE::CTransform::Create(_vec3(0.f, 0.f, -1.f));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_pAi_Transform->Set_StartPos(_vec3(128.f, 32.f, 128.f));
+	m_pAi_Transform->m_vScale = { 0.01f, 0.01f, 0.01f };
 
 	//Renderer Component
 	pComponent = m_pRenderer = ENGINE::Get_Renderer();

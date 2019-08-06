@@ -3,6 +3,8 @@
 
 #include "GameObject.h"
 #include "Effect_Tex.h"
+#include "Dragon_Fireball.h"
+#include "Dragon_GroundFire.h"
 
 namespace ENGINE
 {
@@ -47,6 +49,10 @@ private:
 	_bool RelicColl_Check(const _double& TimeDelta);
 
 private:
+	void Ai_State();
+	void Ai_Fire();
+
+private:
 	void Render_Set();
 	void Render_ReSet();
 	void Find_BoneMatrix(const char* szBone);
@@ -73,6 +79,12 @@ private:
 	DRAGONDIRECTION m_eDir;
 
 private:
+
+	_bool m_bAI;
+	_vec3 m_vChasePos;
+	_double m_AiFireTime;
+
+
 	//Fire Gauge
 	_float m_fFireGauge;
 
@@ -95,6 +107,8 @@ private:
 	ENGINE::CSphereColl*	m_pSphereColl;
 	ENGINE::CSphereColl*	m_pTargetSphereColl;
 	ENGINE::CShader*			m_pShader;
+
+	ENGINE::CTransform*	m_pAi_Transform;
 
 private:
 	_matrix m_pBoneMatrix;

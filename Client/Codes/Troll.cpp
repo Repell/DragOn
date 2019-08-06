@@ -144,9 +144,6 @@ void CTroll::Render_Object()
 
 	m_pMesh->Render_Meshes();
 	
-
-
-
 	////////////////////////////////////////
 	pEffect->EndPass();
 	pEffect->End();
@@ -443,7 +440,7 @@ VOID CTroll::State_Chase()
 	//플레이어가 거리 내에 있으면 무적권 시야 고정
 	m_pTransform->Fix_TargetLook(m_pTargetTransform, 10.f);
 
-	if (m_fDist > 3.f) //플레이어가 멀리 있음, 달려가 추적
+	if (m_fDist > 4.f) //플레이어가 멀리 있음, 달려가 추적
 	{
 		Animate_FSM(_CHASE_RUN);
 
@@ -456,7 +453,7 @@ VOID CTroll::State_Chase()
 
 		m_AttackTime = 0.0;
 	}
-	else if (m_fDist < 3.f)
+	else if (m_fDist < 4.f)
 	{
 		Animate_FSM(_CHASE_WALK);
 
@@ -490,7 +487,7 @@ VOID CTroll::State_Attack()
 {
 	_bool bColl = FALSE;
 
-	m_pTransform->Fix_TargetLook(m_pTargetTransform, 10.f);
+	
 
 	if (m_fDist < 2.25f && m_iCurAniSet == _CHASE_WALK || m_iCurAniSet == _IDLE) // 거리가 됐네 공격
 	{
@@ -542,6 +539,7 @@ VOID CTroll::State_Attack()
 
 	if (m_fDist > 2.25f && !m_bTwice)	//공격 준비됐는데 거리가 좀 머네
 	{
+		m_pTransform->Fix_TargetLook(m_pTargetTransform, 10.f);
 		m_pTransform->m_bAttackState = FALSE;
 		//m_pWeapon->Set_AttackState(FALSE, m_iCurAniSet);
 		m_AttackTime = 0.0;

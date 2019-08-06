@@ -172,8 +172,11 @@
   <ItemGroup>
     <ClInclude Include="..\Codes\BossStage.h" />
     <ClInclude Include="..\Codes\Boss_Blue.h" />
+    <ClInclude Include="..\Codes\Boss_Keroberos.h" />
     <ClInclude Include="..\Codes\Dragon_Fireball.h" />
+    <ClInclude Include="..\Codes\Dragon_GroundFire.h" />
     <ClInclude Include="..\Codes\Effect_FireBall.h" />
+    <ClInclude Include="..\Codes\Effect_KeroFire.h" />
     <ClInclude Include="..\Codes\Effect_Tex.h" />
     <ClInclude Include="..\Codes\Effect_Torch.h" />
     <ClInclude Include="..\Codes\Enemy_Arrow.h" />
@@ -216,8 +219,11 @@
   <ItemGroup>
     <ClCompile Include="..\Codes\BossStage.cpp" />
     <ClCompile Include="..\Codes\Boss_Blue.cpp" />
+    <ClCompile Include="..\Codes\Boss_Keroberos.cpp" />
     <ClCompile Include="..\Codes\Dragon_Fireball.cpp" />
+    <ClCompile Include="..\Codes\Dragon_GroundFire.cpp" />
     <ClCompile Include="..\Codes\Effect_FireBall.cpp" />
+    <ClCompile Include="..\Codes\Effect_KeroFire.cpp" />
     <ClCompile Include="..\Codes\Effect_Tex.cpp" />
     <ClCompile Include="..\Codes\Effect_Torch.cpp" />
     <ClCompile Include="..\Codes\Enemy_Arrow.cpp" />

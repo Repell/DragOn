@@ -3,6 +3,7 @@
 
 #include "Scene.h"
 #include "TestStage.h"
+#include "BossStage.h"
 
 #include "Logo_Loading.h"
 

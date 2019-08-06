@@ -45,7 +45,7 @@
 
 CBlue::CBlue(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice),
-	m_pMesh(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr), m_pNaviMesh(nullptr)
+	m_pMesh(nullptr), m_pTransform(nullptr), m_pRenderer(nullptr), m_pNaviMesh(nullptr), m_pTower(nullptr)
 {
 	m_bQuake = FALSE;
 	m_bAttack = FALSE;
@@ -123,7 +123,7 @@ HRESULT CBlue::Late_Init()
 		ENGINE::CTransform* pTrans = dynamic_cast<ENGINE::CTransform*>
 			(pList->Get_Component(L"Com_Transform", ENGINE::COMP_DYNAMIC));
 
-		if (m_pTransform->Get_TargetDistance(pTrans) < 20.f)
+		if (m_pTransform->Get_TargetDistance(pTrans) < 24.f && m_pTower == nullptr)
 		{
 			m_pTower = dynamic_cast<CStatic_Tower*>(pList);
 		}
@@ -522,10 +522,7 @@ VOID CBlue::State_Weak()
 		m_pTransform->m_bWeak = FALSE;
 
 		if (m_pSphereHead->Get_iHp() != 0)
-		{
-			m_pSphereBody->m_iHp = 2;
-			m_pSphereHead->Get_iHp(2);
-		}
+			m_pSphereBody->m_iHp = 6;
 
 		m_pSphereHead->Set_Scale((_SCALE * m_fScale));
 		m_pSphereBody->Set_Scale((_SCALE * m_fScale));
@@ -979,7 +976,7 @@ HRESULT CBlue::Add_Component()
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_SphereHead", pComponent);
 
-	pComponent = m_pSphereBody = ENGINE::CSphereColl::Create(m_pGraphicDev, _RADIUS, 2);
+	pComponent = m_pSphereBody = ENGINE::CSphereColl::Create(m_pGraphicDev, _RADIUS, 6);
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_SphereBody", pComponent);
 

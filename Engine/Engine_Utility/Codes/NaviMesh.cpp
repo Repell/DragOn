@@ -25,8 +25,8 @@ CNaviMesh::~CNaviMesh()
 HRESULT CNaviMesh::Ready_NaviMesh(wstring strPath, wstring strName)
 {
 
-	//	Load_NaviMesh(64);		//Test
-	LoadforLineDat(strPath, strName);
+	Load_NaviMesh(33);		//Test
+	//LoadforLineDat(strPath, strName);
 	
 	FAILED_CHECK_RETURN(Link_Cell(), E_FAIL);
 
@@ -111,9 +111,9 @@ _vec3 CNaviMesh::MoveOn_NaviMesh_Dir(const _vec3 * pTargetPos, const _vec3 * pTa
 	{
 		//벽이 아닐경우 네비매쉬의 높이값 추가
 		_vec3 vReturn = *pTargetDir;
-		vReturn.y = Compute_OnTerrain(pTargetPos, &m_dwCurrentIdx);
+		//vReturn.y = Compute_OnTerrain(pTargetPos, &m_dwCurrentIdx);
 
-		return vReturn;
+		return *pTargetDir;
 	}
 
 	else if (CCell::COMPARE_STOP == m_vecCell[m_dwCurrentIdx]->Compare(&vEndPos, &m_dwCurrentIdx, &vNormal))
@@ -156,19 +156,31 @@ HRESULT CNaviMesh::Load_NaviMesh(_int iMax)
 	m_vecCell.reserve(iMax);
 
 	CCell* pCell = nullptr;
+	_uint Iterv = 8;
 	
-	for (_uint Z = 0; Z < 8; ++Z)
+	for (_uint Z = 0; Z < iMax; ++Z)
 	{
-		for (_uint X = 0; X < 8; ++X)
+		for (_uint X = 0; X < iMax; ++X)
 		{
 
-			pCell = CCell::Create(m_pGraphicDev, m_vecCell.size(), &_vec3(X * 2.f, Z +1, (Z + 1) * 2.f), &_vec3((X + 1) * 2.f, Z, Z * 2.f), &_vec3(X * 2.f, Z, Z * 2.f));
+			//pCell = CCell::Create(m_pGraphicDev, m_vecCell.size(), &_vec3(X * 2.f, Z +1, (Z + 1) * 2.f), &_vec3((X + 1) * 2.f, Z, Z * 2.f), &_vec3(X * 2.f, Z, Z * 2.f));
+			//NULL_CHECK_RETURN(pCell, E_FAIL);
+			//m_vecCell.emplace_back(pCell);
+
+			//pCell = CCell::Create(m_pGraphicDev, m_vecCell.size(), &_vec3(X * 2.f, Z +1, (Z + 1) * 2.f), &_vec3((X + 1) * 2.f, Z + 1, (Z +1) * 2.f), &_vec3((X+1) * 2.f, Z, Z * 2.f));
+			//NULL_CHECK_RETURN(pCell, E_FAIL);
+			//m_vecCell.emplace_back(pCell);
+
+			pCell = CCell::Create(m_pGraphicDev, m_vecCell.size(), 
+				&_vec3(X * Iterv, 0.1f, (Z + 1) * Iterv), &_vec3((X + 1) * Iterv, 0.1f, Z * Iterv), &_vec3(X * Iterv, 0.1f, Z * Iterv));
 			NULL_CHECK_RETURN(pCell, E_FAIL);
 			m_vecCell.emplace_back(pCell);
 
-			pCell = CCell::Create(m_pGraphicDev, m_vecCell.size(), &_vec3(X * 2.f, Z +1, (Z + 1) * 2.f), &_vec3((X + 1) * 2.f, Z + 1, (Z +1) * 2.f), &_vec3((X+1) * 2.f, Z, Z * 2.f));
+			pCell = CCell::Create(m_pGraphicDev, m_vecCell.size(), 
+				&_vec3(X * Iterv, 0.1f, (Z + 1) * Iterv), &_vec3((X + 1) * Iterv, 0.1f, (Z + 1) * Iterv), &_vec3((X + 1) * Iterv, 0.1f, Z * Iterv));
 			NULL_CHECK_RETURN(pCell, E_FAIL);
 			m_vecCell.emplace_back(pCell);
+
 
 		}
 	}
@@ -270,13 +282,6 @@ _float CNaviMesh::Compute_OnTerrain(const _vec3 * pPos, _ulong * pCellIndex)
 
 
 	return (-d3Plane.a * pPos->x - d3Plane.c * pPos->z - d3Plane.d) / d3Plane.b;
-}
-
-_vec3 CNaviMesh::SlideVector()
-{
-
-
-	return _vec3();
 }
 
 CNaviMesh * CNaviMesh::Create(LPDIRECT3DDEVICE9 pDevice, wstring strPath, wstring strName)

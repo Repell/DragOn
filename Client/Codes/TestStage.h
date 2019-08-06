@@ -19,10 +19,10 @@
 #include "Enemy_Bowman.h"
 
 #include "Boss_Blue.h"
+#include "Boss_Keroberos.h"
 
 //Static
 #include "StaticObj.h"
-#include "Sword.h"
 #include "Spear.h"
 
 #include "Effect_Tex.h"

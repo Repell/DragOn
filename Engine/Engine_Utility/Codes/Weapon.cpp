@@ -74,6 +74,7 @@ _int CWeapon::Update_Component(const _double & TimeDelta)
 		Check_EnemyColl(L"Enemy_Spearman");
 		Check_EnemyColl(L"Enemy_Shieldman");
 		Check_EnemyColl(L"Enemy_Bowman");
+		Check_EnemyColl(L"Boss_Keroberos");
 	}
 	else if (m_bAttack && !m_bPlayer)
 		Check_PlayerColl(L"Player");

@@ -180,7 +180,7 @@ void CStatic_Relic::Render_Object()
 	m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld, (6.f * m_fScale));
 
 	if(m_bCharge)
-		m_pAura->Render_Shadow(&m_pTransform->m_matWorld, 30.f, 0.1f);
+		m_pAura->Render_Shadow(&m_pTransform->m_matWorld, 30.f, 0.2f);
 
 	_tchar szStr[MAX_PATH] = L"";
 

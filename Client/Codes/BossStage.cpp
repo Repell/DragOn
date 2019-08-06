@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "BossStage.h"
 
+#include "Export_Function.h"
+
 CBossStage::CBossStage(LPDIRECT3DDEVICE9 pDevice)
 	: ENGINE::CScene(pDevice), m_pLoading(nullptr)
 {
@@ -34,6 +36,7 @@ _int CBossStage::Update_Scene(_double TimeDelta)
 void CBossStage::Late_Update_Scene()
 {
 	ENGINE::CScene::Late_Update_Scene();
+
 }
 
 void CBossStage::Render_Scene()
@@ -78,12 +81,8 @@ HRESULT CBossStage::Add_GameObject_Layer()
 	//NULL_CHECK_RETURN(pObject, E_FAIL);
 	//pObject_Layer->Add_GameObject(L"Player", pObject);
 
-	//pObject = CSword::Create(m_pGraphicDev, 0);
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Sword", pObject);
-
 	//Rider
-	pObject = CMichael::Create(m_pGraphicDev, _vec3(100.f, 2.1f, 100.f));
+	pObject = CMichael::Create(m_pGraphicDev, _vec3(128.f, 16.f, 128.f));
 	NULL_CHECK_RETURN(pObject, E_FAIL);
 	pObject_Layer->Add_GameObject(L"Player", pObject);
 
@@ -106,21 +105,21 @@ HRESULT CBossStage::Add_GameObject_Layer()
 
 	//Monster
 
-	pObject = CBlue::Create(m_pGraphicDev, _vec3(30.f, 0.f, 30.f));
-	NULL_CHECK_RETURN(pObject, E_FAIL);
-	pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
+	//pObject = CBlue::Create(m_pGraphicDev, _vec3(32.f, 0.f, 32.f));
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
 
-	pObject = CBlue::Create(m_pGraphicDev, _vec3(190.f, 0.f, 30.f));
-	NULL_CHECK_RETURN(pObject, E_FAIL);
-	pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
+	//pObject = CBlue::Create(m_pGraphicDev, _vec3(224.f, 0.f, 32.f));
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
 
-	pObject = CBlue::Create(m_pGraphicDev, _vec3(30.f, 0.f, 190.f));
-	NULL_CHECK_RETURN(pObject, E_FAIL);
-	pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
+	//pObject = CBlue::Create(m_pGraphicDev, _vec3(32.f, 0.f, 224.f));
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
 
-	pObject = CBlue::Create(m_pGraphicDev, _vec3(190.f, 0.f, 190.f));
-	NULL_CHECK_RETURN(pObject, E_FAIL);
-	pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
+	//pObject = CBlue::Create(m_pGraphicDev, _vec3(224.f, 0.f, 224.f));
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
 
 	//pObject = CTroll::Create(m_pGraphicDev, _vec3(39.f, 0.1f, 12.f));
 	//NULL_CHECK_RETURN(pObject, E_FAIL);

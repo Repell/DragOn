@@ -120,9 +120,16 @@ HRESULT CTestStage::Add_GameObject_Layer()
 
 	//Troll
 
-	//pObject = CTroll::Create(m_pGraphicDev, _vec3(39.f, 0.1f, 12.f));
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Troll", pObject);
+	//for (int i = 0; i < 2; ++i)
+	//{
+	//	pObject = CTroll::Create(m_pGraphicDev, _vec3(39.f, 0.1f, 12.f + i));
+	//	NULL_CHECK_RETURN(pObject, E_FAIL);
+	//	pObject_Layer->Add_GameObject(L"Troll", pObject);
+	//}
+
+	pObject = CKeroberos::Create(m_pGraphicDev, _vec3(39.f, 0.1f, 12.f));
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Boss_Keroberos", pObject);
 
 	//pObject = CBlue::Create(m_pGraphicDev, _vec3(60.f +39.f, 0.1f, 60.f +12.f));
 	//NULL_CHECK_RETURN(pObject, E_FAIL);
@@ -143,37 +150,37 @@ HRESULT CTestStage::Add_GameObject_Layer()
 	//pObject = CEnemy_Bowman::Create(m_pGraphicDev, _vec3(38.f, 0.1f, 4.f));
 	//NULL_CHECK_RETURN(pObject, E_FAIL);
 	//pObject_Layer->Add_GameObject(L"Enemy_Bowman", pObject);
-	
-	for (int i = 0; i < 3; ++i)
-	{
-		pObject = CEnemy_Swordman::Create(m_pGraphicDev, _vec3(40.f, 0.1f, (12.f + i)));
-		NULL_CHECK_RETURN(pObject, E_FAIL);
-		pObject_Layer->Add_GameObject(L"Enemy_Swordman", pObject);
-	}
 
-	for (int i = 0; i < 3; ++i)
-	{
-		pObject = CEnemy_Spearman::Create(m_pGraphicDev, _vec3(42.5f, 0.1f, (12.f + i) * 0.5f));
-		NULL_CHECK_RETURN(pObject, E_FAIL);
-		pObject_Layer->Add_GameObject(L"Enemy_Spearman", pObject);
+	//for (int i = 0; i < 3; ++i)
+	//{
+	//	pObject = CEnemy_Swordman::Create(m_pGraphicDev, _vec3(40.f, 0.1f, (12.f + i)));
+	//	NULL_CHECK_RETURN(pObject, E_FAIL);
+	//	pObject_Layer->Add_GameObject(L"Enemy_Swordman", pObject);
+	//}
 
-	}
+	//for (int i = 0; i < 3; ++i)
+	//{
+	//	pObject = CEnemy_Spearman::Create(m_pGraphicDev, _vec3(42.5f, 0.1f, (12.f + i) * 0.5f));
+	//	NULL_CHECK_RETURN(pObject, E_FAIL);
+	//	pObject_Layer->Add_GameObject(L"Enemy_Spearman", pObject);
 
-	for (int i = 0; i < 3; ++i)
-	{
-		pObject = CEnemy_Shieldman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, (12.f + i) * 0.5f));
-		NULL_CHECK_RETURN(pObject, E_FAIL);
-		pObject_Layer->Add_GameObject(L"Enemy_Shieldman", pObject);
+	//}
 
-	}
+	//for (int i = 0; i < 3; ++i)
+	//{
+	//	pObject = CEnemy_Shieldman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, (12.f + i) * 0.5f));
+	//	NULL_CHECK_RETURN(pObject, E_FAIL);
+	//	pObject_Layer->Add_GameObject(L"Enemy_Shieldman", pObject);
 
-	for (int i = 0; i < 3; ++i)
-	{
-		pObject = CEnemy_Bowman::Create(m_pGraphicDev, _vec3(38.f, 0.1f, (12.f + i) * 0.5f));
-		NULL_CHECK_RETURN(pObject, E_FAIL);
-		pObject_Layer->Add_GameObject(L"Enemy_Bowman", pObject);
+	//}
 
-	}
+	//for (int i = 0; i < 3; ++i)
+	//{
+	//	pObject = CEnemy_Bowman::Create(m_pGraphicDev, _vec3(38.f, 0.1f, (12.f + i) * 0.5f));
+	//	NULL_CHECK_RETURN(pObject, E_FAIL);
+	//	pObject_Layer->Add_GameObject(L"Enemy_Bowman", pObject);
+
+	//}
 
 
 	//////////////INSERT LAYER//////////////
@@ -241,7 +248,7 @@ void CTestStage::LoadForStaticDat(ENGINE::CLayer* pLayer)
 {
 	ENGINE::CGameObject* pObject = nullptr;
 
-	HANDLE hFile = CreateFile(L"../../Data/Static2.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	HANDLE hFile = CreateFile(L"../../Data/Static.dat", GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 
 	if (INVALID_HANDLE_VALUE == hFile)
 	{

@@ -566,7 +566,7 @@ void CNewPlayer::Render_Object()
 	pEffect->BeginPass(0);
 	///////////////////////////////////
 
-	m_pNaviMesh->Render_NaviMesh();
+	//m_pNaviMesh->Render_NaviMesh();
 	m_pMesh->Render_Meshes();
 
 	///////////////////////////////////
@@ -592,8 +592,8 @@ void CNewPlayer::Render_Object()
 	swprintf_s(szStr, L"CamPos : X : %3.2f, Y : %3.2f,   Z : %3.2f ", m_pAdvance->Get_INFO(ENGINE::INFO_POS).x, m_pAdvance->Get_INFO(ENGINE::INFO_POS).y, m_pAdvance->Get_INFO(ENGINE::INFO_POS).z);
 	ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 70.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 
-	swprintf_s(szStr, L"Jump : %3.2f ", m_fPosY);
-	ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 10.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
+	//swprintf_s(szStr, L"Jump : %3.2f ", m_fPosY);
+	//ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 10.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 
 
 }

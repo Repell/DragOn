@@ -748,6 +748,12 @@ void CTapTerrain::OnBnClicked_LoadTerrain()
 		ReadFile(hFile, szKey, sizeof(TCHAR) * dwBuff, &dwByte, nullptr);
 		strKey = szKey;
 
+		if (strKey == L"")
+		{
+			strKey = L"Texture_Terrain";
+			m_iTex = 0;
+		}
+
 		ReadFile(hFile, &m_uSizeX, sizeof(WORD), &dwByte, nullptr);
 		ReadFile(hFile, &m_uSizeZ, sizeof(WORD), &dwByte, nullptr);
 		ReadFile(hFile, &m_uInterval, sizeof(WORD), &dwByte, nullptr);
@@ -781,7 +787,6 @@ void CTapTerrain::OnBnClicked_LoadTerrain()
 		
 		CNaviMaker* pNavi = dynamic_cast<CNaviMaker*>(pList2.front());
 		pNavi->Make_TerrainVertex(m_uSizeX, m_uSizeZ);
-
 
 		ENGINE::Safe_Delete_Array(szKey);
 

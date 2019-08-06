@@ -2,6 +2,7 @@
 #define BossStage_h__
 
 #include "Scene.h"
+#include "TestStage.h"
 #include "Loading.h"
 #include "Terrain.h"
 #include "TerrainSkyBox.h"
@@ -17,6 +18,7 @@
 #include "Enemy_Shieldman.h"
 #include "Enemy_Bowman.h"
 
+#include "Boss_Keroberos.h"
 #include "Boss_Blue.h"
 
 //Static

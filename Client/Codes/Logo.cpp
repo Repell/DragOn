@@ -46,7 +46,7 @@ void CLogo::Late_Update_Scene()
 		{
 			ENGINE::CScene* pScene = nullptr;
 
-			pScene = CTestStage::Create(m_pGraphicDev);
+			pScene = CBossStage::Create(m_pGraphicDev);
 			NULL_CHECK(pScene);
 
 			ENGINE::SetUp_CurrentScene(pScene);

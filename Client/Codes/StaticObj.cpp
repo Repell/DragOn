@@ -111,7 +111,7 @@ void CStaticObj::Render_Object()
 	ENGINE::Safe_Release(pEffect);
 
 	///////////////////////////////////
-	m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld, 50.f);
+	//m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld);
 
 
 }
@@ -223,10 +223,10 @@ void CStaticObj::Render_Font(const _vec2 * pPos)
 	_float fAngleY = m_pTransform->m_vAngle.y;
 
 	//Render Text
-	swprintf_s(szStr, L"%5.2f , %5.2f , %5.2f", vPos.x, vPos.y, vPos.z);
+	//swprintf_s(szStr, L"%5.2f , %5.2f , %5.2f", vPos.x, vPos.y, vPos.z);
 	//swprintf_s(szStr, L"%5.2f , %5.2f", fAngleX, fAngleY);
 
-	ENGINE::Render_Font(L"Sp", szStr, pPos, D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
+	//ENGINE::Render_Font(L"Sp", szStr, pPos, D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 
 }
 
