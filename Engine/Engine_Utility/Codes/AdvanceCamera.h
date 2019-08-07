@@ -14,6 +14,7 @@ private:
 	virtual ~CAdvanceCamera() = default;
 
 public:
+	void Set_ActiveCamera(_bool bActive);
 	void Set_Transform_Pos(ENGINE::INFO eInfo, const _vec3* vPos);
 	void Set_Transform_Dir(ENGINE::INFO eInfo, const _vec3* vDir);
 	ENGINE::CTransform* Get_Transform() 
@@ -65,6 +66,7 @@ private:		//Transform
 	ENGINE::CTransform* m_pTransform;
 
 	_double m_Time;
+	_bool m_bActivce;
 
 public:
 	static CAdvanceCamera* Create(LPDIRECT3DDEVICE9 pGraphic, ENGINE::CTransform * pTarget);

@@ -5,6 +5,7 @@
 #include "Effect_Tex.h"
 #include "Dragon_Fireball.h"
 #include "Dragon_GroundFire.h"
+#include "NewPlayer.h"
 
 namespace ENGINE
 {
@@ -16,8 +17,11 @@ namespace ENGINE
 	class CCollider;
 	class CSphereColl;
 	class CShader;
+	class CAdvanceCamera;
+
 }
 
+class CNewPlayer;
 class CMichael : public ENGINE::CGameObject
 {
 	enum DRAGONDIRECTION
@@ -47,6 +51,7 @@ private:
 	_bool Key_check(const _double& TimeDelta);
 	_bool EnemyColl_Check();
 	_bool RelicColl_Check(const _double& TimeDelta);
+	void Set_AdvanceCamera();
 
 private:
 	void Ai_State();
@@ -102,13 +107,16 @@ private:
 	ENGINE::CRenderer* m_pRenderer;
 	ENGINE::CDynamicMesh* m_pMesh;
 	ENGINE::CTransform*	m_pTransform;
-	ENGINE::CTransform*	m_pTargetTransform;
+	ENGINE::CAdvanceCamera* m_pAdvance;
+	//ENGINE::CTransform*	m_pTargetTransform;
 	ENGINE::CCollider*			m_pCollider;
 	ENGINE::CSphereColl*	m_pSphereColl;
-	ENGINE::CSphereColl*	m_pTargetSphereColl;
+	//ENGINE::CSphereColl*	m_pTargetSphereColl;
 	ENGINE::CShader*			m_pShader;
 
 	ENGINE::CTransform*	m_pAi_Transform;
+	
+	CNewPlayer* m_pPlayer;
 
 private:
 	_matrix m_pBoneMatrix;

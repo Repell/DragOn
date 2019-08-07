@@ -93,7 +93,7 @@ HRESULT CBlue::Ready_Object(_vec3 vPos)
 	m_pTransform->m_vScale = { _SCALE, _SCALE, _SCALE };
 	m_pSphereHead->Set_Scale(_SCALE);
 	m_pSphereBody->Set_Scale(_SCALE);
-	m_pCollider->Set_Scale(_SCALE);
+	m_pCollider_Right->Set_Scale(_SCALE);
 
 	return S_OK;
 }
@@ -102,11 +102,11 @@ HRESULT CBlue::Late_Init()
 {
 
 	m_pTargetTransform = dynamic_cast<ENGINE::CTransform*>
-		(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player", L"Com_Transform", ENGINE::COMP_DYNAMIC));
+		(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player_Dragon", L"Com_Transform", ENGINE::COMP_DYNAMIC));
 	NULL_CHECK_RETURN(m_pTargetTransform, E_FAIL);
 
 	m_pTargetSphereColl = dynamic_cast<ENGINE::CSphereColl*>
-		(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player", L"Com_SphereColl", ENGINE::COMP_STATIC));
+		(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player_Dragon", L"Com_SphereColl", ENGINE::COMP_STATIC));
 	NULL_CHECK_RETURN(m_pTargetSphereColl, E_FAIL);
 
 	m_pRelicSphere = dynamic_cast<ENGINE::CSphereColl*>
@@ -234,27 +234,27 @@ void CBlue::Render_Object()
 
 	///////////////////////////////////////
 	Get_WeaponMatrix("BODY1");
-	m_pShadow->Render_Shadow(&m_pBoneMatrix, (30.f * 0.65f * m_fScale), 1.f);
+	m_pShadow->Render_Shadow(&m_pBoneMatrix_Right, (30.f * 0.65f * m_fScale), 1.f);
 
 	//if (m_bAttack)
 	Get_WeaponMatrix("R_Hand");
-	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix);
+	m_pCollider_Right->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix_Right);
 
-	Get_WeaponMatrix("L_Hand");
-	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix);
+	Get_WeaponMatrix2("L_Hand");
+	m_pCollider_Left->Render_Collider(ENGINE::COL_TRUE, &m_pBoneMatrix_Left);
 
 
-	if (m_pSphereHead->m_iHp > 0 && m_pTransform->m_bWeak);
-	{
-		Get_WeaponMatrix("HEAD");
-		m_pSphereHead->Render_SphereColl(&m_pBoneMatrix);
-	}
+	//if (m_pSphereHead->m_iHp > 0 && m_pTransform->m_bWeak);
+	//{
+	//	Get_WeaponMatrix3("HEAD");
+	//	m_pSphereHead->Render_SphereColl(&m_pBoneMatrix_Right);
+	//}
 
 	if (m_pSphereBody->m_iHp != 0)
 	{
-		Get_WeaponMatrix("BODY1");
-		m_pSphereBody->Render_SphereColl(&m_pBoneMatrix);
-		m_pSphereBody->Set_WeakPos(&m_pBoneMatrix);
+		Get_WeaponMatrix3("BODY1");
+		m_pSphereBody->Render_SphereColl(&m_pBody);
+		m_pSphereBody->Set_WeakPos(&m_pBody);
 	}
 	
 	//_tchar szStr[MAX_PATH] = L"";
@@ -285,7 +285,21 @@ void CBlue::Get_WeaponMatrix(const char * tBone)
 {
 	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName(tBone);
 
-	m_pBoneMatrix = pFrame->combinedTransformMatrix * m_pTransform->m_matWorld;
+	m_pBoneMatrix_Right = pFrame->combinedTransformMatrix * m_pTransform->m_matWorld;
+}
+
+void CBlue::Get_WeaponMatrix2(const char * tBone)
+{
+	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName(tBone);
+
+	m_pBoneMatrix_Left = pFrame->combinedTransformMatrix * m_pTransform->m_matWorld;
+}
+
+void CBlue::Get_WeaponMatrix3(const char * tBone)
+{
+	const ENGINE::D3DXFRAME_DERIVED* pFrame = m_pMesh->Get_FrameByName(tBone);
+
+	m_pBody = pFrame->combinedTransformMatrix * m_pTransform->m_matWorld;
 }
 
 void CBlue::Check_EnemyGroup()
@@ -392,9 +406,15 @@ _bool CBlue::Check_EnemySphereColl(const _tchar * szTag)
 		if (pSphere == nullptr)
 			return FALSE;
 
-		Get_WeaponMatrix("R_Hand");
-		m_pCollider->Set_Collider(&m_pBoneMatrix);
-		if (m_pCollider->Check_ComponentBossColl(pSphere) && !pTrans->m_bWeak)
+		if (m_pCollider_Left->Check_ComponentBossColl(pSphere) && !pTrans->m_bWeak)
+		{
+			pSphere->m_bHit = TRUE;
+			pSphere->Get_iHp(10);
+
+			return TRUE;
+		}
+
+		if (m_pCollider_Right->Check_ComponentBossColl(pSphere) && !pTrans->m_bWeak)
 		{
 			pSphere->m_bHit = TRUE;
 			pSphere->Get_iHp(10);
@@ -526,7 +546,7 @@ VOID CBlue::State_Weak()
 
 		m_pSphereHead->Set_Scale((_SCALE * m_fScale));
 		m_pSphereBody->Set_Scale((_SCALE * m_fScale));
-		m_pCollider->Set_Scale((_SCALE * m_fScale));
+		m_pCollider_Right->Set_Scale((_SCALE * m_fScale));
 
 		Animate_Twice(_IDLE);
 	}
@@ -747,8 +767,13 @@ VOID CBlue::State_Quake()
 		//(&vPos, &(m_pSphereBody->Set_KnockBackDist(FALSE) * m_TimeDelta * 2.f));
 
 		m_AttackTime += m_TimeDelta;
-		_bool bColl = m_pCollider->Check_ComponentColl(m_pTargetSphereColl);
-		_bool bRelicColl = m_pCollider->Check_ComponentColl(m_pRelicSphere);
+		_bool bColl = m_pCollider_Right->Check_ComponentColl(m_pTargetSphereColl);
+		if(!bColl)
+			bColl = m_pCollider_Left->Check_ComponentColl(m_pTargetSphereColl);
+
+		_bool bRelicColl = m_pCollider_Right->Check_ComponentColl(m_pRelicSphere);
+		if (!bRelicColl)
+			bRelicColl = m_pCollider_Left->Check_ComponentColl(m_pRelicSphere);
 
 
 		if (bRelicColl && m_AttackTime > 1.0)
@@ -800,7 +825,7 @@ VOID CBlue::State_Attack()
 	if (!m_bAttack && m_fDist < (70.f * m_fScale) && m_iCurAniSet == _CHASE_WALK || m_iCurAniSet == _IDLE) // 거리가 됐네 공격
 	{
 		Get_WeaponMatrix("BODY1");
-		_float fy = m_pBoneMatrix._42;
+		_float fy = m_pBoneMatrix_Right._42;
 		_vec3 vPlayerPos = m_pTargetTransform->Get_vInfoPos(ENGINE::INFO_POS);
 
 		if (fy > vPlayerPos.y + 2.f)
@@ -815,9 +840,9 @@ VOID CBlue::State_Attack()
 	else if (m_bAttStart && !m_pMesh->Is_AnimationSetEnd())
 	{
 		m_AttackTime += m_TimeDelta;
-		bColl = m_pCollider->Check_ComponentColl(m_pTargetSphereColl);
-
-		bRelicColl = m_pCollider->Check_ComponentColl(m_pRelicSphere);
+		bColl = m_pCollider_Right->Check_ComponentColl(m_pTargetSphereColl);
+		bRelicColl = m_pCollider_Right->Check_ComponentColl(m_pRelicSphere);
+		bEnemyColl = Check_EnemySphereColl(L"Boss_Blue");
 
 		if (bRelicColl && m_AttackTime > 0.5)
 		{
@@ -828,13 +853,8 @@ VOID CBlue::State_Attack()
 			}
 
 		}
-
-		if (m_AttackTime > 1.0)
-		{
-			bEnemyColl = Check_EnemySphereColl(L"Boss_Blue");
-		}
-
-		if (bColl && m_AttackTime > 1.0)
+		
+		if (bColl && m_AttackTime > 0.5)
 		{
 			m_pTransform->m_bAttackState = TRUE;
 
@@ -967,9 +987,13 @@ HRESULT CBlue::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_NaviMesh", pComponent);
 
 	//Collider
-	pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev, 200.f, _vec3(0.f, 0.f, 0.f));
+	pComponent = m_pCollider_Left = ENGINE::CCollider::Create(m_pGraphicDev, 200.f, _vec3(0.f, 0.f, 0.f));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider", pComponent);
+	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider_Left", pComponent);
+
+	pComponent = m_pCollider_Right = ENGINE::CCollider::Create(m_pGraphicDev, 200.f, _vec3(0.f, 0.f, 0.f));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider_Right", pComponent);
 
 	//Sphere Collider
 	pComponent = m_pSphereHead = ENGINE::CSphereColl::Create(m_pGraphicDev, (_RADIUS - 50.f), 10);

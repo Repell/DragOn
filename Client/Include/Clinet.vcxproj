@@ -176,6 +176,7 @@
     <ClInclude Include="..\Codes\Dragon_Fireball.h" />
     <ClInclude Include="..\Codes\Dragon_GroundFire.h" />
     <ClInclude Include="..\Codes\Effect_FireBall.h" />
+    <ClInclude Include="..\Codes\Effect_Kaboom.h" />
     <ClInclude Include="..\Codes\Effect_KeroFire.h" />
     <ClInclude Include="..\Codes\Effect_Tex.h" />
     <ClInclude Include="..\Codes\Effect_Torch.h" />
@@ -223,6 +224,7 @@
     <ClCompile Include="..\Codes\Dragon_Fireball.cpp" />
     <ClCompile Include="..\Codes\Dragon_GroundFire.cpp" />
     <ClCompile Include="..\Codes\Effect_FireBall.cpp" />
+    <ClCompile Include="..\Codes\Effect_Kaboom.cpp" />
     <ClCompile Include="..\Codes\Effect_KeroFire.cpp" />
     <ClCompile Include="..\Codes\Effect_Tex.cpp" />
     <ClCompile Include="..\Codes\Effect_Torch.cpp" />

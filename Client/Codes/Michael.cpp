@@ -47,9 +47,9 @@ HRESULT CMichael::Ready_Object(_vec3 vPos)
 	m_pMesh->Set_AnimationSet(11);
 
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = vPos;
-	m_pTransform->m_vScale = { 0.01f, 0.01f, 0.01f };
-	m_pSphereColl->Set_Scale(0.01f);
-	m_pCollider->Set_Scale(0.01f);
+	m_pTransform->m_vScale = { 0.006f, 0.006f, 0.006f };
+	m_pSphereColl->Set_Scale(0.006f);
+	m_pCollider->Set_Scale(0.006f);
 
 	m_pAi_Transform->m_vInfo[ENGINE::INFO_POS] = m_pAi_Transform->m_vStartPos + (m_pAi_Transform->Get_vLookDir() * 20.f);
 	return S_OK;
@@ -57,7 +57,11 @@ HRESULT CMichael::Ready_Object(_vec3 vPos)
 
 HRESULT CMichael::Late_Init()
 {
-
+	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
+	list<CGameObject*> pList =  pLayer->Get_MapObject(L"Player");
+	m_pPlayer = dynamic_cast<CNewPlayer*>(pList.front());
+	
+	NULL_CHECK_RETURN(m_pPlayer, E_FAIL);
 
 	return S_OK;
 }
@@ -70,8 +74,8 @@ _int CMichael::Update_Object(const _double& TimeDelta)
 	if (!m_bAI)
 	{
 		MouseFunc();
-		if (m_pTransform->bCamTarget)
-			Key_check(TimeDelta);
+
+		Key_check(TimeDelta);
 
 		Set_Behavior_Progress(TimeDelta);
 		
@@ -88,15 +92,15 @@ _int CMichael::Update_Object(const _double& TimeDelta)
 
 		Ai_State();
 
-		if (m_AiFireTime > 5.0)
+		if (m_AiFireTime > 2.5)
 			Ai_Fire();
 
 	}
-	
-	ENGINE::CGameObject::Update_Object(TimeDelta);
 	////////////////////////		▼조건 함수
 	RelicColl_Check(TimeDelta);
 
+	if(!m_bAI)
+		Set_AdvanceCamera();
 
 	//if (m_pSphereColl->Get_iHp() <= 0)
 	//	return END_EVENT;
@@ -118,10 +122,20 @@ void CMichael::Late_Update_Object()
 	
 	if (ENGINE::Key_Down(ENGINE::dwKEY_F3))
 	{
-		if(!m_bAI)
+		if (!m_bAI)
+		{
 			m_bAI = TRUE;
+			m_pPlayer->Set_PlayerActive(TRUE);
+			m_pAdvance->Set_ActiveCamera(FALSE);
+		}
 		else
+		{
 			m_bAI = FALSE;
+			m_pPlayer->Set_PlayerActive(FALSE);
+			m_pAdvance->Set_ActiveCamera(TRUE);
+		}
+
+		m_pTransform->m_bAi = m_bAI;
 	}
 
 }
@@ -163,16 +177,16 @@ void CMichael::Render_Object()
 	m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pAi_Transform->m_matWorld);
 	m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld, 1.5f);
 
-	_tchar szStr[MAX_PATH] = L"";
+	//_tchar szStr[MAX_PATH] = L"";
 
-	swprintf_s(szStr, L"PlayerAngle | X : %3.2f, Y : %3.2f,  Z : %3.2f ", m_pTransform->m_vAngle.x, m_pTransform->m_vAngle.y, m_pTransform->m_vAngle.z);
-	ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 30.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
+	//swprintf_s(szStr, L"PlayerAngle | X : %3.2f, Y : %3.2f,  Z : %3.2f ", m_pTransform->m_vAngle.x, m_pTransform->m_vAngle.y, m_pTransform->m_vAngle.z);
+	//ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 30.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 
-	swprintf_s(szStr, L"PlayerPos | X : %3.2f, Y : %3.2f,  Z : %3.2f ", m_pTransform->m_vInfo[ENGINE::INFO_POS].x, m_pTransform->m_vInfo[ENGINE::INFO_POS].y, m_pTransform->m_vInfo[ENGINE::INFO_POS].z);
-	ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 50.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
+	//swprintf_s(szStr, L"PlayerPos | X : %3.2f, Y : %3.2f,  Z : %3.2f ", m_pTransform->m_vInfo[ENGINE::INFO_POS].x, m_pTransform->m_vInfo[ENGINE::INFO_POS].y, m_pTransform->m_vInfo[ENGINE::INFO_POS].z);
+	//ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 50.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 
-	swprintf_s(szStr, L"FireGauge : %4.2f ", m_fFireGauge);
-	ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 70.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
+	//swprintf_s(szStr, L"FireGauge : %4.2f ", m_fFireGauge);
+	//ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 70.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 
 
 }
@@ -214,8 +228,8 @@ _bool CMichael::Key_check(const _double & TimeDelta)
 		_vec3 vFirePos = {};
 		memcpy(vFirePos, m_pBoneMatrix.m[3], sizeof(_vec3));
 		ENGINE::UNITINFO tInfo =
-		{ FALSE, vFirePos, _vec3(0.1f, 0.1f, 0.1f),m_pTransform->m_vAngle, m_pTransform->Get_vInfoPos(ENGINE::INFO_LOOK),  30.f };
-		CGameObject* pObject = CDragon_Fireball::Create(m_pGraphicDev, tInfo);
+		{ FALSE, vFirePos, _vec3(0.1f, 0.1f, 0.1f),m_pTransform->m_vAngle, m_pTransform->Get_vInfoPos(ENGINE::INFO_LOOK),  15.f };
+		CGameObject* pObject = CDragon_GroundFire::Create(m_pGraphicDev, tInfo);
 		ENGINE::Get_Management()->Add_GameObject(ENGINE::CLayer::OBJECT, L"Dragon_Fireball", pObject);
 	}
 
@@ -324,6 +338,18 @@ _bool CMichael::RelicColl_Check(const _double& TimeDelta)
 	}
 
 	return FALSE;
+}
+
+void CMichael::Set_AdvanceCamera()
+{
+	_vec3 vEye = vEye.Reverse(&m_pTransform->Get_vLookRealDir());
+
+	vEye *= -15.f;
+	vEye += m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
+	
+	m_pAdvance->Set_Transform_Pos(ENGINE::INFO_POS, &vEye);
+
+	m_pAdvance->Set_PlayerTransform(m_pTransform);
 }
 
 void CMichael::Ai_State()
@@ -459,6 +485,14 @@ HRESULT CMichael::Add_Component()
 	pComponent->AddRef();
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Renderer", pComponent);
+
+	//AdvanceCamera
+	pComponent = m_pAdvance = ENGINE::CAdvanceCamera::Create(m_pGraphicDev, m_pTransform);
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_AdvCam", pComponent);
+	m_pAdvance->Get_Transform()->m_vScale = { 0.01f, 0.01f, 0.01f };
+	m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] = { 128.f, 32.f, 127.f};
+	m_pAdvance->Set_ActiveCamera(TRUE);
 
 	//Collider
 	pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev, 80.f, _vec3(0.f, 1.5f, 0.f));

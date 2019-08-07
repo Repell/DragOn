@@ -7,6 +7,7 @@
 #define _ANGLE 60.f
 #define  _RADIUS 75.f
 #define  _CAMDIST 3.f
+#define _SCALE 0.01f
 //#define _GRAVITY 4.8f
 //#define _JUMPPOWER 1.25f
 #define  _IDLE 110
@@ -27,6 +28,7 @@ CNewPlayer::CNewPlayer(LPDIRECT3DDEVICE9 pDevice)
 	m_fJumpPower = 0.36f;
 	m_Delay = 0.0;
 	ZeroMemory(&m_vMoveDir, sizeof(_vec3));
+	m_bPlayerActive = FALSE;
 }
 
 CNewPlayer::~CNewPlayer()
@@ -67,8 +69,8 @@ HRESULT CNewPlayer::Add_Component()
 	pComponent = m_pTransform = ENGINE::CTransform::Create(_vec3(-1.f, 0.f, 0.f));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_DYNAMIC].emplace(L"Com_Transform", pComponent);
-	m_pTransform->m_vScale = { 0.006f, 0.006f, 0.006f };
-	m_pTransform->m_vInfo[ENGINE::INFO_POS] = { 50.f, 0.1f, 8.f };
+	m_pTransform->m_vScale = { _SCALE, _SCALE, _SCALE };
+	m_pTransform->m_vInfo[ENGINE::INFO_POS] = { 128.f, 0.1f, 30.f };
 
 	//Renderer Component
 	pComponent = m_pRenderer = ENGINE::Get_Renderer();
@@ -85,15 +87,16 @@ HRESULT CNewPlayer::Add_Component()
 	pComponent = m_pSphereColl = ENGINE::CSphereColl::Create(m_pGraphicDev, _RADIUS, 10);
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_SphereColl", pComponent);
-	m_pSphereColl->Set_Scale(0.006f);
-	m_pSphereColl->Get_CollPos() = { 50.f, 0.1f, 8.f };
+	m_pSphereColl->Set_Scale(_SCALE);
+	m_pSphereColl->Get_CollPos() = { 128.f, 0.1f, 30.f };
 
 	//AdvanceCamera
 	pComponent = m_pAdvance = ENGINE::CAdvanceCamera::Create(m_pGraphicDev, m_pTransform);
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_AdvCam", pComponent);
-	m_pAdvance->Get_Transform()->m_vScale = { 0.006f, 0.006f, 0.006f };
-	m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] = { 50.f, 0.1f, 11.f };
+	m_pAdvance->Get_Transform()->m_vScale = { _SCALE, _SCALE, _SCALE };
+	m_pAdvance->Get_Transform()->m_vInfo[ENGINE::INFO_POS] = { 128.f, 0.1f, 33.f };
+	m_pAdvance->Set_ActiveCamera(FALSE);
 
 	//Shader 
 	pComponent = m_pShader = dynamic_cast<ENGINE::CShader*>(ENGINE::Clone(L"Shader_Transform"));
@@ -101,7 +104,7 @@ HRESULT CNewPlayer::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	ENGINE::UNITINFO tInfo =
-	{ TRUE, _vec3(0.f, 0.f, -90.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(90.f, 20.f, 20.f), _vec3(0.f, 0.f, 0.f), 50.f };
+	{ TRUE, _vec3(0.f, 0.f, -80.f), _vec3{ _SCALE, _SCALE, _SCALE }, _vec3(90.f, 20.f, 20.f), _vec3(0.f, 0.f, 0.f), 50.f };
 	pComponent = m_pWeapon = ENGINE::CWeapon::Create(m_pGraphicDev, m_pTransform, tInfo, L"Mesh_Sword");
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Weapon", pComponent);
@@ -522,14 +525,18 @@ _int CNewPlayer::Update_Object(const _double & TimeDelta)
 	CGameObject::Late_Init();
 	////////////////////////		▼최우선 함수
 
-	Set_Behavior_Progress(TimeDelta);
+	
+
+	if (m_bPlayerActive)
+		Set_Behavior_Progress(TimeDelta);
+
 
 	////////////////////////		▼조건 함수
 
 
 	//////////////////////// ▼상시 함수
-	m_pAdvance->Set_PlayerTransform(m_pTransform);
 	CGameObject::Update_Object(TimeDelta);
+	m_pAdvance->Set_PlayerTransform(m_pTransform);
 
 	m_TimeAccel = 1.5;
 	m_pMesh->Play_AnimationSet(TimeDelta * m_TimeAccel);
@@ -544,6 +551,11 @@ void CNewPlayer::Late_Update_Object()
 	CGameObject::Late_Update_Object();
 	//////////////////////
 	//Check_DirectionCollision(&_vec3(0.f, 0.f, 0.f));	//몬스터와 충돌 체크, 멤버 변수는 리버스 벡터 반환
+
+	if (m_bPlayerActive)
+		m_pAdvance->Set_ActiveCamera(TRUE);
+	else if (!m_bPlayerActive)
+		m_pAdvance->Set_ActiveCamera(FALSE);
 }
 
 void CNewPlayer::Render_Object()
@@ -567,7 +579,8 @@ void CNewPlayer::Render_Object()
 	///////////////////////////////////
 
 	//m_pNaviMesh->Render_NaviMesh();
-	m_pMesh->Render_Meshes();
+	if(m_bPlayerActive)
+		m_pMesh->Render_Meshes();
 
 	///////////////////////////////////
 	pEffect->EndPass();
@@ -1082,6 +1095,11 @@ HRESULT CNewPlayer::Set_AniIndex()
 	m_iKnockIdx[5] = 23;	//Fast Fall Up
 
 	return S_OK;
+}
+
+VOID CNewPlayer::Set_PlayerActive(_bool bActive)
+{
+	m_bPlayerActive = bActive;
 }
 
 CNewPlayer * CNewPlayer::Create(LPDIRECT3DDEVICE9 pGraphicDev)

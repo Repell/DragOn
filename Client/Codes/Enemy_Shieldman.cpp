@@ -4,6 +4,7 @@
 #include "Export_Function.h"
 
 #define _SPEED 1.5f
+#define _SCALE 0.01f
 #define _ANGLE 60.f
 #define  _RADIUS 100.f
 
@@ -59,8 +60,8 @@ HRESULT CEnemy_Shieldman::Ready_Object(_vec3 vPos)
 	Animate_FSM(_IDLE);
 
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = vPos;
-	m_pTransform->m_vScale = { 0.006f, 0.006f, 0.006f };
-	m_pSphereColl->Set_Scale(0.005f);
+	m_pTransform->m_vScale = { _SCALE, _SCALE, _SCALE };
+	m_pSphereColl->Set_Scale(_SCALE);
 
 	Set_Animation();
 
@@ -106,7 +107,7 @@ HRESULT CEnemy_Shieldman::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	ENGINE::UNITINFO tInfo =
-	{ FALSE, _vec3(0.f, 0.f, 50.f), _vec3{ 0.01f, 1.f, 1.f }, _vec3(0.f, -90.f, 180.f), _vec3(0.f, 0.f, 0.f), 60.f};
+	{ FALSE, _vec3(0.f, 0.f, 50.f), _vec3{ _SCALE, 1.f, 1.f }, _vec3(0.f, -90.f, 180.f), _vec3(0.f, 0.f, 0.f), 30.f};
 	pComponent = m_pWeapon = ENGINE::CWeapon::Create(m_pGraphicDev, m_pTransform, tInfo, L"Mesh_Enemy_Shield");
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Weapon", pComponent);

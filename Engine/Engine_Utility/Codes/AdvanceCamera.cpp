@@ -4,6 +4,7 @@
 USING(ENGINE)
 
 CAdvanceCamera::CAdvanceCamera(LPDIRECT3DDEVICE9 pDevice)
+	: m_bActivce(TRUE)
 {
 	m_pGraphicDev = pDevice;
 	m_pGraphicDev->AddRef();
@@ -16,6 +17,11 @@ CAdvanceCamera::CAdvanceCamera(LPDIRECT3DDEVICE9 pDevice)
 	m_vUp = { 0.f, 1.f, 0.f };
 	m_fCamDist = 3.f;
 
+}
+
+void CAdvanceCamera::Set_ActiveCamera(_bool bActive)
+{
+	m_bActivce = bActive;
 }
 
 void CAdvanceCamera::Set_Transform_Pos(ENGINE::INFO eInfo, const _vec3* vPos)
@@ -86,12 +92,16 @@ _int CAdvanceCamera::Update_Component(const _double & TimeDelta)
 
 	//Update Camera
 	//////////////////////////////////////
-	m_vAt = m_pTarget->Get_vInfoPos(ENGINE::INFO_POS);
-	m_vAt.y += 1.f;
-	m_vEye = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
-	m_vEye.y += 2.f;
+	if (m_bActivce)
+	{
+		m_vAt = m_pTarget->Get_vInfoPos(ENGINE::INFO_POS);
+		m_vAt.y += 1.f;
+		m_vEye = m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
+		m_vEye.y += 2.f;
 
-	Make_ViewMatrix(&m_vEye, &m_vAt, &m_vUp);
+		Make_ViewMatrix(&m_vEye, &m_vAt, &m_vUp);
+
+	}
 	
 	return NO_EVENT;
 }

@@ -16,6 +16,7 @@ CTransform::CTransform()
 	bRotate = FALSE;
 	m_bDead = FALSE;
 	m_bWeak = FALSE;
+	m_bAi = FALSE;
 	m_fRotate = 0;
 }
 
@@ -335,6 +336,11 @@ _bool CTransform::Check_TargetFront()
 		m_bFront = FALSE;
 
 	return m_bFront;
+}
+
+_bool CTransform::Check_Ai()
+{
+	return m_bAi;
 }
 
 void CTransform::Rotation_AngleY(const _double & TimeDelta)

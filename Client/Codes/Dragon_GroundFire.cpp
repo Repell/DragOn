@@ -3,13 +3,7 @@
 
 #include "Export_Function.h"
 
-#define	_ATTACK_UP_END						3
-#define	_ATTACK_DOWN_END				5
-#define	_ATTACK_MID_END					7
-#define _QUAKEEND								10
-
-
-#define _SPEED 100.f
+#define _SPEED 3000.f
 #define  _RADIUS 30.f
 
 CDragon_GroundFire::CDragon_GroundFire(LPDIRECT3DDEVICE9 pDevice)
@@ -51,10 +45,6 @@ HRESULT CDragon_GroundFire::Add_Component()
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
-	//m_pTarget = dynamic_cast<ENGINE::CTransform*>
-	//	(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Boss_Blue", L"Com_Transform", ENGINE::COMP_DYNAMIC));
-	//NULL_CHECK_RETURN(m_pTarget, E_FAIL);
-
 	return S_OK;
 }
 
@@ -62,9 +52,8 @@ HRESULT CDragon_GroundFire::Ready_Object(ENGINE::UNITINFO tInfo)
 {
 	m_tInfo = tInfo;
 	Add_Component();
-	m_pSphereColl->Set_Scale(0.1f);
-	//m_pTransform->Fix_TargetLook(m_pTarget, 30.f);
-
+	m_pSphereColl->Set_Scale(0.01f);
+	
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = tInfo.m_vPos;
 	m_pTransform->m_vScale = tInfo.m_vScale;
 	m_pTransform->m_vAngle = tInfo.m_vAngle;
@@ -79,19 +68,17 @@ _int CDragon_GroundFire::Update_Object(const _double & TimeDelta)
 	
 	CGameObject::Update_Object(TimeDelta);
 
-	//Fly Arrow
+	//Fly Fireball
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_tInfo.m_vDir * _SPEED * -TimeDelta;
 
-	//Target Check
-	//if (Check_FireballColl() || m_LifeTime > 10.f)
-	//	return END_EVENT;
-
-	if (m_pTransform->m_vInfo[ENGINE::INFO_POS].y < 1.5f)
+	if(Check_EnemyGroup() == END_EVENT)
 	{
-		CGameObject* pObject = CEffect_Tex::Create(m_pGraphicDev, m_pTransform->m_vInfo[ENGINE::INFO_POS], 1.f);
+ 		CGameObject* pObject = CEffect_Kaboom::Create(m_pGraphicDev, m_pTransform->m_vInfo[ENGINE::INFO_POS], 1.f);
 		ENGINE::Get_Management()->Add_GameObject(ENGINE::CLayer::OBJECT, L"kaboom", pObject);
+
 		return END_EVENT;
 	}
+
 
 	if (m_LifeTime > 10.f)
 		return END_EVENT;
@@ -126,7 +113,6 @@ void CDragon_GroundFire::Render_Object()
 	ENGINE::Safe_Release(pEffect);
 
 	////////////////////////////////////////	Shader End
-
 	m_pSphereColl->Render_SphereColl(&m_pTransform->m_matWorld);
 
 	//_tchar szStr[MAX_PATH] = L"";
@@ -135,80 +121,54 @@ void CDragon_GroundFire::Render_Object()
 	//ENGINE::Render_Font(L"Sp", szStr, &_vec2(10.f, 100.f), D3DXCOLOR(1.f, 1.f, 1.f, 1.f));
 }
 
-_bool CDragon_GroundFire::Check_FireballColl()
+_bool CDragon_GroundFire::Check_FireballColl(const _tchar * pObjTag)
 {
 	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
 
-	for (auto pList : pLayer->Get_MapObject(L"Boss_Blue"))
+	if (pLayer->Get_MapObject(pObjTag).empty())
+		return FALSE;
+
+	for (auto pList : pLayer->Get_MapObject(pObjTag))
 	{
-		
 		ENGINE::CTransform* pTrans = dynamic_cast<ENGINE::CTransform*>
 			(pList->Get_Component(L"Com_Transform", ENGINE::COMP_DYNAMIC));
 
 		if (pTrans->Get_Dead())
 			continue;
 
-		ENGINE::CSphereColl* pTargetHead = dynamic_cast<ENGINE::CSphereColl*>
-			(pList->Get_Component(L"Com_SphereHead", ENGINE::COMP_STATIC));
+		ENGINE::CSphereColl* pTarget = dynamic_cast<ENGINE::CSphereColl*>
+			(pList->Get_Component(L"Com_SphereColl", ENGINE::COMP_STATIC));
 
-		ENGINE::CSphereColl* pTargetBody = dynamic_cast<ENGINE::CSphereColl*>
-			(pList->Get_Component(L"Com_SphereBody", ENGINE::COMP_STATIC));
-
-		_uint attIdx = pTrans->m_iCurAniIndex;
-
-		if (m_pSphereColl->Check_ComponentColl(pTargetBody) && !pTrans->m_bWeak)
+		if (m_pSphereColl->Check_ComponentColl(pTarget))
 		{
-			switch (attIdx)
-			{
-			case _ATTACK_UP_END:
-				//ÀÌÆåÆ® ÆãÆã
-				//Ã¼·Â ¶³¾îÁü
-				pTargetBody->m_bHit = TRUE;
-				pTargetBody->Get_iHp(2);
-				break;
 
-			case _ATTACK_DOWN_END:
-				//ÀÌÆåÆ® ÆãÆã
-				//Ã¼·Â ¶³¾îÁü
-				pTargetBody->m_bHit = TRUE;
-				pTargetBody->Get_iHp(2);
-				break;
-
-			case _ATTACK_MID_END:
-				//ÀÌÆåÆ® ÆãÆã
-				//Ã¼·Â ¶³¾îÁü
-				pTargetBody->m_bHit = TRUE;
-				pTargetBody->Get_iHp(2);
-				break;
-				
-			case _QUAKEEND:
-				//ÀÌÆåÆ® ÆãÆã
-				//Ã¼·Â ¶³¾îÁü
-				pTargetBody->m_bHit = TRUE;
-				pTargetBody->Get_iHp(2);
-				break;
-			}
-
-			if (pTargetBody->Get_iHp() <= 0)
-				pTrans->m_bWeak = TRUE;
-
-			CGameObject* pObject = CEffect_Tex::Create(m_pGraphicDev, m_pTransform->m_vInfo[ENGINE::INFO_POS], 1.f);
-			ENGINE::Get_Management()->Add_GameObject(ENGINE::CLayer::OBJECT, L"kaboom", pObject);
 		
 			return TRUE;
 		}
-
-		if (m_pSphereColl->Check_ComponentColl(pTargetHead) && pTrans->m_bWeak)
-		{
-			if (pTargetHead->Get_iHp() != 0)
-				pTargetHead->Get_iHp(2);
-		
-			return TRUE;
-		}
-
 	}
 
 	return FALSE;
+}
+
+_int CDragon_GroundFire::Check_EnemyGroup()
+{
+	if (Check_FireballColl(L"Troll"))
+		return END_EVENT;
+	if (Check_FireballColl(L"Enemy_Swordman"))
+		return END_EVENT;
+	if (Check_FireballColl(L"Enemy_Spearman"))
+		return END_EVENT;
+	if (Check_FireballColl(L"Enemy_Shieldman"))
+		return END_EVENT;
+	if (Check_FireballColl(L"Enemy_Bowman"))
+		return END_EVENT;
+	if (Check_FireballColl(L"Boss_Keroberos"))
+		return END_EVENT;
+
+	if (m_pTransform->m_vInfo[ENGINE::INFO_POS].y < 0.01f)
+		return END_EVENT;
+
+	return NO_EVENT;
 }
 
 HRESULT CDragon_GroundFire::SetUp_ConstantTable(LPD3DXEFFECT pEffect)

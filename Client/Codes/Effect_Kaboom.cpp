@@ -1,111 +1,68 @@
 #include "stdafx.h"
-#include "Effect_FireBall.h"
+#include "Effect_Kaboom.h"
 #include "Export_Utility.h"
 
-CEffect_Fireball::CEffect_Fireball(LPDIRECT3DDEVICE9 pDevice)
+CEffect_Kaboom::CEffect_Kaboom(LPDIRECT3DDEVICE9 pDevice)
 	: CGameObject(pDevice),
-	m_Frame(0.f), m_MaxFrame(15.f), m_LifeTime(0.f), m_Time(0.f), m_fScale(1.f), m_bMove(FALSE)
+	m_Frame(0.f), m_MaxFrame(90.f), m_LifeTime(0.f), m_Time(0.f), m_bTwice(FALSE)
 {
 }
 
-CEffect_Fireball::~CEffect_Fireball()
+CEffect_Kaboom::~CEffect_Kaboom()
 {
 }
 
-void CEffect_Fireball::Set_Pos(_vec3 vPos)
+void CEffect_Kaboom::Set_Pos(_vec3 vPos)
 {
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = vPos;
 	m_pTransform->m_vInfo[ENGINE::INFO_POS].y += 1.f;
 }
 
-void CEffect_Fireball::Set_Scale(_vec3 vScale)
-{
-	m_pTransform->m_vScale = vScale;
-	constScale = vScale;
-}
-
-void CEffect_Fireball::Set_TotalScale(_float fScale)
-{
-	m_fScale = fScale;
-}
-
-void CEffect_Fireball::Set_LifeTime(_double fLife, _double fDelay)
+void CEffect_Kaboom::Set_LifeTime(_double fLife, _double fDelay)
 {
 	m_LifeTime = fLife;
 	m_Time -= fDelay;
 }
 
-HRESULT CEffect_Fireball::Ready_Object()
+HRESULT CEffect_Kaboom::Ready_Object()
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
-	m_pTransform->m_vScale = { 1.f, 1.f, 1.f };
+	m_pTransform->m_vScale = { 5.f, 5.f, 5.f };
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = { 0.f, 0.f, 0.f };
-
+	m_pCollider->Set_Scale(0.1f);
+	
 	return S_OK;
 }
 
-HRESULT CEffect_Fireball::Late_Init()
+_int CEffect_Kaboom::Update_Object(const _double& TimeDelta)
 {
-	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::ENVIRONMENT);
-
-	if (pLayer->Get_MapObject(L"Mesh_Relic").empty())
-		return E_FAIL;
-
-	list<CGameObject*> pList = pLayer->Get_MapObject(L"Mesh_Relic");
-
-	ENGINE::CTransform* pTrans = dynamic_cast<ENGINE::CTransform*>
-		(pList.front()->Get_Component(L"Com_Transform", ENGINE::COMP_DYNAMIC));
-	NULL_CHECK_RETURN(pTrans, E_FAIL);
-
-	ENGINE::CSphereColl* pSphere = dynamic_cast<ENGINE::CSphereColl*>
-		(pList.front()->Get_Component(L"Com_SphereColl", ENGINE::COMP_STATIC));
-	NULL_CHECK_RETURN(pSphere, E_FAIL);
-
-	m_pTarget = pTrans;
-	m_pTargetSphere = pSphere;
-
-	_vec3 vPos = m_pTarget->m_vInfo[ENGINE::INFO_POS];
-	vPos.y += 20.f;
-	m_vFireDir = vPos  - m_pTransform->m_vInfo[ENGINE::INFO_POS];
-	D3DXVec3Normalize(&m_vFireDir, &m_vFireDir);
-
-	return S_OK;
-}
-
-
-
-_int CEffect_Fireball::Update_Object(const _double& TimeDelta)
-{
-	ENGINE::CGameObject::Late_Init();
+	//ENGINE::CGameObject::Late_Init();
 	m_Time += TimeDelta;
-	m_pTransform->m_vScale = constScale * m_fScale;
 	ENGINE::CGameObject::Update_Object(TimeDelta);
+	m_pCollider->Set_Collider(&m_pTransform->m_matWorld);
 
 	if (m_Time > m_LifeTime)
 		return END_EVENT;
 
-	//if (m_pTargetSphere->Get_iHp() >= 300 && m_bMove)
-	//	return END_EVENT;
-
 	Update_Frame(TimeDelta);
 	Update_Billboard();
+
+	if(!m_bTwice)
+		Check_EnemyGroup();
 
 	Compute_ViewZ(&m_pTransform->m_vInfo[ENGINE::INFO_POS]);
 	m_pRenderer->Add_RenderGroup(ENGINE::RENDER_ALPHA, this);
 
-	if (m_bMove && m_Time > 0.0)
-		return Fire_Fireball(TimeDelta);
-
 	return NO_EVENT;
 }
 
-void CEffect_Fireball::Late_Update_Object()
+void CEffect_Kaboom::Late_Update_Object()
 {
 	ENGINE::CGameObject::Late_Update_Object();
 }
 
-void CEffect_Fireball::Render_Object()
+void CEffect_Kaboom::Render_Object()
 {
 	//Render_Set();
 
@@ -117,10 +74,12 @@ void CEffect_Fireball::Render_Object()
 		m_pBuffer->Render_Buffer();
 	}
 
+	//m_pCollider->Render_Collider(ENGINE::COL_TRUE, &m_pTransform->m_matWorld);
+
 	//Render_ReSet();
 }
 
-HRESULT CEffect_Fireball::Add_Component()
+HRESULT CEffect_Kaboom::Add_Component()
 {
 	ENGINE::CComponent* pComponent = nullptr;
 	/////////INSERT COMPONENT/////////
@@ -133,7 +92,7 @@ HRESULT CEffect_Fireball::Add_Component()
 
 	//Texture Componet
 	pComponent = m_pTexture = dynamic_cast<ENGINE::CTexture*>
-		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Texture_Fireball"));
+		(ENGINE::Clone_Resources(RESOURCE_LOGO, L"Texture_Explosion"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Texture", pComponent);
 
@@ -141,6 +100,11 @@ HRESULT CEffect_Fireball::Add_Component()
 	pComponent = m_pTransform = ENGINE::CTransform::Create(_vec3(0.f, 0.f, 1.f));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Transform", pComponent);
+
+	//Collider Component
+	pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev, 30.f, m_pTransform->Get_vInfoPos(ENGINE::INFO_POS));
+	NULL_CHECK_RETURN(m_pCollider, E_FAIL);
+	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider", pComponent);
 
 	//Renderer Component
 	pComponent = m_pRenderer = ENGINE::Get_Renderer();
@@ -152,16 +116,16 @@ HRESULT CEffect_Fireball::Add_Component()
 	return S_OK;
 }
 
-void CEffect_Fireball::Update_Frame(const _double& TimeDelta)
+void CEffect_Kaboom::Update_Frame(const _double & TimeDelta)
 {
-	if (m_Time > 0.0)
+	if (m_Time > 0.f)
 		m_Frame += m_MaxFrame * TimeDelta;
 
 	if (m_Frame > m_MaxFrame)
-		m_Frame = 0.0;
+		m_Frame = 0.f;
 }
 
-void CEffect_Fireball::Update_Billboard()
+void CEffect_Kaboom::Update_Billboard()
 {
 	///////////////////////////////////////
 	_matrix		matView, matBill, matWorld;
@@ -181,31 +145,60 @@ void CEffect_Fireball::Update_Billboard()
 	///////////////////////////////////////
 }
 
-_int CEffect_Fireball::Fire_Fireball(const _double& TimeDelta)
+void CEffect_Kaboom::Check_EnemyGroup()
 {
-	_float fDist = m_pTransform->Get_TargetDistance(m_pTarget);
-
-	if (fDist> 20.f)
-	{
-		m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_vFireDir * TimeDelta * 25.f;
-		return NO_EVENT;
-	}
-	else if (fDist < 20.f)
-	{
-		if(m_pTargetSphere->Get_iHp() < 300)
-			m_pTargetSphere->m_iHp += 100;
-		return END_EVENT;
-	}
+	Check_KaboomColl(L"Player");
+	Check_KaboomColl(L"Troll");
+	Check_KaboomColl(L"Enemy_Swordman");
+	Check_KaboomColl(L"Enemy_Spearman");
+	Check_KaboomColl(L"Enemy_Shieldman");
+	Check_KaboomColl(L"Enemy_Bowman");
+	Check_KaboomColl(L"Boss_Keroberos");
+	
+	m_bTwice = TRUE;
 }
 
-void CEffect_Fireball::Render_Set()
+void CEffect_Kaboom::Check_KaboomColl(const _tchar * pObjTag)
+{
+	ENGINE::CLayer* pLayer = ENGINE::Get_Management()->Get_Layer(ENGINE::CLayer::OBJECT);
+
+	if (pLayer->Get_MapObject(pObjTag).empty())
+		return;
+	for (auto pList : pLayer->Get_MapObject(pObjTag))
+	{
+		ENGINE::CTransform* pTrans = dynamic_cast<ENGINE::CTransform*>
+			(pList->Get_Component(L"Com_Transform", ENGINE::COMP_DYNAMIC));
+
+		if (pTrans->Get_Dead())
+			continue;
+
+		ENGINE::CSphereColl* pTarget = dynamic_cast<ENGINE::CSphereColl*>
+			(pList->Get_Component(L"Com_SphereColl", ENGINE::COMP_STATIC));
+
+		if (m_pCollider->Check_ComponentColl(pTarget))
+		{
+			pTarget->m_bHit = TRUE;
+			pTarget->m_bKnockBack = TRUE;
+
+			_vec3 vKnockDir = pTarget->Get_CollPos() - m_pTransform->Get_vInfoPos(ENGINE::INFO_POS);
+			vKnockDir.y = 0.f;
+			D3DXVec3Normalize(&vKnockDir, &vKnockDir);
+			pTarget->Set_KnockBackDist(TRUE, vKnockDir);
+			pTarget->Get_iHp(5);
+		}
+	}
+
+}
+
+
+void CEffect_Kaboom::Render_Set()
 {
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
 	//Alpha Test Begin
 	//m_pGraphicDev->SetRenderState(D3DRS_ALPHAREF, 0x000000ff);
 	//m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	//m_pGraphicDev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
-
+	
 	//Alpha Blend
 	m_pGraphicDev->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	m_pGraphicDev->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
@@ -218,11 +211,11 @@ void CEffect_Fireball::Render_Set()
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &m_pTransform->m_matWorld);
 }
 
-void CEffect_Fireball::Render_ReSet()
+void CEffect_Kaboom::Render_ReSet()
 {
 	//Alpha Test End
 	//m_pGraphicDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-
+	
 	//Alpha Blend End
 	m_pGraphicDev->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 
@@ -232,9 +225,9 @@ void CEffect_Fireball::Render_ReSet()
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
-CEffect_Fireball * CEffect_Fireball::Create(LPDIRECT3DDEVICE9 pDevice)
+CEffect_Kaboom * CEffect_Kaboom::Create(LPDIRECT3DDEVICE9 pDevice)
 {
-	CEffect_Fireball* pInstance = new CEffect_Fireball(pDevice);
+	CEffect_Kaboom* pInstance = new CEffect_Kaboom(pDevice);
 
 	if (FAILED(pInstance->Ready_Object()))
 		ENGINE::Safe_Release(pInstance);
@@ -242,21 +235,20 @@ CEffect_Fireball * CEffect_Fireball::Create(LPDIRECT3DDEVICE9 pDevice)
 	return pInstance;
 }
 
-CEffect_Fireball * CEffect_Fireball::Create(LPDIRECT3DDEVICE9 pDevice, _vec3 vPos, _vec3 vScale, _double fLife, _double fDelay)
+CEffect_Kaboom * CEffect_Kaboom::Create(LPDIRECT3DDEVICE9 pDevice, _vec3 vPos, _double fLife, _double fDelay)
 {
-	CEffect_Fireball* pInstance = new CEffect_Fireball(pDevice);
+	CEffect_Kaboom* pInstance = new CEffect_Kaboom(pDevice);
 
 	if (FAILED(pInstance->Ready_Object()))
 		ENGINE::Safe_Release(pInstance);
 
 	pInstance->Set_Pos(vPos);
 	pInstance->Set_LifeTime(fLife, fDelay);
-	pInstance->Set_Scale(vScale);
 
 	return pInstance;
 }
 
-void CEffect_Fireball::Free()
+void CEffect_Kaboom::Free()
 {
 	ENGINE::CGameObject::Free();
 }

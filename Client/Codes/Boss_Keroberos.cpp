@@ -6,7 +6,7 @@
 #define _SPEED 2.4f
 #define _ANGLE 60.f
 #define  _RADIUS 300.f
-#define  _SCALE 0.006f
+#define  _SCALE 0.01f
 
 //STATE DEFINE
 #define _IDLE								0

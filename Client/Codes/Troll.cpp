@@ -4,6 +4,7 @@
 #include "Export_Function.h"
 
 #define _SPEED 1.4f
+#define _SCALE 0.01f
 #define _ANGLE 60.f
 #define  _RADIUS 140.f
 
@@ -74,10 +75,10 @@ HRESULT CTroll::Ready_Object(_vec3 vPos)
 HRESULT CTroll::Late_Init()
 {
 	//m_pTransform->m_vAngle.y = 180.f;
-	m_pTransform->m_vScale = { 0.008f, 0.008f, 0.008f };
+	m_pTransform->m_vScale = { _SCALE, _SCALE, _SCALE };
 	//m_pTransform->m_vInfo[ENGINE::INFO_POS] = { 40.f, 0.1f, 3.f };
-	m_pSphereColl->Set_Scale(0.007f);
-	m_pCollider->Set_Scale(0.007f);
+	m_pSphereColl->Set_Scale(_SCALE);
+	m_pCollider->Set_Scale(_SCALE);
 
 	m_pTargetTransform = dynamic_cast<ENGINE::CTransform*>
 		(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Player", L"Com_Transform", ENGINE::COMP_DYNAMIC));
@@ -487,7 +488,6 @@ VOID CTroll::State_Attack()
 {
 	_bool bColl = FALSE;
 
-	
 
 	if (m_fDist < 2.25f && m_iCurAniSet == _CHASE_WALK || m_iCurAniSet == _IDLE) // 거리가 됐네 공격
 	{
@@ -617,12 +617,12 @@ HRESULT CTroll::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_NaviMesh", pComponent);
 
 	//Collider
-	pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev, 100.f, _vec3(0.f, 0.f, 0.f));
+	pComponent = m_pCollider = ENGINE::CCollider::Create(m_pGraphicDev, 80.f, _vec3(0.f, 0.f, 0.f));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Collider", pComponent);
 
 	//Sphere Collider
-	pComponent = m_pSphereColl = ENGINE::CSphereColl::Create(m_pGraphicDev, _RADIUS, 20);
+	pComponent = m_pSphereColl = ENGINE::CSphereColl::Create(m_pGraphicDev, _RADIUS, 30);
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_SphereColl", pComponent);
 

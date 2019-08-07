@@ -75,24 +75,23 @@ HRESULT CBossStage::Add_GameObject_Layer()
 	ENGINE::CGameObject* pObject = nullptr;
 	////////////INSERT GAME OBJECT////////////
 
-	//Normal
-
-	//pObject = CNewPlayer::Create(m_pGraphicDev);
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Player", pObject);
+	//Sword Player
+	pObject = CNewPlayer::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Player", pObject);
 
 	//Rider
 	pObject = CMichael::Create(m_pGraphicDev, _vec3(128.f, 16.f, 128.f));
 	NULL_CHECK_RETURN(pObject, E_FAIL);
-	pObject_Layer->Add_GameObject(L"Player", pObject);
+	pObject_Layer->Add_GameObject(L"Player_Dragon", pObject);
 
 	pObject = CPlayer_Rider::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pObject, E_FAIL);
 	pObject_Layer->Add_GameObject(L"Player_Rider", pObject);
 
-	pObject = CSpear::Create(m_pGraphicDev, 0);
-	NULL_CHECK_RETURN(pObject, E_FAIL);
-	pObject_Layer->Add_GameObject(L"Spear", pObject);
+	//pObject = CSpear::Create(m_pGraphicDev, 0);
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"Spear", pObject);
 
 	//ETC
 	pObject = CEffect_Tex::Create(m_pGraphicDev);
@@ -105,72 +104,63 @@ HRESULT CBossStage::Add_GameObject_Layer()
 
 	//Monster
 
-	//pObject = CBlue::Create(m_pGraphicDev, _vec3(32.f, 0.f, 32.f));
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
+	pObject = CBlue::Create(m_pGraphicDev, _vec3(32.f, 0.f, 32.f));
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
 
-	//pObject = CBlue::Create(m_pGraphicDev, _vec3(224.f, 0.f, 32.f));
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
+	pObject = CBlue::Create(m_pGraphicDev, _vec3(224.f, 0.f, 32.f));
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
 
-	//pObject = CBlue::Create(m_pGraphicDev, _vec3(32.f, 0.f, 224.f));
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
+	pObject = CBlue::Create(m_pGraphicDev, _vec3(32.f, 0.f, 224.f));
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
 
-	//pObject = CBlue::Create(m_pGraphicDev, _vec3(224.f, 0.f, 224.f));
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
+	pObject = CBlue::Create(m_pGraphicDev, _vec3(224.f, 0.f, 224.f));
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Boss_Blue", pObject);
 
-	//pObject = CTroll::Create(m_pGraphicDev, _vec3(39.f, 0.1f, 12.f));
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Troll", pObject);
-	
-	//pObject = CEnemy_Swordman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 12.f));
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Enemy_Swordman", pObject);
+	pObject = CTroll::Create(m_pGraphicDev, _vec3(127.f, 0.1f, 12.f));
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Troll", pObject);
 
-	//pObject = CEnemy_Spearman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 5.f));
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Enemy_Spearman", pObject);
+	pObject = CTroll::Create(m_pGraphicDev, _vec3(133.f, 0.1f, 12.f));
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Troll", pObject);
+		
+	for (int i = 0; i < 5; ++i)
+	{
+		pObject = CEnemy_Swordman::Create(m_pGraphicDev, _vec3(128 + i, 0.1f, 16.f));
+		NULL_CHECK_RETURN(pObject, E_FAIL);
+		pObject_Layer->Add_GameObject(L"Enemy_Swordman", pObject);
+	}
 
-	//	pObject = CEnemy_Shieldman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, 4.f));
-	//	NULL_CHECK_RETURN(pObject, E_FAIL);
-	//	pObject_Layer->Add_GameObject(L"Enemy_Shieldman", pObject);
+	for (int i = 0; i < 5; ++i)
+	{
+		pObject = CEnemy_Spearman::Create(m_pGraphicDev, _vec3(128 + i, 0.1f, 14.f));
+		NULL_CHECK_RETURN(pObject, E_FAIL);
+		pObject_Layer->Add_GameObject(L"Enemy_Spearman", pObject);
+	}
 
-	//pObject = CEnemy_Bowman::Create(m_pGraphicDev, _vec3(38.f, 0.1f, 4.f));
-	//NULL_CHECK_RETURN(pObject, E_FAIL);
-	//pObject_Layer->Add_GameObject(L"Enemy_Bowman", pObject);
-	
-	//for (int i = 0; i < 6; ++i)
-	//{
-	//	pObject = CEnemy_Swordman::Create(m_pGraphicDev, _vec3(40.f, 0.1f, (12.f + i)));
-	//	NULL_CHECK_RETURN(pObject, E_FAIL);
-	//	pObject_Layer->Add_GameObject(L"Enemy_Swordman", pObject);
-	//}
+	for (int i = 0; i < 5; ++i)
+	{
+		pObject = CEnemy_Shieldman::Create(m_pGraphicDev, _vec3(128 + i, 0.1f, 18.f));
+		NULL_CHECK_RETURN(pObject, E_FAIL);
+		pObject_Layer->Add_GameObject(L"Enemy_Shieldman", pObject);
 
-	//for (int i = 0; i < 6; ++i)
-	//{
-	//	pObject = CEnemy_Spearman::Create(m_pGraphicDev, _vec3(42.5f, 0.1f, (12.f + i) * 0.5f));
-	//	NULL_CHECK_RETURN(pObject, E_FAIL);
-	//	pObject_Layer->Add_GameObject(L"Enemy_Spearman", pObject);
+	}
 
-	//}
+	for (int i = 0; i < 3; ++i)
+	{
+		pObject = CEnemy_Bowman::Create(m_pGraphicDev, _vec3(129 + i, 0.1f, 12.f));
+		NULL_CHECK_RETURN(pObject, E_FAIL);
+		pObject_Layer->Add_GameObject(L"Enemy_Bowman", pObject);
 
-	//for (int i = 0; i < 3; ++i)
-	//{
-	//	pObject = CEnemy_Shieldman::Create(m_pGraphicDev, _vec3(45.f, 0.1f, (12.f + i) * 0.5f));
-	//	NULL_CHECK_RETURN(pObject, E_FAIL);
-	//	pObject_Layer->Add_GameObject(L"Enemy_Shieldman", pObject);
+	}
 
-	//}
-
-	//for (int i = 0; i < 3; ++i)
-	//{
-	//	pObject = CEnemy_Bowman::Create(m_pGraphicDev, _vec3(38.f, 0.1f, (12.f + i) * 0.5f));
-	//	NULL_CHECK_RETURN(pObject, E_FAIL);
-	//	pObject_Layer->Add_GameObject(L"Enemy_Bowman", pObject);
-
-	//}
+	pObject = CKeroberos::Create(m_pGraphicDev, _vec3(129, 0.1f, 9.f));
+	NULL_CHECK_RETURN(pObject, E_FAIL);
+	pObject_Layer->Add_GameObject(L"Boss_Keroberos", pObject);
 
 
 	//////////////INSERT LAYER//////////////
@@ -186,9 +176,9 @@ HRESULT CBossStage::Add_UI_Layer()
 	ENGINE::CGameObject* pObject = nullptr;
 	////////////INSERT GAME OBJECT////////////
 
-	pObject = CDynamicCamera::Create(m_pGraphicDev);
-	NULL_CHECK_RETURN(pObject, E_FAIL);
-	pObject_Layer->Add_GameObject(L"DynamicCamera", pObject);
+	//pObject = CDynamicCamera::Create(m_pGraphicDev);
+	//NULL_CHECK_RETURN(pObject, E_FAIL);
+	//pObject_Layer->Add_GameObject(L"DynamicCamera", pObject);
 
 
 	//ENGINE::CTransform* pTransfom =(ENGINE::CTransform*)Get_Component(ENGINE::CLayer::OBJECT, L"Player", L"Com_Transform", ENGINE::COMP_DYNAMIC);

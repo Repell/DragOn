@@ -146,6 +146,9 @@
     <Filter Include="01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29\02.GroundFireball">
       <UniqueIdentifier>{494650ae-15a9-41b2-aeed-d6101f6a3dd9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.SubApp\02.Effect\02.Effect_Kaboom">
+      <UniqueIdentifier>{ebb16672-b884-4e5a-bde0-412707634fb6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clinet.h">
@@ -283,6 +286,9 @@
     <ClInclude Include="..\Codes\Dragon_GroundFire.h">
       <Filter>01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29\02.GroundFireball</Filter>
     </ClInclude>
+    <ClInclude Include="..\Codes\Effect_Kaboom.h">
+      <Filter>02.SubApp\02.Effect\02.Effect_Kaboom</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -398,6 +404,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Dragon_GroundFire.cpp">
       <Filter>01.Clinet\02.Scene\09.TestStage\05.Michael%28P_Rider%29\02.GroundFireball</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Effect_Kaboom.cpp">
+      <Filter>02.SubApp\02.Effect\02.Effect_Kaboom</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

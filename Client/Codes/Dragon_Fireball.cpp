@@ -8,7 +8,6 @@
 #define	_ATTACK_MID_END					7
 #define _QUAKEEND								10
 
-
 #define _SPEED 6000.f
 #define  _RADIUS 30.f
 
@@ -51,10 +50,6 @@ HRESULT CDragon_Fireball::Add_Component()
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
-	m_pTarget = dynamic_cast<ENGINE::CTransform*>
-		(ENGINE::Get_Component(ENGINE::CLayer::OBJECT, L"Boss_Blue", L"Com_Transform", ENGINE::COMP_DYNAMIC));
-	NULL_CHECK_RETURN(m_pTarget, E_FAIL);
-
 	return S_OK;
 }
 
@@ -63,7 +58,6 @@ HRESULT CDragon_Fireball::Ready_Object(ENGINE::UNITINFO tInfo)
 	m_tInfo = tInfo;
 	Add_Component();
 	m_pSphereColl->Set_Scale(0.1f);
-	//m_pTransform->Fix_TargetLook(m_pTarget, 30.f);
 
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = tInfo.m_vPos;
 	m_pTransform->m_vScale = tInfo.m_vScale;
@@ -79,7 +73,7 @@ _int CDragon_Fireball::Update_Object(const _double & TimeDelta)
 	
 	CGameObject::Update_Object(TimeDelta);
 
-	//Fly Arrow
+	//Fly Fireball
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] += m_tInfo.m_vDir * _SPEED * -TimeDelta;
 
 	//Target Check

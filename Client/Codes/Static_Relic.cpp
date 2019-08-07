@@ -136,8 +136,8 @@ _int CStatic_Relic::Update_Object(const _double& TimeDelta)
 		m_bCharge = TRUE;
 	}
 
-	if (m_pSphereColl->Get_iHp() < 0)
-		return END_EVENT;
+	//if (m_pSphereColl->Get_iHp() < 0)
+	//	return END_EVENT;
 
 	m_pRender->Add_RenderGroup(ENGINE::RENDER_NONALPHA, this);
 	return NO_EVENT;

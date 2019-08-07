@@ -18,10 +18,7 @@ public:
 	void Set_AniState(_uint iAni)
 	{		m_iCurAniIndex = iAni;	}
 	void Set_StartPos(_vec3 vPos)
-	{
-		m_vStartPos = vPos;
-	}
-
+	{		m_vStartPos = vPos;	}
 
 	_vec3 Get_vLookDir();	//Y°ª 0.f;
 	_vec3 Get_vLookRealDir();	
@@ -39,6 +36,7 @@ public:
 	virtual void Late_Update_Component() override;
 
 	_bool Check_TargetFront();
+	_bool Check_Ai();
 
 	void Stalk_Target(CTransform* pTransform, const _double& fTime, const _float fSpeed);
 	_vec3 Stalk_TargetDir(CTransform* pTransform, const _double& fTime, const _float fSpeed);
@@ -64,6 +62,7 @@ public:
 	_bool m_bAttackState;
 	_float m_fJump;
 
+	_bool m_bAi;
 	_bool m_bDead;
 	_bool m_bFront;
 	_bool bRotate;

@@ -38,7 +38,7 @@ _int CMainApp::Update_MainApp()
 	ENGINE::Set_InputDev();
 	 
 	//Management
-	m_pManagement->Update_Scene(ENGINE::Get_DeltaTime());
+	m_pManagement->Update_Scene(ENGINE::Get_DeltaTime() * 1.2);
 
 	return NO_EVENT;
 }

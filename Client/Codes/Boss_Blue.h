@@ -34,6 +34,8 @@ public:
 private:
 	void Set_Animation();
 	void Get_WeaponMatrix(const char* tBone);
+	void Get_WeaponMatrix2(const char* tBone);
+	void Get_WeaponMatrix3(const char* tBone);
 	void Check_EnemyGroup();
 	_bool Check_EnemyColl(_vec3* vRevDir, const _tchar* szTag);
 	_bool Check_EnemySphereColl(const _tchar* szTag);
@@ -121,7 +123,8 @@ private:
 	ENGINE::CTransform*	m_pTransform;
 	ENGINE::CTransform*	m_pTargetTransform;
 	ENGINE::CNaviMesh*		m_pNaviMesh;
-	ENGINE::CCollider*			m_pCollider;
+	ENGINE::CCollider*			m_pCollider_Left;
+	ENGINE::CCollider*			m_pCollider_Right;
 
 	ENGINE::CSphereColl*	m_pSphereHead;
 	ENGINE::CSphereColl*	m_pSphereBody;
@@ -134,7 +137,9 @@ private:
 	CStatic_Tower*				m_pTower;
 
 private:
-	_matrix m_pBoneMatrix;
+	_matrix m_pBody;
+	_matrix m_pBoneMatrix_Right;
+	_matrix m_pBoneMatrix_Left;
 
 public:
 	static CBlue* Create(LPDIRECT3DDEVICE9 pGraphicDev, _vec3 vPos);

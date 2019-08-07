@@ -48,6 +48,9 @@ private:
 	explicit CNewPlayer(LPDIRECT3DDEVICE9 pDevice);
 	virtual ~CNewPlayer();
 
+public:
+	VOID Set_PlayerActive(_bool bActive);
+
 public:	//OverRide Func
 	virtual HRESULT Ready_Object() override;
 	virtual HRESULT Late_Init();
@@ -150,6 +153,8 @@ private:
 	_uint m_iKnockCnt = 0;
 
 private:
+	//Activate
+	_bool m_bPlayerActive;
 	//Move
 	_vec3 m_vMoveDir;
 	//Jump

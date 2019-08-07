@@ -4,6 +4,7 @@
 #include "Export_Function.h"
 
 #define _SPEED 1.5f
+#define _SCALE 0.01f
 #define _ANGLE 60.f
 #define  _RADIUS 100.f
 
@@ -60,8 +61,8 @@ HRESULT CEnemy_Spearman::Ready_Object(_vec3 vPos)
 	Animate_FSM(_IDLE);
 
 	m_pTransform->m_vInfo[ENGINE::INFO_POS] = vPos;
-	m_pTransform->m_vScale = { 0.006f, 0.006f, 0.006f };
-	m_pSphereColl->Set_Scale(0.004f);
+	m_pTransform->m_vScale = { _SCALE, _SCALE, _SCALE };
+	m_pSphereColl->Set_Scale(_SCALE);
 	//m_pCollider->Set_Scale(0.005f);
 
 	Set_Animation();
@@ -588,7 +589,7 @@ HRESULT CEnemy_Spearman::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_NaviMesh", pComponent);
 
 	//Sphere Collider
-	pComponent = m_pSphereColl = ENGINE::CSphereColl::Create(m_pGraphicDev, _RADIUS, 10);
+	pComponent = m_pSphereColl = ENGINE::CSphereColl::Create(m_pGraphicDev, _RADIUS, 20);
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_SphereColl", pComponent);
 
@@ -598,7 +599,7 @@ HRESULT CEnemy_Spearman::Add_Component()
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Shader", pComponent);
 
 	ENGINE::UNITINFO tInfo =
-	{ FALSE, _vec3(0.f, 0.f, -130.f), _vec3{ 0.006f, 1.f, 1.f }, _vec3(90.f, 20.f, 0.f), _vec3(0.f, 0.f, 0.f), 60.f };
+	{ FALSE, _vec3(0.f, 0.f, -130.f), _vec3{ _SCALE, _SCALE, _SCALE }, _vec3(90.f, 20.f, 0.f), _vec3(0.f, 0.f, 0.f), 40.f };
 	pComponent = m_pWeapon = ENGINE::CWeapon::Create(m_pGraphicDev, m_pTransform, tInfo, L"Mesh_Enemy_Spear");
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_MapComponent[ENGINE::COMP_STATIC].emplace(L"Com_Weapon", pComponent);

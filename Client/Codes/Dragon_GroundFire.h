@@ -3,6 +3,7 @@
 
 #include "GameObject.h"
 #include "Effect_Tex.h"
+#include "Effect_Kaboom.h"
 
 namespace ENGINE
 {
@@ -30,7 +31,8 @@ public:
 
 private:
 	//Transform
-	_bool Check_FireballColl();
+	_bool Check_FireballColl(const _tchar * pObjTag);
+	_int Check_EnemyGroup();
 	//Shader
 	HRESULT SetUp_ConstantTable(LPD3DXEFFECT pEffect);
 
